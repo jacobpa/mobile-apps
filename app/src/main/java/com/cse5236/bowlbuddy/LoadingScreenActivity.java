@@ -1,8 +1,10 @@
 package com.cse5236.bowlbuddy;
 
+import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 
 public class LoadingScreenActivity extends AppCompatActivity {
 
@@ -15,5 +17,11 @@ public class LoadingScreenActivity extends AppCompatActivity {
         FragmentManager manager = getSupportFragmentManager();
         manager.beginTransaction().replace(R.id.loadingScreen, fragment, fragment.getTag()).commit();
 
+    }
+
+    public void sendMessage(View view)
+    {
+        Intent intent = new Intent(LoadingScreenActivity.this, MapsActivity.class);
+        startActivity(intent);
     }
 }
