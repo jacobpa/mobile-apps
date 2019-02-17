@@ -24,4 +24,11 @@ public class LoadingScreenActivity extends AppCompatActivity {
         Intent intent = new Intent(LoadingScreenActivity.this, MapsActivity.class);
         startActivity(intent);
     }
+
+    @Override
+    public void onBackPressed() {
+        // Must use Support Library FragmentManager, we're using Support Library Fragments
+        FragmentManager fm = getSupportFragmentManager();
+        fm.popBackStackImmediate();  // Replace current fragment with last on back stack
+    }
 }

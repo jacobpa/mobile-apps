@@ -64,18 +64,23 @@ public class HomePageFragment extends Fragment implements View.OnClickListener {
     }
 
     private void startLogin() {
-
         Fragment loginFragment = new LoginFragment();
         FragmentManager manager = getFragmentManager();
-        manager.beginTransaction().replace(R.id.loadingScreen, loginFragment, loginFragment.getTag()).commit();
 
+        manager.beginTransaction()
+                .replace(R.id.loadingScreen, loginFragment, loginFragment.getTag())
+                .addToBackStack(null)  // Add to Fragments back stack for easy back navigation
+                .commit();
     }
 
      private void startSignUp() {
-
         Fragment signUpFragment = new SignUpFragment();
         FragmentManager manager = getFragmentManager();
-        manager.beginTransaction().replace(R.id.loadingScreen, signUpFragment, signUpFragment.getTag()).commit();
+
+        manager.beginTransaction()
+                .replace(R.id.loadingScreen, signUpFragment, signUpFragment.getTag())
+                .addToBackStack(null)
+                .commit();
      }
 
 }
