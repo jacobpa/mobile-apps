@@ -1,24 +1,31 @@
 package com.cse5236.bowlbuddy;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * This is the {@link Fragment} that hosts the login form.
  */
 public class LoginFragment extends Fragment {
-
     private View viewVar;
+    private Button loginButton;
+    private Button backButton;
+    private EditText usernameField;
+    private EditText passwordField;
 
     public LoginFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -26,7 +33,37 @@ public class LoginFragment extends Fragment {
         // Inflate the layout for this fragment
         viewVar = inflater.inflate(R.layout.login_fragment, container, false);
 
+        // Populate UI elements
+        loginButton = viewVar.findViewById(R.id.loginButton);
+        backButton = viewVar.findViewById(R.id.backButton);
+        usernameField = viewVar.findViewById(R.id.usernameField);
+        passwordField = viewVar.findViewById(R.id.passwordField);
+
+        if(loginButton != null) {
+            loginButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getActivity(), MasterListActivity.class);
+                    startActivity(intent);
+                    Toast.makeText(getActivity(), "Login not implemented.", Toast.LENGTH_SHORT)
+                            .show();
+                    // Finish current activity, so that the user cannot "back" into it.
+                    // TODO: Once user logs in, make MasterListActivity new launch activity
+                    getActivity().finish();
+                }
+            });
+        }
+
+        if(backButton != null) {
+            backButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    FragmentManager fm = getFragmentManager();
+                    fm.popBackStackImmediate();
+                }
+            });
+        }
+
         return viewVar;
     }
-
 }

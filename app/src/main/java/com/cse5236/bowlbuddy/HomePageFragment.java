@@ -49,16 +49,16 @@ public class HomePageFragment extends Fragment implements View.OnClickListener {
 
         Activity activity = getActivity();
 
-            switch (view.getId()) {
-                case R.id.loginButton:
-                    startLogin();
-                    break;
-                case R.id.signUpButton:
-                    startSignUp();
-                    break;
-                default:
-                    Toast.makeText(activity, "unrecognized button id", Toast.LENGTH_SHORT).show();
-            }
+        switch (view.getId()) {
+            case R.id.loginButton:
+                startLogin();
+                break;
+            case R.id.signUpButton:
+                startSignUp();
+                break;
+            default:
+                Toast.makeText(activity, "unrecognized button id", Toast.LENGTH_SHORT).show();
+        }
 
 
     }
@@ -73,7 +73,7 @@ public class HomePageFragment extends Fragment implements View.OnClickListener {
                 .commit();
     }
 
-     private void startSignUp() {
+    private void startSignUp() {
         Fragment signUpFragment = new SignUpFragment();
         FragmentManager manager = getFragmentManager();
 
@@ -81,6 +81,5 @@ public class HomePageFragment extends Fragment implements View.OnClickListener {
                 .replace(R.id.loadingScreen, signUpFragment, signUpFragment.getTag())
                 .addToBackStack(null)
                 .commit();
-     }
-
+    }
 }
