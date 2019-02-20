@@ -3,6 +3,7 @@ package com.cse5236.bowlbuddy;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
  * A simple {@link Fragment} subclass.
  */
 public class SignUpFragment extends Fragment {
+    private final static String TAG = SignUpFragment.class.getSimpleName();
 
     private View viewVar;
 
@@ -26,6 +28,7 @@ public class SignUpFragment extends Fragment {
         // Inflate the layout for this fragment
         viewVar = inflater.inflate(R.layout.sign_up_fragment, container, false);
 
+        Log.d(TAG, "onCreateView: View successfully created");
         return viewVar;
     }
 

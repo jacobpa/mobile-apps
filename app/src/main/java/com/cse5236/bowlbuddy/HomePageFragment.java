@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import android.widget.Button;
  * A simple {@link Fragment} subclass.
  */
 public class HomePageFragment extends Fragment implements View.OnClickListener {
+    private final static String TAG = HomePageFragment.class.getSimpleName();
 
     private View viewVar;
 
@@ -41,6 +43,7 @@ public class HomePageFragment extends Fragment implements View.OnClickListener {
             signUpButton.setOnClickListener(this);
         }
 
+        Log.d(TAG, "onCreateView: View successfully created");
         return viewVar;
     }
 

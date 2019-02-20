@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,8 @@ import android.widget.Toast;
  * This is the {@link Fragment} that hosts the login form.
  */
 public class LoginFragment extends Fragment {
+    private final static String TAG = LoginFragment.class.getSimpleName();
+
     private View viewVar;
     private Button loginButton;
     private Button backButton;
@@ -64,6 +67,7 @@ public class LoginFragment extends Fragment {
             });
         }
 
+        Log.d(TAG, "onCreateView: View successfully created");
         return viewVar;
     }
 }

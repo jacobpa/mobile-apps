@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 public class LoadingScreenActivity extends AppCompatActivity {
+    private final static String TAG = LoadingScreenActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,7 +18,7 @@ public class LoadingScreenActivity extends AppCompatActivity {
         HomePageFragment fragment = new HomePageFragment();
         FragmentManager manager = getSupportFragmentManager();
         manager.beginTransaction().replace(R.id.loadingScreen, fragment, fragment.getTag()).commit();
-
+        Log.d(TAG, "onCreate: Successfully created");
     }
 
     public void sendMessage(View view)
@@ -30,5 +32,6 @@ public class LoadingScreenActivity extends AppCompatActivity {
         // Must use Support Library FragmentManager, we're using Support Library Fragments
         FragmentManager fm = getSupportFragmentManager();
         fm.popBackStackImmediate();  // Replace current fragment with last on back stack
+        Log.d(TAG, "onBackPressed: Overwritten back task ran");
     }
 }

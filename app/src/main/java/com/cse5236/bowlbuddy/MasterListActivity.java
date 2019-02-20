@@ -4,8 +4,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 public class MasterListActivity extends AppCompatActivity {
+    private final static String TAG = MasterListActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,5 +25,6 @@ public class MasterListActivity extends AppCompatActivity {
                     .add(R.id.master_list_container, fragment)
                     .commit();
         }
+        Log.d(TAG, "onCreate: Successfully created");
     }
 }
