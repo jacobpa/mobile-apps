@@ -25,6 +25,8 @@ public class LoginFragment extends Fragment {
     private Button backButton;
     private EditText usernameField;
     private EditText passwordField;
+    private String userName;
+    private String password;
 
     public LoginFragment() {
         // Required empty public constructor
@@ -46,6 +48,8 @@ public class LoginFragment extends Fragment {
             loginButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    userName = usernameField.getText().toString();
+                    password = passwordField.getText().toString();
                     Intent intent = new Intent(getActivity(), MasterListActivity.class);
                     startActivity(intent);
                     Toast.makeText(getActivity(), "Login not implemented.", Toast.LENGTH_SHORT)

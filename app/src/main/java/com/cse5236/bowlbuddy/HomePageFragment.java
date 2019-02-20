@@ -20,6 +20,8 @@ public class HomePageFragment extends Fragment implements View.OnClickListener {
     private final static String TAG = HomePageFragment.class.getSimpleName();
 
     private View viewVar;
+    private Button loginButton;
+    private Button signUpButton;
 
     public HomePageFragment() {
         // Required empty public constructor
@@ -33,8 +35,8 @@ public class HomePageFragment extends Fragment implements View.OnClickListener {
 
         viewVar = inflater.inflate(R.layout.home_page_fragment, container, false);
 
-        Button loginButton = viewVar.findViewById(R.id.loginButton);
-        Button signUpButton = viewVar.findViewById(R.id.signUpButton);
+        loginButton = viewVar.findViewById(R.id.loginButton);
+        signUpButton = viewVar.findViewById(R.id.signUpButton);
 
         if (loginButton != null) {
             loginButton.setOnClickListener(this);

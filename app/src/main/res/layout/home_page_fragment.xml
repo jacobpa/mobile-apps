@@ -23,10 +23,10 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.33"
             android:textAlignment="center"
-
             android:text="@string/title_page"
             android:textColor="@color/black"
-            android:textSize="40sp"/>
+            android:textSize="40sp"
+            android:ems="10"/>
 
         <Button
             android:id="@+id/loginButton"
