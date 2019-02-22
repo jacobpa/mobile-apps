@@ -87,4 +87,5 @@ public class HomePageFragment extends Fragment implements View.OnClickListener {
                 .addToBackStack(null)
                 .commit();
     }
+
 }

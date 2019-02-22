@@ -34,4 +34,21 @@ public class LoadingScreenActivity extends AppCompatActivity {
         fm.popBackStackImmediate();  // Replace current fragment with last on back stack
         Log.d(TAG, "onBackPressed: Overwritten back task ran");
     }
+
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy: Successfully ended activity");
+        finish();
+    }
+
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause: Successfully paused activity");
+    }
+
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume: Successfully resumed activity");
+    }
+
 }

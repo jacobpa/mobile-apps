@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,8 @@ public class LoadingScreenFragment extends Fragment {
     private int minPercent = 0;
     private int sleepTime = 250;
 
+    private final static String TAG = LoadingScreenFragment.class.getSimpleName();
+
     public LoadingScreenFragment() {
         // Required empty public constructor
     }
@@ -28,6 +31,7 @@ public class LoadingScreenFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewVar = inflater.inflate(R.layout.loading_screen_fragment, container, false);
+        Log.d(TAG, "onCreateView: View successfully created");
         return viewVar;
     }
 
