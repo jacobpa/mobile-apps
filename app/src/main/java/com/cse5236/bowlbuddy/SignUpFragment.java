@@ -2,8 +2,8 @@ package com.cse5236.bowlbuddy;
 
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,11 +13,22 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.cse5236.bowlbuddy.models.User;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SignUpFragment extends Fragment implements View.OnClickListener {
+public class SignUpFragment extends Fragment implements View.OnClickListener, Callback<User> {
     private final static String TAG = SignUpFragment.class.getSimpleName();
 
     private View viewVar;
@@ -76,6 +87,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
     }
 
     private void startSignUp() {
+        LoadingScreenActivity activity = (LoadingScreenActivity) getActivity();
         userName = usernameField.getText().toString();
         password = passwordField.getText().toString();
         confirmPassword = confirmPasswordField.getText().toString();
@@ -86,18 +98,43 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
             return;
         }
 
-        // TODO: Make sure unique user name is used.
+        // Check that the username does not contain spaces.
+        if (!userName.matches("[A-Za-z0-9_]+")) {
+            Snackbar.make(getView(), "Username must only contain letters, digits, or underscores.", Snackbar.LENGTH_SHORT).show();
+            return;
+        }
 
-        Intent intent = new Intent(getActivity(), MasterListActivity.class);
-        startActivity(intent);
-        Toast.makeText(getActivity(), "Login not implemented.", Toast.LENGTH_SHORT)
-                .show();
-        // Finish current activity, so that the user cannot "back" into it.
-        // TODO: Once user logs in, make MasterListActivity new launch activity
-        getActivity().finish();
+        activity.getService().signUp(userName, password, confirmPassword).enqueue(this);
     }
 
     private void goBack() {
         getFragmentManager().popBackStack();
+    }
+
+    @Override
+    public void onResponse(Call<User> call, Response<User> response) {
+        try {
+            if (response.isSuccessful()) {
+                User u = response.body();
+                Log.d(TAG, "onResponse: Received successful signup response.");
+                Snackbar.make(getView(), "Account created!", Snackbar.LENGTH_LONG).show();
+                getFragmentManager().popBackStack();
+            } else {
+                JSONObject json = new JSONObject(response.errorBody().string());
+                Snackbar.make(getView(), json.getString("error"), Snackbar.LENGTH_LONG).show();
+                Log.e(TAG, "onResponse: Unsuccessful signup response, status " + response.code());
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, "onResponse: Error parsing JSON", e);
+        } catch (IOException e) {
+            Log.e(TAG, "onResponse: Error getting errorBody string", e);
+        }
+    }
+
+    @Override
+    public void onFailure(Call<User> call, Throwable t) {
+        LoadingScreenActivity activity = (LoadingScreenActivity) getActivity();
+        Toast.makeText(activity, "Network error", Toast.LENGTH_SHORT).show();
+        Log.e(TAG, "onFailure: Signup call failed", t);
     }
 }

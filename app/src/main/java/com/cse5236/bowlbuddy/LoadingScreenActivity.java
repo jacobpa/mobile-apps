@@ -1,24 +1,40 @@
 package com.cse5236.bowlbuddy;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.cse5236.bowlbuddy.util.APIService;
+
+import retrofit2.Retrofit;
+import retrofit2.converter.moshi.MoshiConverterFactory;
+
 public class LoadingScreenActivity extends AppCompatActivity {
     private final static String TAG = LoadingScreenActivity.class.getSimpleName();
+    private APIService service;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.loading_screen_activity);
 
+        service = new Retrofit.Builder()
+                .baseUrl("https://bb.jacobpa.com/api/")
+                .addConverterFactory(MoshiConverterFactory.create())
+                .build()
+                .create(APIService.class);
+
         HomePageFragment fragment = new HomePageFragment();
         FragmentManager manager = getSupportFragmentManager();
         manager.beginTransaction().replace(R.id.loadingScreen, fragment, fragment.getTag()).commit();
         Log.d(TAG, "onCreate: Successfully created");
+    }
+
+    public APIService getService() {
+        return service;
     }
 
     public void sendMessage(View view)
