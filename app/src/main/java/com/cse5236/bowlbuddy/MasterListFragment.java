@@ -2,6 +2,7 @@ package com.cse5236.bowlbuddy;
 
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -71,6 +73,7 @@ public class MasterListFragment extends Fragment {
         private TextView bathroomDesc;
         private AppCompatRatingBar ratingBar;
         private Bathroom bathroom;
+        private Button viewDetails;
 
         public BathroomHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.list_item_bathroom, parent, false));
@@ -80,6 +83,15 @@ public class MasterListFragment extends Fragment {
             bathroomTitle = itemView.findViewById(R.id.bathroom_title);
             bathroomDesc = itemView.findViewById(R.id.bathroom_desc);
             ratingBar = itemView.findViewById(R.id.bathroom_overall_rating);
+            viewDetails = itemView.findViewById(R.id.view_details_btn);
+
+            viewDetails.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    openDetails();
+                }
+            });
+
         }
 
         public void bind(Bathroom bathroom) {
@@ -96,6 +108,12 @@ public class MasterListFragment extends Fragment {
                     getActivity(), "Gender: " + bathroom.getGender(), Toast.LENGTH_SHORT)
                     .show();
         }
+
+        public void openDetails() {
+            Intent intent = new Intent(getActivity(), DetailsActivity.class);
+            startActivity(intent);
+        }
+
     }
 
     private class BathroomAdapter extends RecyclerView.Adapter<BathroomHolder> {
