@@ -27,4 +27,20 @@ public class ReviewActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: Successfully created");
     }
 
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy: Successfully ended activity");
+        finish();
+    }
+
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause: Successfully paused activity");
+    }
+
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume: Successfully resumed activity");
+    }
+
 }
