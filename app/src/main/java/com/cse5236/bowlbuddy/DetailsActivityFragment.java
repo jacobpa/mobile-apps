@@ -14,7 +14,7 @@ public class DetailsActivityFragment extends Fragment {
 
     // TODO: Programmatically request image urls from webserver
     private String[] imageUrls = new String[] {
-            "https://via.placeholder.com/150/4286f4/808080",
+            "https://st.hzcdn.com/simgs/c881faaa0672e118_4-2734/traditional-bathroom.jpg",
             "https://via.placeholder.com/200/f4b642/808080",
             "https://via.placeholder.com/100/0000AF/808080"
     };
