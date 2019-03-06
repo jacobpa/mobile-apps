@@ -1,8 +1,10 @@
 package com.cse5236.bowlbuddy;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -32,9 +34,12 @@ public class ViewPagerAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
         ImageView imageView = new ImageView(context);
+        Configuration configuration = context.getResources().getConfiguration();
+        int screenWidthDp = configuration.screenWidthDp;
+
         Picasso.get()
                 .load(imageUrls[position])
-                .fit()
+                .resize(screenWidthDp,200)
                 .centerCrop()
                 .into(imageView);
         container.addView(imageView);

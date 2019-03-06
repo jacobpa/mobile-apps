@@ -12,10 +12,11 @@ import android.view.ViewGroup;
  */
 public class DetailsActivityFragment extends Fragment {
 
+    // TODO: Programmatically request image urls from webserver
     private String[] imageUrls = new String[] {
-            "https://via.placeholder.com/150/0C0BFF/808080?Text=test1",
-            "https://via.placeholder.com/200/BBBBBF/808080?Text=test2",
-            "https://via.placeholder.com/100/0000AF/808080?Text=test3"
+            "https://via.placeholder.com/150/4286f4/808080",
+            "https://via.placeholder.com/200/f4b642/808080",
+            "https://via.placeholder.com/100/0000AF/808080"
     };
 
     public DetailsActivityFragment() {
