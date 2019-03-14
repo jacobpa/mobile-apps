@@ -78,9 +78,17 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
             case R.id.log_out:
                 logOutAction();
                 return true;
+            case R.id.action_profile:
+                launchProfileActivity();
+                return true;
         }
 
         return true;
+    }
+
+    private void launchProfileActivity() {
+        Intent i = new Intent(getActivity(), ProfileActivity.class);
+        startActivity(i);
     }
 
     /**
