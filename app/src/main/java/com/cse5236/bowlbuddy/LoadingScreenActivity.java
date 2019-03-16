@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.cse5236.bowlbuddy.util.APIService;
+import com.cse5236.bowlbuddy.util.APISingleton;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
@@ -23,11 +24,7 @@ public class LoadingScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.loading_screen_activity);
 
-        service = new Retrofit.Builder()
-                .baseUrl("https://bb.jacobpa.com/api/")
-                .addConverterFactory(MoshiConverterFactory.create())
-                .build()
-                .create(APIService.class);
+        service = APISingleton.getInstance();
 
         HomePageFragment fragment = new HomePageFragment();
         FragmentManager manager = getSupportFragmentManager();
