@@ -16,7 +16,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".ProfileActivity"></activity>
+        <activity android:name=".ProfileActivity"
+            android:windowSoftInputMode="adjustResize"></activity>
         <activity android:name=".MasterListActivity" />
         <activity
             android:name=".LoadingScreenActivity"

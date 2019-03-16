@@ -5,7 +5,7 @@ public class User {
     private String username;
     private int karma;
 
-    public User(){
+    public User() {
         //Empty Constructor
     }
 
@@ -29,5 +29,17 @@ public class User {
 
     public void setKarma(int karma) {
         this.karma = karma;
+    }
+
+    /**
+     * Determines if a certain username is valid.
+     *
+     * @param username The username to check the validity of
+     * @return True if valid, false otherwise
+     */
+    public static boolean isUsernameValid(String username) {
+        String usernameRegexp = "[A-Za-z0-9_]+";
+
+        return username.matches(usernameRegexp);
     }
 }
