@@ -89,13 +89,21 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
         confirmPassword = confirmPasswordField.getText().toString();
 
         // Check that the password and confirm password are the same.
-        if (!password.equals(confirmPassword)) {
-            Toast.makeText(getActivity(), "Password and Confirmation Password did not match.", Toast.LENGTH_SHORT).show();
+        boolean passwordsMatch = password.equals(confirmPassword);
+        boolean fieldsEmpty = password.isEmpty() || confirmPassword.isEmpty();
+
+        if (!passwordsMatch) {
+            Snackbar.make(viewVar, "Password and Confirmation Password did not match.", Snackbar.LENGTH_LONG)
+                    .show();
+            return;
+        }
+        if (fieldsEmpty) {
+            Snackbar.make(viewVar, "Password fields can not be empty.", Snackbar.LENGTH_LONG).show();
             return;
         }
 
         // Check that the username does not contain spaces.
-        if (!userName.matches("[A-Za-z0-9_]+")) {
+        if (!User.isUsernameValid(userName)) {
             Snackbar.make(getView(), "Username must only contain letters, digits, or underscores.", Snackbar.LENGTH_SHORT).show();
             return;
         }
