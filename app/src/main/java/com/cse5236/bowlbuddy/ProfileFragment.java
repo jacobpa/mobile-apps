@@ -13,21 +13,16 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cse5236.bowlbuddy.models.User;
 import com.cse5236.bowlbuddy.util.APIService;
 import com.cse5236.bowlbuddy.util.APISingleton;
+import com.cse5236.bowlbuddy.util.BowlBuddyCallback;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ProfileFragment extends Fragment {
@@ -69,7 +64,7 @@ public class ProfileFragment extends Fragment {
         usernameChangeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                updateUsername();
+                changeUsername();
             }
         });
         passwordChangeButton.setOnClickListener(new View.OnClickListener() {
@@ -87,7 +82,7 @@ public class ProfileFragment extends Fragment {
 
         usernameField = v.findViewById(R.id.new_username_field);
         passwordFields[0] = v.findViewById(R.id.password_change_field);
-        passwordFields[1] = v.findViewById(R.id.password_change_field);
+        passwordFields[1] = v.findViewById(R.id.password_change_confirm_field);
 
         return v;
     }
@@ -107,12 +102,12 @@ public class ProfileFragment extends Fragment {
         return;
     }
 
-    private void updateUsername() {
+    private void changeUsername() {
         String desiredUsername = usernameField.getText().toString();
         if (User.isUsernameValid(desiredUsername)) {
             service.updateUsername(sp.getInt("id", -1),
                     desiredUsername,
-                    sp.getString("jwt", "")).enqueue(new updateUsernameCallback());
+                    sp.getString("jwt", "")).enqueue(new ChangeUsernameCallback(getContext(), v));
         } else {
             Snackbar.make(v, "Username must only contain letters, digits, or underscores.", Snackbar.LENGTH_LONG)
                     .show();
@@ -127,7 +122,11 @@ public class ProfileFragment extends Fragment {
                 .attach(currentFragment)
                 .commit();
     }
-    private class updateUsernameCallback implements Callback<User> {
+
+    private class ChangeUsernameCallback extends BowlBuddyCallback<User> {
+        public ChangeUsernameCallback(Context context, View view) {
+            super(context, view);
+        }
 
         @Override
         public void onResponse(Call<User> call, Response<User> response) {
@@ -138,21 +137,8 @@ public class ProfileFragment extends Fragment {
 
                 refreshFragment();
             } else {
-                try {
-                    JSONObject json = new JSONObject(response.errorBody().string());
-                    Snackbar.make(getView(), json.getString("error"), Snackbar.LENGTH_LONG)
-                            .show();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                parseError(response);
             }
-        }
-
-        @Override
-        public void onFailure(Call<User> call, Throwable t) {
-
         }
     }
 

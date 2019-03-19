@@ -2,6 +2,7 @@ package com.cse5236.bowlbuddy;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -14,21 +15,16 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.cse5236.bowlbuddy.models.User;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
+import com.cse5236.bowlbuddy.util.BowlBuddyCallback;
 
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SignUpFragment extends Fragment implements View.OnClickListener, Callback<User> {
+public class SignUpFragment extends Fragment implements View.OnClickListener {
     private final static String TAG = SignUpFragment.class.getSimpleName();
 
     private View viewVar;
@@ -104,37 +100,27 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, Ca
             return;
         }
 
-        activity.getService().signUp(userName, password, confirmPassword).enqueue(this);
+        activity.getService().signUp(userName, password, confirmPassword).enqueue(new SignUpCallback(getContext(), viewVar));
     }
 
     private void goBack() {
         getFragmentManager().popBackStack();
     }
 
-    @Override
-    public void onResponse(Call<User> call, Response<User> response) {
-        try {
+    private class SignUpCallback extends BowlBuddyCallback<User> {
+        public SignUpCallback(Context context, View view) {
+            super(context, view);
+        }
+
+        @Override
+        public void onResponse(Call<User> call, Response<User> response) {
             if (response.isSuccessful()) {
-                User u = response.body();
                 Log.d(TAG, "onResponse: Received successful signup response.");
                 Snackbar.make(getView(), "Account created!", Snackbar.LENGTH_LONG).show();
                 getFragmentManager().popBackStack();
             } else {
-                JSONObject json = new JSONObject(response.errorBody().string());
-                Snackbar.make(getView(), json.getString("error"), Snackbar.LENGTH_LONG).show();
-                Log.e(TAG, "onResponse: Unsuccessful signup response, status " + response.code());
+                parseError(response);
             }
-        } catch (JSONException e) {
-            Log.e(TAG, "onResponse: Error parsing JSON", e);
-        } catch (IOException e) {
-            Log.e(TAG, "onResponse: Error getting errorBody string", e);
         }
-    }
-
-    @Override
-    public void onFailure(Call<User> call, Throwable t) {
-        LoadingScreenActivity activity = (LoadingScreenActivity) getActivity();
-        Toast.makeText(activity, "Network error", Toast.LENGTH_SHORT).show();
-        Log.e(TAG, "onFailure: Signup call failed", t);
     }
 }
