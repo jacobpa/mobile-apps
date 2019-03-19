@@ -4,6 +4,7 @@ import com.cse5236.bowlbuddy.models.User;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.http.DELETE;
 import retrofit2.http.Header;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
@@ -51,4 +52,28 @@ public interface APIService {
     Call<User> updateUsername(@Path("id") int id,
                               @Query("username") String username,
                               @Header("Authorization") String token);
+
+    /**
+     * Update a user's password.
+     *
+     * @param id       The id of the user
+     * @param password The new desired password
+     * @param token    The user's JWT authentication token
+     * @return A Call object of type User with the new information
+     */
+    @PATCH("users/{id}")
+    Call<User> updatePassword(@Path("id") int id,
+                              @Query("password") String password,
+                              @Header("Authorization") String token);
+
+    /**
+     * Delete a user from the database.
+     *
+     * @param id    The id of the user
+     * @param token The user's JWT authentication token
+     * @return
+     */
+    @DELETE("users/{id}")
+    Call<Void> deleteUser(@Path("id") int id,
+                          @Header("Authorization") String token);
 }

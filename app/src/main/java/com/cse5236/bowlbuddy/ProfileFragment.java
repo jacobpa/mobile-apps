@@ -1,6 +1,7 @@
 package com.cse5236.bowlbuddy;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -70,13 +71,13 @@ public class ProfileFragment extends Fragment {
         passwordChangeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                changePassword();
             }
         });
         deleteAccountButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                deleteUser();
             }
         });
 
@@ -114,6 +115,31 @@ public class ProfileFragment extends Fragment {
         }
     }
 
+    private void changePassword() {
+        String newPassword = passwordFields[0].getText().toString();
+        String newPasswordConfirmation = passwordFields[1].getText().toString();
+
+        boolean passwordsMatch = newPassword.equals(newPasswordConfirmation);
+        boolean fieldsEmpty = newPassword.isEmpty() || newPasswordConfirmation.isEmpty();
+
+        if (!passwordsMatch) {
+            Snackbar.make(v, "Password and Confirmation Password did not match.", Snackbar.LENGTH_LONG)
+                    .show();
+            return;
+        }
+        if (fieldsEmpty) {
+            Snackbar.make(v, "Password fields can not be empty.", Snackbar.LENGTH_LONG).show();
+            return;
+        }
+
+        service.updatePassword(sp.getInt("id", -1), newPassword, sp.getString("jwt", ""))
+                .enqueue(new ChangePasswordCallback(getContext(), v));
+    }
+
+    private void deleteUser() {
+        // TODO: Confirm that the user really wants to delete themselves.
+        service.deleteUser(sp.getInt("id", -1), sp.getString("jwt", "")).enqueue(new DeleteAccountCallback(getContext(), v));
+    }
 
     private void refreshFragment() {
         Fragment currentFragment = getFragmentManager().findFragmentById(R.id.profiler_container);
@@ -142,29 +168,38 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    private class updatePasswordCallback implements Callback<User> {
-
-        @Override
-        public void onResponse(Call<User> call, Response<User> response) {
-
+    private class ChangePasswordCallback extends BowlBuddyCallback<User> {
+        public ChangePasswordCallback(Context context, View view) {
+            super(context, view);
         }
 
         @Override
-        public void onFailure(Call<User> call, Throwable t) {
-
+        public void onResponse(Call<User> call, Response<User> response) {
+            if (response.isSuccessful()) {
+                // Don't need to serialize User object
+                Snackbar.make(v, "Password changed successfully.", Snackbar.LENGTH_LONG).show();
+            } else {
+                parseError(response);
+            }
         }
     }
 
-    private class deleteAccountCallback implements Callback<User> {
-
-        @Override
-        public void onResponse(Call<User> call, Response<User> response) {
-
+    private class DeleteAccountCallback extends BowlBuddyCallback<Void> {
+        public DeleteAccountCallback(Context context, View view) {
+            super(context, view);
         }
 
         @Override
-        public void onFailure(Call<User> call, Throwable t) {
+        public void onResponse(Call<Void> call, Response<Void> response) {
+            if (response.isSuccessful()) {
+                sp.edit().clear().apply();
+                Intent i = new Intent(getActivity(), LoadingScreenActivity.class);
+                startActivity(i);
 
+                getActivity().finish();
+            } else {
+                parseError(response);
+            }
         }
     }
 }
