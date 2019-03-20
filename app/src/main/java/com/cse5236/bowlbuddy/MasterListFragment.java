@@ -4,6 +4,7 @@ package com.cse5236.bowlbuddy;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -16,14 +17,18 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.cse5236.bowlbuddy.util.Bathroom;
-import com.cse5236.bowlbuddy.util.FakeData;
+import com.cse5236.bowlbuddy.models.Building;
+import com.cse5236.bowlbuddy.util.APIService;
+import com.cse5236.bowlbuddy.util.APISingleton;
+import com.cse5236.bowlbuddy.models.Bathroom;
+import com.cse5236.bowlbuddy.util.BowlBuddyCallback;
 
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Response;
 
 
 /**
@@ -32,44 +37,44 @@ import java.util.List;
 public class MasterListFragment extends Fragment implements NavigationView.OnNavigationItemSelectedListener {
     private final static String TAG = MasterListFragment.class.getSimpleName();
 
+    private View view;
     private RecyclerView bathroomRecyclerView;
     private RecyclerView.Adapter bathroomAdapter;
     private RecyclerView.LayoutManager bathroomLayoutManager;
+    private List<Bathroom> bathroomList;
+    private APIService service;
+    private SharedPreferences sharedPreferences;
 
     public MasterListFragment() {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_master_list, container, false);
+        view = inflater.inflate(R.layout.fragment_master_list, container, false);
         Activity activity = getActivity();
 
-        bathroomRecyclerView = v.findViewById(R.id.masterRecyclerView);
+        service = APISingleton.getInstance();
+        sharedPreferences = activity.getSharedPreferences("Session", Context.MODE_PRIVATE);
 
-        bathroomRecyclerView.setHasFixedSize(true);
+
+        bathroomAdapter = new BathroomAdapter();
         bathroomLayoutManager = new LinearLayoutManager(activity);
-
+        bathroomRecyclerView = view.findViewById(R.id.masterRecyclerView);
+        bathroomRecyclerView.setHasFixedSize(true);
         bathroomRecyclerView.setLayoutManager(bathroomLayoutManager);
+        bathroomRecyclerView.setAdapter(bathroomAdapter);
 
-        NavigationView nav = v.findViewById(R.id.master_nav_view);
+        NavigationView nav = view.findViewById(R.id.master_nav_view);
         nav.setNavigationItemSelectedListener(this);
 
-        updateUI();
+        service.getAllBathrooms(sharedPreferences.getString("jwt", ""))
+                .enqueue(new GetBathroomsCallback(getContext(), view));
 
         Log.d(TAG, "onCreateView: View successfully created");
-        return v;
-    }
-
-    private void updateUI() {
-        FakeData data = new FakeData();
-        data.generateData(5);
-
-        bathroomAdapter = new BathroomAdapter(data.getBathrooms());
-        bathroomRecyclerView.setAdapter(bathroomAdapter);
+        return view;
     }
 
     @Override
@@ -108,8 +113,6 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         private TextView bathroomTitle;
         private TextView bathroomDesc;
         private AppCompatRatingBar ratingBar;
-        private Bathroom bathroom;
-        private Button viewDetails;
 
         public BathroomHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.list_item_bathroom, parent, false));
@@ -119,46 +122,33 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
             bathroomTitle = itemView.findViewById(R.id.bathroom_title);
             bathroomDesc = itemView.findViewById(R.id.bathroom_desc);
             ratingBar = itemView.findViewById(R.id.bathroom_overall_rating);
-            viewDetails = itemView.findViewById(R.id.view_details_btn);
-
-            viewDetails.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    openDetails();
-                }
-            });
-
         }
 
         public void bind(Bathroom bathroom) {
-            this.bathroom = bathroom;
+            if (bathroom != null && bathroom.getBuilding() != null) {
+                String title = String.format("%s: Floor %d, Room %d",
+                        bathroom.getBuilding().getName(),
+                        bathroom.getFloor(),
+                        bathroom.getRmNum());
 
-            bathroomTitle.setText(bathroom.getLocation().getBuilding().getName());
-            bathroomDesc.setText(bathroom.getLocation().toString());
-            ratingBar.setRating(bathroom.getAverageRating());
+                bathroomTitle.setText(title);
+                bathroomDesc.setText(bathroom.getBuilding().getAddress());
+                ratingBar.setRating(bathroom.getAverageRating());
+            }
         }
 
         @Override
         public void onClick(View view) {
-            Toast.makeText(
-                    getActivity(), "Gender: " + bathroom.getGender(), Toast.LENGTH_SHORT)
-                    .show();
+            openDetails();
         }
 
         public void openDetails() {
             Intent intent = new Intent(getActivity(), DetailsActivity.class);
             startActivity(intent);
         }
-
     }
 
     private class BathroomAdapter extends RecyclerView.Adapter<BathroomHolder> {
-        private List<Bathroom> bathrooms;
-
-        public BathroomAdapter(List<Bathroom> bathrooms) {
-            this.bathrooms = bathrooms;
-        }
-
         @NonNull
         @Override
         public BathroomHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -169,13 +159,57 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
 
         @Override
         public void onBindViewHolder(@NonNull BathroomHolder holder, int position) {
-            Bathroom bathroom = bathrooms.get(position);
+            Bathroom bathroom = bathroomList.get(position);
             holder.bind(bathroom);
         }
 
         @Override
         public int getItemCount() {
-            return bathrooms.size();
+            if (bathroomList == null)
+                return 0;
+            return bathroomList.size();
+        }
+
+
+    }
+
+    private class GetBathroomsCallback extends BowlBuddyCallback<List<Bathroom>> {
+        public GetBathroomsCallback(Context context, View view) {
+            super(context, view);
+        }
+
+        @Override
+        public void onResponse(Call<List<Bathroom>> call, Response<List<Bathroom>> response) {
+            if (response.isSuccessful()) {
+                bathroomList = response.body();
+
+                for (Bathroom bathroom : bathroomList) {
+                    service.getLocation(bathroom.getBuildingID(), sharedPreferences.getString("jwt", ""))
+                            .enqueue(new GetBathroomBuildingCallback(getContext(), view, bathroom));
+                }
+                Log.d(TAG, "onResponse: Response is " + bathroomList);
+            } else {
+                parseError(response);
+            }
+        }
+    }
+
+    private class GetBathroomBuildingCallback extends BowlBuddyCallback<Building> {
+        private Bathroom bathroom;
+
+        public GetBathroomBuildingCallback(Context context, View view, Bathroom bathroom) {
+            super(context, view);
+            this.bathroom = bathroom;
+        }
+
+        @Override
+        public void onResponse(Call<Building> call, Response<Building> response) {
+            if (response.isSuccessful()) {
+                bathroom.setBuilding(response.body());
+                bathroomAdapter.notifyDataSetChanged();
+            } else {
+                parseError(response);
+            }
         }
     }
 }

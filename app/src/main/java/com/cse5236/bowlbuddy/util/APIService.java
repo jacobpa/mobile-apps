@@ -1,10 +1,15 @@
 package com.cse5236.bowlbuddy.util;
 
 import com.cse5236.bowlbuddy.models.User;
+import com.cse5236.bowlbuddy.models.Bathroom;
+import com.cse5236.bowlbuddy.models.Building;
+
+import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.DELETE;
+import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
@@ -76,4 +81,11 @@ public interface APIService {
     @DELETE("users/{id}")
     Call<Void> deleteUser(@Path("id") int id,
                           @Header("Authorization") String token);
+
+    @GET("bathrooms")
+    Call<List<Bathroom>> getAllBathrooms(@Header("Authorization") String token);
+
+    @GET("buildings/{id}")
+    Call<Building> getLocation(@Path("id") int id,
+                               @Header("Authorization") String token);
 }
