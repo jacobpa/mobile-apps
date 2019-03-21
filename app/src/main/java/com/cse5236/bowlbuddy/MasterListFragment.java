@@ -7,7 +7,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatRatingBar;
 import android.support.v7.widget.LinearLayoutManager;
@@ -30,6 +32,9 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Response;
 
+import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -44,6 +49,9 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
     private List<Bathroom> bathroomList;
     private APIService service;
     private SharedPreferences sharedPreferences;
+    private FloatingActionButton menuFab;
+    private FloatingActionButton addReviewFab;
+    private FloatingActionButton gottaGoFab;
 
     public MasterListFragment() {
         // Required empty public constructor
@@ -73,8 +81,51 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         service.getAllBathrooms(sharedPreferences.getString("jwt", ""))
                 .enqueue(new GetBathroomsCallback(getContext(), view));
 
+        menuFab = view.findViewById(R.id.menu_fab);
+        gottaGoFab = view.findViewById(R.id.gotta_go);
+        addReviewFab = view.findViewById(R.id.add_review);
+
+        menuFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View fabView) {
+                gottaGoFab.setVisibility(VISIBLE);
+                addReviewFab.setVisibility(VISIBLE);
+            }
+        });
+
+        gottaGoFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View fabView) {
+                startGottaGo();
+            }
+        });
+
+        addReviewFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View fabView) {
+                startAddReview();
+            }
+        });
+
         Log.d(TAG, "onCreateView: View successfully created");
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        gottaGoFab.setVisibility(INVISIBLE);
+        addReviewFab.setVisibility(INVISIBLE);
+    }
+
+    public void startGottaGo() {
+        Intent intent = new Intent(getActivity(), GottaGoActivity.class);
+        startActivity(intent);
+    }
+
+    public void startAddReview() {
+        Intent intent = new Intent(getActivity(), ReviewActivity.class);
+        startActivity(intent);
     }
 
     @Override

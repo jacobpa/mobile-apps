@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".MasterListFragment">
 
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/masterRecyclerView"
         android:layout_width="match_parent"
@@ -20,4 +21,44 @@
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/ml_drawer_view" />
+
+    <android.support.v7.widget.LinearLayoutCompat
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        android:gravity="end|bottom">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/add_review"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="@dimen/cardview_default_elevation"
+            android:src="@android:drawable/ic_menu_add"
+            android:visibility="invisible"
+            app:backgroundTint="@color/cardview_dark_background"
+            app:fabSize="mini" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/gotta_go"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="@dimen/cardview_default_elevation"
+            android:src="?android:attr/alertDialogIcon"
+            android:visibility="invisible"
+            app:backgroundTint="@color/cardview_dark_background"
+            app:fabSize="mini" />
+
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/menu_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/cardview_default_elevation"
+            android:src="@drawable/ic_menu_white"
+            app:backgroundTint="@color/cardview_dark_background" />
+
+    </android.support.v7.widget.LinearLayoutCompat>
 </android.support.v4.widget.DrawerLayout>
