@@ -81,18 +81,26 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         service.getAllBathrooms(sharedPreferences.getString("jwt", ""))
                 .enqueue(new GetBathroomsCallback(getContext(), view));
 
+        // Initialize the menu, add review, and gotta go fab buttons
         menuFab = view.findViewById(R.id.menu_fab);
         gottaGoFab = view.findViewById(R.id.gotta_go);
         addReviewFab = view.findViewById(R.id.add_review);
 
+        // Set the on click method for clicking the menu FAB
         menuFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View fabView) {
-                gottaGoFab.setVisibility(VISIBLE);
-                addReviewFab.setVisibility(VISIBLE);
+                if (gottaGoFab.getVisibility() == INVISIBLE) {
+                    gottaGoFab.setVisibility(VISIBLE);
+                    addReviewFab.setVisibility(VISIBLE);
+                } else {
+                    gottaGoFab.setVisibility(INVISIBLE);
+                    addReviewFab.setVisibility(INVISIBLE);
+                }
             }
         });
 
+        // Set the on click method for clicking the gotta go FAB
         gottaGoFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View fabView) {
@@ -100,6 +108,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
             }
         });
 
+        // Set the on click method for clicking the add review FAB
         addReviewFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View fabView) {
@@ -114,6 +123,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
     @Override
     public void onStart() {
         super.onStart();
+        // Make these FABs invisible when the fragment starts
         gottaGoFab.setVisibility(INVISIBLE);
         addReviewFab.setVisibility(INVISIBLE);
     }
@@ -132,11 +142,15 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.log_out:
+                Snackbar.make(view, "logout pressed", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 logOutAction();
                 return true;
             case R.id.action_profile:
+                Snackbar.make(view, "profile pressed", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 launchProfileActivity();
                 return true;
+            default:
+                Snackbar.make(view, "unrecognized button pressed", Snackbar.LENGTH_LONG).setAction("Action", null).show();
         }
 
         return true;
