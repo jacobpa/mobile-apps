@@ -128,18 +128,10 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         addReviewFab.setVisibility(INVISIBLE);
     }
 
-    public void startGottaGo() {
-        Intent intent = new Intent(getActivity(), GottaGoActivity.class);
-        startActivity(intent);
-    }
-
-    public void startAddReview() {
-        Intent intent = new Intent(getActivity(), ReviewActivity.class);
-        startActivity(intent);
-    }
-
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+        Snackbar.make(view, "item selected", Snackbar.LENGTH_LONG).setAction("Action", null).show();
         switch (item.getItemId()) {
             case R.id.log_out:
                 Snackbar.make(view, "logout pressed", Snackbar.LENGTH_LONG).setAction("Action", null).show();
@@ -172,6 +164,16 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         startActivity(i);
 
         getActivity().finish();
+    }
+
+    public void startGottaGo() {
+        Intent intent = new Intent(getActivity(), GottaGoActivity.class);
+        startActivity(intent);
+    }
+
+    public void startAddReview() {
+        Intent intent = new Intent(getActivity(), ReviewActivity.class);
+        startActivity(intent);
     }
 
     private class BathroomHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

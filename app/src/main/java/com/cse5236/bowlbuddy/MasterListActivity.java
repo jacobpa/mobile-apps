@@ -1,5 +1,6 @@
 package com.cse5236.bowlbuddy;
 
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
@@ -9,7 +10,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 public class MasterListActivity extends AppCompatActivity {
     private final static String TAG = MasterListActivity.class.getSimpleName();
@@ -41,6 +48,15 @@ public class MasterListActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+
+        inflater.inflate(R.menu.menu_toolbar, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // If populated in onCreate, returns null object, wait until created in fragment
         DrawerLayout drawerLayout = findViewById(R.id.master_drawer);
@@ -52,8 +68,18 @@ public class MasterListActivity extends AppCompatActivity {
                 } else {
                     drawerLayout.openDrawer(GravityCompat.START);
                 }
-                return true;
+                break;
+            case R.id.distance:
+                // Search by closest bathroom
+                break;
+            case R.id.rating:
+                // Search by highest rating
+                break;
+            case R.id.stall_count:
+                // Search by highest stall count
+                break;
         }
+
 
         return super.onOptionsItemSelected(item);
     }
