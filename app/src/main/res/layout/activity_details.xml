@@ -12,7 +12,7 @@
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <fragment
-            android:id="@+id/fragment2"
+            android:id="@+id/details_fragment"
             android:name="com.cse5236.bowlbuddy.DetailsActivityFragment"
             android:layout_width="0dp"
             android:layout_height="wrap_content" />

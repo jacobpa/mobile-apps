@@ -6,11 +6,14 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 /**
  * A fragment containing a the details about a specific bathroom
  */
-public class DetailsActivityFragment extends Fragment {
+public class DetailsActivityFragment extends android.support.v4.app.Fragment {
+
+    TextView genderField;
 
     // TODO: Programmatically request image urls from webserver
     private String[] imageUrls = new String[] {
@@ -30,7 +33,15 @@ public class DetailsActivityFragment extends Fragment {
         ViewPager viewPager = view.findViewById(R.id.view_pager);
         ViewPagerAdapter adapter = new ViewPagerAdapter(getActivity(), imageUrls);
         viewPager.setAdapter(adapter);
+        genderField = view.findViewById(R.id.genderField);
+        DetailsActivity activity = (DetailsActivity) getActivity();
 
+        setGender(activity.getIntent().getStringExtra("gender"));
         return view;
     }
+
+    public void setGender(String gender) {
+        genderField.setText(gender);
+    }
+
 }

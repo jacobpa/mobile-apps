@@ -17,7 +17,7 @@
     </android.support.v4.view.ViewPager>
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/nameField"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
@@ -29,7 +29,7 @@
         app:layout_constraintTop_toBottomOf="@+id/view_pager" />
 
     <RatingBar
-        android:id="@+id/ratingBar4"
+        android:id="@+id/ratingBar"
         style="@style/Widget.AppCompat.RatingBar.Indicator"
         android:layout_width="148dp"
         android:layout_height="49dp"
@@ -37,55 +37,54 @@
         android:numStars="4"
         android:rating="4"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+        app:layout_constraintTop_toBottomOf="@+id/nameField" />
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/hoursIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="Open Until:"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ratingBar4" />
+        app:layout_constraintTop_toBottomOf="@+id/ratingBar" />
 
     <TextView
-        android:id="@+id/f"
+        android:id="@+id/accessIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="82dp"
         android:layout_marginTop="16dp"
         android:text="&#9855;"
         android:textSize="24sp"
-        app:layout_constraintStart_toEndOf="@+id/textView2"
+        app:layout_constraintStart_toEndOf="@+id/nameField"
         app:layout_constraintTop_toBottomOf="@+id/view_pager" />
 
     <TextView
-        android:id="@+id/textView8"
+        android:id="@+id/accessField"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="29dp"
         android:text="TextView"
-        app:layout_constraintStart_toEndOf="@+id/f"
+        app:layout_constraintStart_toEndOf="@+id/accessIcon"
         app:layout_constraintTop_toBottomOf="@+id/view_pager"
         tools:text="Acessible" />
 
     <TextView
-        android:id="@+id/textView9"
+        android:id="@+id/genderIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="66dp"
         android:text="👨"
         android:textSize="24sp"
-        app:layout_constraintStart_toEndOf="@+id/ratingBar4"
-        app:layout_constraintTop_toBottomOf="@+id/f" />
+        app:layout_constraintStart_toEndOf="@+id/ratingBar"
+        app:layout_constraintTop_toBottomOf="@+id/accessIcon" />
 
     <TextView
-        android:id="@+id/textView10"
+        android:id="@+id/genderField"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Male"
-        app:layout_constraintStart_toEndOf="@+id/textView9"
-        app:layout_constraintTop_toBottomOf="@+id/textView8" />
+        app:layout_constraintStart_toEndOf="@+id/genderIcon"
+        app:layout_constraintTop_toBottomOf="@+id/accessField" />
 
 </android.support.constraint.ConstraintLayout>

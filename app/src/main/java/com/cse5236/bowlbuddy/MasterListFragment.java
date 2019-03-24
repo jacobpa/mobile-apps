@@ -111,7 +111,12 @@ public class MasterListFragment extends Fragment {
 
         public void openDetails() {
             Intent intent = new Intent(getActivity(), DetailsActivity.class);
+            intent.putExtra("gender", getGender());
             startActivity(intent);
+        }
+
+        public String getGender() {
+            return  bathroom.getGender();
         }
 
     }
