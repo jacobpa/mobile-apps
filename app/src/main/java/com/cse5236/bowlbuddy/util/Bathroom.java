@@ -2,10 +2,6 @@ package com.cse5236.bowlbuddy.util;
 
 import android.util.Log;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 public class Bathroom {
     private static final String TAG = "BathroomModel";
 

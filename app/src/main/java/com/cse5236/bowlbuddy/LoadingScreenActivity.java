@@ -1,13 +1,14 @@
 package com.cse5236.bowlbuddy;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 
 import com.cse5236.bowlbuddy.util.APIService;
+import com.cse5236.bowlbuddy.util.APISingleton;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
@@ -18,14 +19,12 @@ public class LoadingScreenActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        checkLoggedIn();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.loading_screen_activity);
 
-        service = new Retrofit.Builder()
-                .baseUrl("https://bb.jacobpa.com/api/")
-                .addConverterFactory(MoshiConverterFactory.create())
-                .build()
-                .create(APIService.class);
+        service = APISingleton.getInstance();
 
         HomePageFragment fragment = new HomePageFragment();
         FragmentManager manager = getSupportFragmentManager();
@@ -37,10 +36,19 @@ public class LoadingScreenActivity extends AppCompatActivity {
         return service;
     }
 
-    public void sendMessage(View view)
-    {
-        Intent intent = new Intent(LoadingScreenActivity.this, MapsActivity.class);
-        startActivity(intent);
+    /**
+     * Check to see if user is logged in. If they are, and the JWT is present, skip creating
+     * the current activity and create the MasterListActivity.
+     */
+    private void checkLoggedIn() {
+        SharedPreferences sharedPrefs = getSharedPreferences("Session", MODE_PRIVATE);
+        Log.d(TAG, "checkLoggedIn: jwt: " + sharedPrefs.getString("jwt", ""));
+
+        if (sharedPrefs.contains("jwt")) {
+            Intent i = new Intent(this, MasterListActivity.class);
+            startActivity(i);
+            finish();
+        }
     }
 
     @Override

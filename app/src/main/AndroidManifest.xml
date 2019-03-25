@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.cse5236.bowlbuddy">
-
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -16,7 +15,9 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme.NoActionBar">
+        <activity android:name=".ProfileActivity"
+            android:windowSoftInputMode="adjustResize"></activity>
         <activity android:name=".MasterListActivity" />
         <activity
             android:name=".LoadingScreenActivity"
@@ -44,12 +45,10 @@
             android:label="@string/title_activity_maps" />
         <activity
             android:name=".DetailsActivity"
-            android:label="@string/title_activity_details"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:label="@string/title_activity_details" />
         <activity
             android:name=".ReviewActivity"
-            android:label="@string/title_activity_review"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:label="@string/title_activity_review" />
     </application>
 
 </manifest>
