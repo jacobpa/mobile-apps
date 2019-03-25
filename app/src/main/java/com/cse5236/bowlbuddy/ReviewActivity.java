@@ -43,6 +43,4 @@ public class ReviewActivity extends AppCompatActivity {
         Log.d(TAG, "onResume: Successfully resumed activity");
     }
 
-
-
 }
