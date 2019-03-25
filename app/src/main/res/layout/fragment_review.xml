@@ -35,7 +35,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                android:id="@+id/textView11"
+                android:id="@+id/smellField"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Smell"
@@ -43,8 +43,10 @@
                 tools:layout_editor_absoluteY="271dp" />
 
             <RatingBar
-                android:id="@+id/ratingBar5"
+                android:id="@+id/smellRating"
                 style="@style/Widget.AppCompat.RatingBar.Indicator"
+                android:isIndicator="false"
+                android:stepSize="1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:layout_editor_absoluteX="102dp"
@@ -57,8 +59,10 @@
             android:layout_height="match_parent">
 
             <RatingBar
-                android:id="@+id/ratingBar2"
+                android:id="@+id/cleanRating"
                 style="@style/Widget.AppCompat.RatingBar.Indicator"
+                android:stepSize="1"
+                android:isIndicator="false"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="116dp"
@@ -66,14 +70,16 @@
                 tools:layout_editor_absoluteY="0dp" />
 
             <RatingBar
-                android:id="@+id/ratingBar3"
+                android:id="@+id/quietRating"
                 style="@style/Widget.AppCompat.RatingBar.Indicator"
+                android:stepSize="1"
+                android:isIndicator="false"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="116dp"
                 android:layout_marginTop="8dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ratingBar2" />
+                app:layout_constraintTop_toBottomOf="@+id/cleanRating" />
 
             <TextView
                 android:id="@+id/textView12"
@@ -92,7 +98,7 @@
                 android:layout_marginStart="84dp"
                 android:layout_marginTop="28dp"
                 android:text="Quiet"
-                app:layout_constraintEnd_toStartOf="@+id/ratingBar3"
+                app:layout_constraintEnd_toStartOf="@+id/quietRating"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView12" />
 
@@ -104,7 +110,7 @@
                 android:layout_marginTop="12dp"
                 android:text="&#9855;"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ratingBar3" />
+                app:layout_constraintTop_toBottomOf="@+id/quietRating" />
 
             <Button
                 android:id="@+id/ptButton"
@@ -114,7 +120,7 @@
                 android:layout_marginTop="12dp"
                 android:text="PT?"
                 app:layout_constraintStart_toEndOf="@+id/handicapButton"
-                app:layout_constraintTop_toBottomOf="@+id/ratingBar3" />
+                app:layout_constraintTop_toBottomOf="@+id/quietRating" />
 
             <Button
                 android:id="@+id/genderButton"
@@ -124,7 +130,7 @@
                 android:layout_marginTop="12dp"
                 android:text="🚺"
                 app:layout_constraintStart_toEndOf="@+id/ptButton"
-                app:layout_constraintTop_toBottomOf="@+id/ratingBar3" />
+                app:layout_constraintTop_toBottomOf="@+id/quietRating" />
 
         </android.support.constraint.ConstraintLayout>
 
