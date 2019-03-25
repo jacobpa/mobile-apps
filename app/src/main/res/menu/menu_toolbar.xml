@@ -4,7 +4,11 @@
     android:id="@+id/toolbar_menu">
 
     <group>
-
+        <item
+            android:enabled="false"
+            android:title="Sort Bathrooms By..."/>
+    </group>
+    <group>
         <item
         android:id="@+id/distance"
         android:title="Distance"/>
@@ -15,11 +19,5 @@
         <item
             android:id="@+id/rating"
             android:title="Rating"/>
-    </group>
-
-    <group>
-        <item
-            android:id="@+id/stall_count"
-            android:title="Stall Count"/>
     </group>
 </menu>

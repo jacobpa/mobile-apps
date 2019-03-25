@@ -26,6 +26,8 @@ import com.cse5236.bowlbuddy.util.APIService;
 import com.cse5236.bowlbuddy.util.APISingleton;
 import com.cse5236.bowlbuddy.models.Bathroom;
 import com.cse5236.bowlbuddy.util.BowlBuddyCallback;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 
 import java.util.List;
 
@@ -44,7 +46,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
 
     private View view;
     private RecyclerView bathroomRecyclerView;
-    private RecyclerView.Adapter bathroomAdapter;
+    public RecyclerView.Adapter bathroomAdapter;
     private RecyclerView.LayoutManager bathroomLayoutManager;
     private List<Bathroom> bathroomList;
     private APIService service;
@@ -64,10 +66,6 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         view = inflater.inflate(R.layout.fragment_master_list, container, false);
         Activity activity = getActivity();
 
-        service = APISingleton.getInstance();
-        sharedPreferences = activity.getSharedPreferences("Session", Context.MODE_PRIVATE);
-
-
         bathroomAdapter = new BathroomAdapter();
         bathroomLayoutManager = new LinearLayoutManager(activity);
         bathroomRecyclerView = view.findViewById(R.id.masterRecyclerView);
@@ -77,9 +75,6 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
 
         NavigationView nav = view.findViewById(R.id.master_nav_view);
         nav.setNavigationItemSelectedListener(this);
-
-        service.getAllBathrooms(sharedPreferences.getString("jwt", ""))
-                .enqueue(new GetBathroomsCallback(getContext(), view));
 
         // Initialize the menu, add review, and gotta go fab buttons
         menuFab = view.findViewById(R.id.menu_fab);
@@ -131,18 +126,13 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-        Snackbar.make(view, "item selected", Snackbar.LENGTH_LONG).setAction("Action", null).show();
         switch (item.getItemId()) {
             case R.id.log_out:
-                Snackbar.make(view, "logout pressed", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 logOutAction();
                 return true;
             case R.id.action_profile:
-                Snackbar.make(view, "profile pressed", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 launchProfileActivity();
                 return true;
-            default:
-                Snackbar.make(view, "unrecognized button pressed", Snackbar.LENGTH_LONG).setAction("Action", null).show();
         }
 
         return true;
@@ -174,6 +164,11 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
     public void startAddReview() {
         Intent intent = new Intent(getActivity(), ReviewActivity.class);
         startActivity(intent);
+    }
+
+    public void bathroomChanged(List<Bathroom> activityBathroomList) {
+        bathroomList = activityBathroomList;
+        bathroomAdapter.notifyDataSetChanged();
     }
 
     private class BathroomHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -240,43 +235,4 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
 
     }
 
-    private class GetBathroomsCallback extends BowlBuddyCallback<List<Bathroom>> {
-        public GetBathroomsCallback(Context context, View view) {
-            super(context, view);
-        }
-
-        @Override
-        public void onResponse(Call<List<Bathroom>> call, Response<List<Bathroom>> response) {
-            if (response.isSuccessful()) {
-                bathroomList = response.body();
-
-                for (Bathroom bathroom : bathroomList) {
-                    service.getLocation(bathroom.getBuildingID(), sharedPreferences.getString("jwt", ""))
-                            .enqueue(new GetBathroomBuildingCallback(getContext(), view, bathroom));
-                }
-                Log.d(TAG, "onResponse: Response is " + bathroomList);
-            } else {
-                parseError(response);
-            }
-        }
-    }
-
-    private class GetBathroomBuildingCallback extends BowlBuddyCallback<Building> {
-        private Bathroom bathroom;
-
-        public GetBathroomBuildingCallback(Context context, View view, Bathroom bathroom) {
-            super(context, view);
-            this.bathroom = bathroom;
-        }
-
-        @Override
-        public void onResponse(Call<Building> call, Response<Building> response) {
-            if (response.isSuccessful()) {
-                bathroom.setBuilding(response.body());
-                bathroomAdapter.notifyDataSetChanged();
-            } else {
-                parseError(response);
-            }
-        }
-    }
 }
