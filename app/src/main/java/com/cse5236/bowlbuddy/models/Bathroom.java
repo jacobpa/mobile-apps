@@ -45,7 +45,12 @@ public class Bathroom {
     }
 
     public boolean isHandicap() {
-        return handicap;
+        if(handicap != null) {
+            return handicap;
+        }
+        else {
+            return false;
+        }
     }
 
     public void setHandicap(boolean handicap) {
