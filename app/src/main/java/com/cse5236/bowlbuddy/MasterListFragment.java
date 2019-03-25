@@ -141,10 +141,33 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         public void onClick(View view) {
             openDetails();
         }
-
+      
         public void openDetails() {
             Intent intent = new Intent(getActivity(), DetailsActivity.class);
+            intent.putExtra("gender", getGender());
+            intent.putExtra("handicap", getHandicap());
+            intent.putExtra("title", getTitle());
             startActivity(intent);
+        }
+
+        public String getGender() {
+            return  bathroom.getGender();
+        }
+
+        public Boolean getHandicap() {
+            return bathroom.isHandicap();
+        }
+
+        public float getAverageRating() {
+            return bathroom.getAverageRating();
+        }
+
+        public int getPlyCount() {
+            return bathroom.getPlyCount();
+        }
+
+        public String getTitle() {
+            return bathroomTitle.getText().toString();
         }
     }
 
