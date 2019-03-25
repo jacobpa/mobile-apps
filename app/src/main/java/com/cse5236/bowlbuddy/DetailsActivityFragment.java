@@ -8,12 +8,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import io.bloco.faker.components.Bool;
+
 /**
  * A fragment containing a the details about a specific bathroom
  */
 public class DetailsActivityFragment extends android.support.v4.app.Fragment {
 
     TextView genderField;
+    TextView handicapField;
+    TextView titleField;
 
     // TODO: Programmatically request image urls from webserver
     private String[] imageUrls = new String[] {
@@ -34,14 +38,40 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getActivity(), imageUrls);
         viewPager.setAdapter(adapter);
         genderField = view.findViewById(R.id.genderField);
+        handicapField = view.findViewById(R.id.handicapField);
+        titleField = view.findViewById(R.id.titleField);
         DetailsActivity activity = (DetailsActivity) getActivity();
 
         setGender(activity.getIntent().getStringExtra("gender"));
+        setHandicap(activity.getIntent().getStringExtra("handicap"));
+        setTitle(activity.getIntent().getStringExtra("title"));
+
         return view;
     }
 
     public void setGender(String gender) {
+
         genderField.setText(gender);
+    }
+
+    public void setAverageRating(Float rating) {
+
+    }
+
+    public void setHandicap(String handicap) {
+        String access = "Handicap Accessible";
+        String no_access = "Not Accessible";
+        if(handicap != null && handicap.equals(1)) {
+            handicapField.setText(access);
+        }
+        else {
+            handicapField.setText(no_access);
+        }
+
+    }
+
+    public void setTitle(String title) {
+        titleField.setText(title);
     }
 
 }
