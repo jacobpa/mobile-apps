@@ -113,6 +113,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         private TextView bathroomTitle;
         private TextView bathroomDesc;
         private AppCompatRatingBar ratingBar;
+        private Bathroom bathroom;
 
         public BathroomHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.list_item_bathroom, parent, false));
@@ -125,6 +126,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         }
 
         public void bind(Bathroom bathroom) {
+            this.bathroom = bathroom;
             if (bathroom != null && bathroom.getBuilding() != null) {
                 String title = String.format("%s: Floor %d, Room %d",
                         bathroom.getBuilding().getName(),
@@ -144,7 +146,35 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
 
         public void openDetails() {
             Intent intent = new Intent(getActivity(), DetailsActivity.class);
+            intent.putExtra("gender", getGender());
+            intent.putExtra("handicap", getHandicap());
+            intent.putExtra("title", getTitle());
             startActivity(intent);
+        }
+
+        public String getGender() {
+            return  bathroom.getGender();
+        }
+
+        public Boolean getHandicap() {
+            if(bathroom != null) {
+                return bathroom.isHandicap();
+            }
+            else {
+                return false;
+            }
+        }
+
+        public float getAverageRating() {
+            return bathroom.getAverageRating();
+        }
+
+        public int getPlyCount() {
+            return bathroom.getPlyCount();
+        }
+
+        public String getTitle() {
+            return bathroomTitle.getText().toString();
         }
     }
 
