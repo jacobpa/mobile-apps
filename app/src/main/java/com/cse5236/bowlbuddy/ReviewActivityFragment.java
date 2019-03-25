@@ -7,16 +7,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * A fragment containing a the details about a specific bathroom
+ * A placeholder fragment containing a simple view.
  */
-public class DetailsActivityFragment extends Fragment {
+public class ReviewActivityFragment extends Fragment {
 
-    public DetailsActivityFragment() {
+    public ReviewActivityFragment() {
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_details, container, false);
+        return inflater.inflate(R.layout.fragment_review, container, false);
     }
 }
