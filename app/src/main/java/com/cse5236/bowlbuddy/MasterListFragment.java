@@ -146,9 +146,11 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
 
         public void openDetails() {
             Intent intent = new Intent(getActivity(), DetailsActivity.class);
+            intent.putExtra("gender", getGender());
+            intent.putExtra("handicap", getHandicap());
+            intent.putExtra("title", getTitle());
             startActivity(intent);
         }
-<<<<<<< HEAD
 
         public String getGender() {
             return  bathroom.getGender();
@@ -174,8 +176,6 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         public String getTitle() {
             return bathroomTitle.getText().toString();
         }
-=======
->>>>>>> 28fed188863e41364add7efdb04d3d9ae54fc6f7
     }
 
     private class BathroomAdapter extends RecyclerView.Adapter<BathroomHolder> {
