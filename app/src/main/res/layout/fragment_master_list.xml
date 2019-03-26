@@ -24,35 +24,37 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|bottom"
-            android:layout_margin="@dimen/cardview_default_elevation"
-            android:src="@android:drawable/ic_menu_add"
+            android:layout_marginRight="24dp"
+            android:layout_marginBottom="2dp"
             android:visibility="invisible"
-            app:backgroundTint="@color/cardview_dark_background"
+            app:backgroundTint="@color/colorPrimaryDark"
             app:fabSize="mini"
+            app:layout_constraintBottom_toTopOf="@id/gotta_go"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/gotta_go"/>
+            app:srcCompat="@android:drawable/ic_input_add" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/gotta_go"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|bottom"
-            android:layout_margin="@dimen/cardview_default_elevation"
+            android:layout_marginRight="24dp"
+            android:layout_marginBottom="2dp"
             android:src="?android:attr/alertDialogIcon"
             android:visibility="invisible"
-            app:backgroundTint="@color/cardview_dark_background"
+            app:backgroundTint="@color/colorPrimaryDark"
             app:fabSize="mini"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/menu_fab"/>
+            app:layout_constraintBottom_toTopOf="@id/menu_fab"
+            app:layout_constraintEnd_toEndOf="parent" />
 
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/menu_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/cardview_default_elevation"
+            app:backgroundTint="@color/colorPrimaryDark"
+            android:layout_margin="16dp"
             android:src="@drawable/ic_menu_white"
-            app:backgroundTint="@color/cardview_dark_background"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 

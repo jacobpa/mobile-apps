@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -46,7 +47,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
 
     private View view;
     private RecyclerView bathroomRecyclerView;
-    public RecyclerView.Adapter bathroomAdapter;
+    private RecyclerView.Adapter bathroomAdapter;
     private RecyclerView.LayoutManager bathroomLayoutManager;
     private List<Bathroom> bathroomList;
     private APIService service;
@@ -54,6 +55,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
     private FloatingActionButton menuFab;
     private FloatingActionButton addReviewFab;
     private FloatingActionButton gottaGoFab;
+    private boolean gottaGoEnabled = false;
 
     public MasterListFragment() {
         // Required empty public constructor
@@ -157,8 +159,16 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
     }
 
     public void startGottaGo() {
-        Intent intent = new Intent(getActivity(), GottaGoActivity.class);
-        startActivity(intent);
+
+        int color = Color.YELLOW;
+
+        if (gottaGoEnabled) {
+            color = Color.WHITE;
+        }
+
+        changeRecyclerViewHighlight(color);
+
+        gottaGoEnabled = !gottaGoEnabled;
     }
 
     public void startAddReview() {
@@ -166,7 +176,22 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         startActivity(intent);
     }
 
+    public void changeRecyclerViewHighlight(int color) {
+        for (int i = 0; i < 3; i++) {
+            View bathroom = bathroomRecyclerView.getChildAt(i);
+
+            if (bathroom != null) {
+
+                bathroom.setBackgroundColor(color);
+
+            }
+        }
+    }
+
     public void bathroomChanged(List<Bathroom> activityBathroomList) {
+        if (gottaGoEnabled) {
+            changeRecyclerViewHighlight(Color.WHITE);
+        }
         bathroomList = activityBathroomList;
         bathroomAdapter.notifyDataSetChanged();
     }
