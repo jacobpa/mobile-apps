@@ -1,6 +1,7 @@
 package com.cse5236.bowlbuddy;
 
-import android.support.v4.app.Fragment;
+import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -8,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import io.bloco.faker.components.Bool;
 
 /**
  * A fragment containing a the details about a specific bathroom
@@ -45,6 +45,17 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         setGender(activity.getIntent().getStringExtra("gender"));
         setHandicap(activity.getIntent().getStringExtra("handicap"));
         setTitle(activity.getIntent().getStringExtra("title"));
+
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+        if(fab != null) {
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getActivity(), ReviewActivity.class);
+                    startActivity(intent);
+                }
+            });
+        }
 
         return view;
     }

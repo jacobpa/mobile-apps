@@ -147,7 +147,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         public void openDetails() {
             Intent intent = new Intent(getActivity(), DetailsActivity.class);
             intent.putExtra("gender", getGender());
-            intent.putExtra("handicap", getHandicap());
+            intent.putExtra("handicap", getHandicap().toString());
             intent.putExtra("title", getTitle());
             startActivity(intent);
         }
