@@ -36,6 +36,7 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
     TextView titleField;
     APIService service;
     View view;
+
     private SharedPreferences sharedPrefs;
     private RecyclerView reviewRecyclerView;
     private RecyclerView.Adapter reviewAdapter;
@@ -83,6 +84,20 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         sharedPrefs = activity.getSharedPreferences("Session", Context.MODE_PRIVATE);
 
         service = APISingleton.getInstance();
+        service.getBathroomReviews(activity.getIntent().getIntExtra("id", 0),
+                sharedPrefs.getString("jwt", "")).enqueue(new ReviewListCallback(getContext(), view));
+
+        reviewAdapter = new ReviewAdapter();
+        reviewLayoutManager = new LinearLayoutManager(activity);
+        reviewRecyclerView = view.findViewById(R.id.review_recycler_view);
+        reviewRecyclerView.setHasFixedSize(true);
+        reviewRecyclerView.setLayoutManager(reviewLayoutManager);
+        reviewRecyclerView.setAdapter(reviewAdapter);
+
+        sharedPrefs = activity.getSharedPreferences("Session", Context.MODE_PRIVATE);
+
+        service = APISingleton.getInstance();
+
         service.getBathroomReviews(activity.getIntent().getIntExtra("id", 0),
                 sharedPrefs.getString("jwt", "")).enqueue(new ReviewListCallback(getContext(), view));
 
