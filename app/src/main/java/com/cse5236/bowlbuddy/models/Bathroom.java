@@ -3,6 +3,7 @@ package com.cse5236.bowlbuddy.models;
 import com.squareup.moshi.Json;
 
 public class Bathroom {
+    private Integer id;
     private Integer sNum;
     private Integer plyCount;
     private Integer floor;
@@ -123,5 +124,13 @@ public class Bathroom {
 
     public void setBuilding(Building building) {
         this.building = building;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 }
