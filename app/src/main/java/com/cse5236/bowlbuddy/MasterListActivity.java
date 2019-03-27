@@ -57,10 +57,13 @@ public class MasterListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_master_list);
 
+        // Declare variable that will manage the calls to the gps for location coordinates
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
+        // Declare variable that will be used to listen for responses from the GPS
         LocationListener locationListener = new UserLocationListener();
 
+        // Check for location permissions before requesting updates from the GPS
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
         {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);

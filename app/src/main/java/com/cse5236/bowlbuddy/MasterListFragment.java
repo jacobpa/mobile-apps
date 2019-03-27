@@ -135,6 +135,12 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
             case R.id.action_profile:
                 launchProfileActivity();
                 return true;
+            case R.id.my_reviews:
+                launchMyReviewsActivity();
+                return true;
+            case R.id.favorites:
+                launchFavoritesActivity();
+                return true;
         }
 
         return true;
@@ -156,6 +162,15 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         startActivity(i);
 
         getActivity().finish();
+    }
+
+    private void launchMyReviewsActivity () {
+        Intent i = new Intent(getActivity(), MyReviewsActivity.class);
+        startActivity(i);
+    }
+
+    private void launchFavoritesActivity() {
+
     }
 
     public void startGottaGo() {

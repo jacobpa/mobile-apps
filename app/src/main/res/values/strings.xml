@@ -25,4 +25,7 @@
     <string name="big_number">9999</string>
 
     <string name="profile_greeting">Hello, %1$s!</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

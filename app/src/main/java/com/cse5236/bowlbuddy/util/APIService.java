@@ -1,5 +1,6 @@
 package com.cse5236.bowlbuddy.util;
 
+import com.cse5236.bowlbuddy.models.Review;
 import com.cse5236.bowlbuddy.models.User;
 import com.cse5236.bowlbuddy.models.Bathroom;
 import com.cse5236.bowlbuddy.models.Building;
@@ -88,4 +89,8 @@ public interface APIService {
     @GET("buildings/{id}")
     Call<Building> getLocation(@Path("id") int id,
                                @Header("Authorization") String token);
+
+    @GET("users/{user_id}/reviews")
+    Call<List<Review>> getUserReviews(@Path("user_id") int id,
+                                      @Header("Authorization") String token);
 }
