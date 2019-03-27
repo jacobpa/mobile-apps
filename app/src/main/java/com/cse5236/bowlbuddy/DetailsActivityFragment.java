@@ -104,8 +104,8 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         sharedPrefs = activity.getSharedPreferences("Session", Context.MODE_PRIVATE);
 
         service = APISingleton.getInstance();
-        service.getBathroomReviews(activity.getIntent().getIntExtra("id", 0),
-                sharedPrefs.getString("jwt", "")).enqueue(new ReviewListCallback(getContext(), view));
+        service.getBathroomReviews(bathroom.getId(), sharedPrefs.getString("jwt", ""))
+                .enqueue(new ReviewListCallback(getContext(), view));
 
         reviewAdapter = new ReviewAdapter();
         reviewLayoutManager = new LinearLayoutManager(activity);
@@ -151,11 +151,7 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         }
 
         public void bind(Review review) {
-            if (review.getAuthor() != null) {
-                username.setText(review.getAuthor().getUsername());
-            } else {
-                username.setText("Username");
-            }
+            username.setText(review.getAuthorName());
             details.setText(review.getDetails());
         }
     }
@@ -197,30 +193,7 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
                 if (reviewList.size() == 0) {
                     reviewRecyclerView.setVisibility(View.GONE);
                     noReviewMessage.setVisibility(View.VISIBLE);
-                } else {
-                    for (Review review : reviewList) {
-                        service.getUser(review.getUserID(), sharedPrefs.getString("jwt", ""))
-                                .enqueue(new ReviewUserCallback(getContext(), getView(), review));
-                    }
                 }
-            } else {
-                parseError(response);
-            }
-        }
-    }
-
-    private class ReviewUserCallback extends BowlBuddyCallback<User> {
-        private Review review;
-
-        public ReviewUserCallback(Context context, View view, Review review) {
-            super(context, view);
-            this.review = review;
-        }
-
-        @Override
-        public void onResponse(Call<User> call, Response<User> response) {
-            if (response.isSuccessful()) {
-                review.setAuthor(response.body());
                 reviewAdapter.notifyDataSetChanged();
             } else {
                 parseError(response);
