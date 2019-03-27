@@ -36,6 +36,7 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
     TextView genderField;
     TextView handicapField;
     TextView titleField;
+    TextView noReviewMessage;
     APIService service;
     View view;
     private Bathroom bathroom;
@@ -67,6 +68,8 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         genderField = view.findViewById(R.id.genderField);
         handicapField = view.findViewById(R.id.handicapField);
         titleField = view.findViewById(R.id.titleField);
+        noReviewMessage = view.findViewById(R.id.no_reviews_message);
+
         DetailsActivity activity = (DetailsActivity) getActivity();
 
         bathroom = (Bathroom) activity.getIntent().getExtras().getSerializable("bathroom");
@@ -190,9 +193,15 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
             if (response.isSuccessful()) {
                 reviewList = response.body();
                 Log.d(TAG, "onResponse: Got list of reviews with length " + reviewList.size());
-                for (Review review : reviewList) {
-                    service.getUser(review.getUserID(), sharedPrefs.getString("jwt", ""))
-                            .enqueue(new ReviewUserCallback(getContext(), getView(), review));
+
+                if (reviewList.size() == 0) {
+                    reviewRecyclerView.setVisibility(View.GONE);
+                    noReviewMessage.setVisibility(View.VISIBLE);
+                } else {
+                    for (Review review : reviewList) {
+                        service.getUser(review.getUserID(), sharedPrefs.getString("jwt", ""))
+                                .enqueue(new ReviewUserCallback(getContext(), getView(), review));
+                    }
                 }
             } else {
                 parseError(response);
