@@ -52,7 +52,8 @@
             android:name=".ReviewActivity"
             android:label="@string/title_activity_review" />
         <activity android:name=".GottaGoActivity" />
-        <activity android:name=".MyReviewsActivity"></activity>
+        <activity android:name=".MyReviewsActivity" />
+        <activity android:name=".FavoritesMapActivity"></activity>
     </application>
 
 </manifest>

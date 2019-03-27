@@ -4,6 +4,7 @@ import com.squareup.moshi.Json;
 import java.io.Serializable;
 
 public class Review implements Serializable {
+    private int id;
     private String details;
     @Json(name = "user_id")
     private int userID;
@@ -17,15 +18,18 @@ public class Review implements Serializable {
     public Review() {
     }
 
-    public Review(String details, int userID, int bathroomID) {
+    public Review(int reviewID, String details, int userID, int bathroomID) {
         this.details = details;
         this.userID = userID;
         this.bathroomID = bathroomID;
+        this.id = reviewID;
     }
 
     public String getDetails() {
         return details;
     }
+
+    public void setDetails(String newDetails) { this.details = newDetails; }
 
     public int getUserID() {
         return userID;
@@ -53,5 +57,9 @@ public class Review implements Serializable {
 
     public String getAuthorName() {
         return authorName;
+    }
+
+    public int getReviewID() {
+        return this.id;
     }
 }

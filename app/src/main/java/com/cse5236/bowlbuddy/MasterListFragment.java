@@ -170,7 +170,8 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
     }
 
     private void launchFavoritesActivity() {
-
+        Intent i = new Intent(getActivity(), FavoritesMapActivity.class);
+        startActivity(i);
     }
 
     public void startGottaGo() {

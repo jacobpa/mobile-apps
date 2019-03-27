@@ -102,4 +102,19 @@ public interface APIService {
     @GET("bathrooms/{id}/reviews")
     Call<List<Review>> getBathroomReviews(@Path("id") int bathroomID,
                                           @Header("Authorization") String token);
+
+    @GET("bathrooms/{id}")
+    Call<Bathroom> getBathroom(@Path("id") int id,
+                               @Header("Authorization") String token);
+
+    @DELETE("users/{user_id}/reviews/{id}")
+    Call<Void> deleteReview(@Path("user_id") int userID,
+                            @Path("id") int id,
+                            @Header("Authorization") String token);
+
+    @PATCH("users/{user_id}/reviews/{id}")
+    Call<Void> updateUserReview(@Path("user_id") int userID,
+                                @Path("id") int id,
+                                @Query("details") String reviewStr,
+                                @Header("Authorization") String token);
 }
