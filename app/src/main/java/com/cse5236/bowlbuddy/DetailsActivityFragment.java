@@ -22,6 +22,7 @@ import com.cse5236.bowlbuddy.util.APIService;
 import com.cse5236.bowlbuddy.util.APISingleton;
 import com.cse5236.bowlbuddy.util.BowlBuddyCallback;
 
+import java.io.IOException;
 import java.util.List;
 
 import retrofit2.Call;
@@ -88,8 +89,8 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         sharedPrefs = activity.getSharedPreferences("Session", Context.MODE_PRIVATE);
 
         service = APISingleton.getInstance();
-        service.getBathroomReviews(activity.getIntent().getIntExtra("id", 0),
-                sharedPrefs.getString("jwt", "")).enqueue(new ReviewListCallback(getContext(), view));
+        service.getBathroomReviews(bathroom.getId(), sharedPrefs.getString("jwt", ""))
+                .enqueue(new ReviewListCallback(getContext(), view));
 
         reviewAdapter = new ReviewAdapter();
         reviewLayoutManager = new LinearLayoutManager(activity);

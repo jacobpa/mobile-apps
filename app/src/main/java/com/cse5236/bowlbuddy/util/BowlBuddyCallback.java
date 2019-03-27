@@ -47,6 +47,7 @@ public abstract class BowlBuddyCallback<T> implements Callback<T> {
      */
     public void parseError(Response<T> response) {
         try {
+            Log.d(TAG, "parseError: Parsing error... " + response.errorBody().string());
             JSONObject json = new JSONObject(response.errorBody().string());
             Snackbar.make(view, json.getString("error"), Snackbar.LENGTH_LONG)
                     .show();
