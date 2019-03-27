@@ -97,7 +97,6 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         sharedPrefs = activity.getSharedPreferences("Session", Context.MODE_PRIVATE);
 
         service = APISingleton.getInstance();
-
         service.getBathroomReviews(activity.getIntent().getIntExtra("id", 0),
                 sharedPrefs.getString("jwt", "")).enqueue(new ReviewListCallback(getContext(), view));
 
