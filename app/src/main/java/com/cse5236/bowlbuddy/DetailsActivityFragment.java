@@ -5,7 +5,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -36,6 +35,7 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
     TextView handicapField;
     TextView titleField;
     APIService service;
+    View view;
     private SharedPreferences sharedPrefs;
     private RecyclerView reviewRecyclerView;
     private RecyclerView.Adapter reviewAdapter;
@@ -44,7 +44,7 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
 
 
     // TODO: Programmatically request image urls from webserver
-    private String[] imageUrls = new String[] {
+    private String[] imageUrls = new String[]{
             "https://st.hzcdn.com/simgs/c881faaa0672e118_4-2734/traditional-bathroom.jpg",
             "https://93fvk2j4yjt36cujr3idg8f1-wpengine.netdna-ssl.com/wp-content/uploads/2017/03/cindy-bathroom-1.jpg",
             "https://hgtvhome.sndimg.com/content/dam/images/hgtv/fullset/2009/11/16/1/HDIVD1510_master-bathroom-after_s4x3.jpg.rend.hgtvcom.1280.960.suffix/1400949240724.jpeg"
@@ -57,7 +57,7 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_details, container, false);
+        view = inflater.inflate(R.layout.fragment_details, container, false);
         ViewPager viewPager = view.findViewById(R.id.view_pager);
         ViewPagerAdapter adapter = new ViewPagerAdapter(getActivity(), imageUrls);
         viewPager.setAdapter(adapter);
@@ -83,7 +83,6 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         sharedPrefs = activity.getSharedPreferences("Session", Context.MODE_PRIVATE);
 
         service = APISingleton.getInstance();
-
         service.getBathroomReviews(activity.getIntent().getIntExtra("id", 0),
                 sharedPrefs.getString("jwt", "")).enqueue(new ReviewListCallback(getContext(), view));
 
@@ -108,10 +107,9 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
     public void setHandicap(String handicap) {
         String access = "Handicap Accessible";
         String no_access = "Not Accessible";
-        if(handicap != null && handicap.equals(1)) {
+        if (handicap != null && handicap.equals(1)) {
             handicapField.setText(access);
-        }
-        else {
+        } else {
             handicapField.setText(no_access);
         }
     }
@@ -171,7 +169,7 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
 
         @Override
         public void onResponse(Call<List<Review>> call, Response<List<Review>> response) {
-            if(response.isSuccessful()) {
+            if (response.isSuccessful()) {
                 reviewList = response.body();
                 Log.d(TAG, "onResponse: Got list of reviews with length " + reviewList.size());
                 for (Review review : reviewList) {
