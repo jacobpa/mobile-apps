@@ -9,6 +9,8 @@ public class Review implements Serializable {
     @Json(name = "user_id")
     private int userID;
     private User author;
+    @Json(name = "author_name")
+    private String authorName;
     @Json(name = "bathroom_id")
     private int bathroomID;
     private Bathroom bathroom;
@@ -48,5 +50,9 @@ public class Review implements Serializable {
 
     public void setBathroom(Bathroom bathroom) {
         this.bathroom = bathroom;
+    }
+
+    public String getAuthorName() {
+        return authorName;
     }
 }
