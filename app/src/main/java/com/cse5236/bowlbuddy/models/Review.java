@@ -2,11 +2,15 @@ package com.cse5236.bowlbuddy.models;
 
 import com.squareup.moshi.Json;
 
-public class Review {
+import java.io.Serializable;
+
+public class Review implements Serializable {
     private String details;
-    @Json(name = "user_id") private int userID;
+    @Json(name = "user_id")
+    private int userID;
     private User author;
-    @Json(name= "bathroom_id") private int bathroomID;
+    @Json(name = "bathroom_id")
+    private int bathroomID;
     private Bathroom bathroom;
 
     public Review() {

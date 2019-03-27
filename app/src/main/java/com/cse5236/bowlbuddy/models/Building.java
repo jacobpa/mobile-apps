@@ -2,12 +2,16 @@ package com.cse5236.bowlbuddy.models;
 
 import com.squareup.moshi.Json;
 
-public class Building {
+import java.io.Serializable;
+
+public class Building implements Serializable {
     private Integer floors;
     private String address;
     private String name;
-    @Json(name = "open_time") private String openTime;
-    @Json(name = "close_time") private String closeTime;
+    @Json(name = "open_time")
+    private String openTime;
+    @Json(name = "close_time")
+    private String closeTime;
     private Double longitude;
     private Double latitude;
 

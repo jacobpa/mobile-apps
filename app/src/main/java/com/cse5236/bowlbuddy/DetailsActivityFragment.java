@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.cse5236.bowlbuddy.models.Bathroom;
 import com.cse5236.bowlbuddy.models.Review;
 import com.cse5236.bowlbuddy.models.User;
 import com.cse5236.bowlbuddy.util.APIService;
@@ -36,6 +37,7 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
     TextView titleField;
     APIService service;
     View view;
+    private Bathroom bathroom;
     private SharedPreferences sharedPrefs;
     private RecyclerView reviewRecyclerView;
     private RecyclerView.Adapter reviewAdapter;
@@ -66,9 +68,11 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         titleField = view.findViewById(R.id.titleField);
         DetailsActivity activity = (DetailsActivity) getActivity();
 
-        setGender(activity.getIntent().getStringExtra("gender"));
-        setHandicap(activity.getIntent().getStringExtra("handicap"));
-        setTitle(activity.getIntent().getStringExtra("title"));
+        bathroom = (Bathroom) activity.getIntent().getExtras().getSerializable("bathroom");
+
+        setGender(bathroom.getGender());
+        setHandicap(bathroom.isHandicap());
+        setTitle(bathroom.getBuilding().getName());
 
         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
         if(fab != null) {
@@ -105,10 +109,10 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
 
     }
 
-    public void setHandicap(String handicap) {
+    public void setHandicap(Boolean handicap) {
         String access = "Handicap Accessible";
         String no_access = "Not Accessible";
-        if (handicap != null && handicap.equals(1)) {
+        if (handicap != null && handicap) {
             handicapField.setText(access);
         } else {
             handicapField.setText(no_access);
