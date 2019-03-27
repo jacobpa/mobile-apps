@@ -102,6 +102,18 @@
         app:layout_constraintStart_toEndOf="@+id/genderIcon"
         app:layout_constraintTop_toBottomOf="@+id/handicapField" />
 
+    <TextView
+        android:id="@+id/no_reviews_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/no_reviews_found"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:visibility="gone"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/hoursIcon"
+        />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/review_recycler_view"
         android:layout_width="match_parent"
