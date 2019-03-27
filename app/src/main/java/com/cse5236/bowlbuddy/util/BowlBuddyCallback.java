@@ -46,15 +46,21 @@ public abstract class BowlBuddyCallback<T> implements Callback<T> {
      * @param response The response whose error is bing parsed
      */
     public void parseError(Response<T> response) {
+        String error = null;
         try {
-            Log.d(TAG, "parseError: Parsing error... " + response.errorBody().string());
-            JSONObject json = new JSONObject(response.errorBody().string());
+            error = response.errorBody().string().trim();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            Log.d(TAG, "parseError: Parsing error... " + error);
+            JSONObject json = new JSONObject(error);
             Snackbar.make(view, json.getString("error"), Snackbar.LENGTH_LONG)
                     .show();
         } catch (JSONException e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            Snackbar.make(view, "Error communicating with server. " + error, Snackbar.LENGTH_LONG)
+                    .show();
         }
     }
 }
