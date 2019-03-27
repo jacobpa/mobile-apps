@@ -247,22 +247,22 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         }
 
         public void openDetails() {
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("bathroom", this.bathroom);
+
             Intent intent = new Intent(getActivity(), DetailsActivity.class);
-            intent.putExtra("gender", getGender());
-            intent.putExtra("handicap", getHandicap());
-            intent.putExtra("title", getTitle());
+            intent.putExtras(bundle);
             startActivity(intent);
         }
 
         public String getGender() {
-            return  bathroom.getGender();
+            return bathroom.getGender();
         }
 
         public Boolean getHandicap() {
-            if(bathroom != null) {
+            if (bathroom != null) {
                 return bathroom.isHandicap();
-            }
-            else {
+            } else {
                 return false;
             }
         }

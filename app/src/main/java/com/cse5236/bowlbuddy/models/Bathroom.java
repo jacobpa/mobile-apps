@@ -2,7 +2,10 @@ package com.cse5236.bowlbuddy.models;
 
 import com.squareup.moshi.Json;
 
-public class Bathroom {
+import java.io.Serializable;
+
+public class Bathroom implements Serializable {
+    private Integer id;
     private Integer sNum;
     private Integer plyCount;
     private Integer floor;
@@ -13,7 +16,8 @@ public class Bathroom {
     private Float emptyRating;
     private Float smellRating;
     private String gender;
-    @Json(name = "building_id") private int buildingID;
+    @Json(name = "building_id")
+    private int buildingID;
     private Building building;
 
     public Bathroom() {
@@ -45,10 +49,9 @@ public class Bathroom {
     }
 
     public boolean isHandicap() {
-        if(handicap != null) {
+        if (handicap != null) {
             return handicap;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -123,5 +126,13 @@ public class Bathroom {
 
     public void setBuilding(Building building) {
         this.building = building;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 }
