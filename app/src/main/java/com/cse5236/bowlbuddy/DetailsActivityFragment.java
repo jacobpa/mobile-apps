@@ -117,6 +117,32 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         reviewRecyclerView.setLayoutManager(reviewLayoutManager);
         reviewRecyclerView.setAdapter(reviewAdapter);
 
+        sharedPrefs = activity.getSharedPreferences("Session", Context.MODE_PRIVATE);
+
+        service = APISingleton.getInstance();
+        service.getBathroomReviews(bathroom.getId(), sharedPrefs.getString("jwt", ""))
+                .enqueue(new ReviewListCallback(getContext(), view));
+
+        reviewAdapter = new ReviewAdapter();
+        reviewLayoutManager = new LinearLayoutManager(activity);
+        reviewRecyclerView = view.findViewById(R.id.review_recycler_view);
+        reviewRecyclerView.setHasFixedSize(true);
+        reviewRecyclerView.setLayoutManager(reviewLayoutManager);
+        reviewRecyclerView.setAdapter(reviewAdapter);
+
+        sharedPrefs = activity.getSharedPreferences("Session", Context.MODE_PRIVATE);
+
+        service = APISingleton.getInstance();
+        service.getBathroomReviews(bathroom.getId(), sharedPrefs.getString("jwt", ""))
+                .enqueue(new ReviewListCallback(getContext(), view));
+
+        reviewAdapter = new ReviewAdapter();
+        reviewLayoutManager = new LinearLayoutManager(activity);
+        reviewRecyclerView = view.findViewById(R.id.review_recycler_view);
+        reviewRecyclerView.setHasFixedSize(true);
+        reviewRecyclerView.setLayoutManager(reviewLayoutManager);
+        reviewRecyclerView.setAdapter(reviewAdapter);
+
         return view;
     }
 

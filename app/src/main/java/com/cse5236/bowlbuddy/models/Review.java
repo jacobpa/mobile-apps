@@ -1,10 +1,10 @@
 package com.cse5236.bowlbuddy.models;
 
 import com.squareup.moshi.Json;
-
 import java.io.Serializable;
 
 public class Review implements Serializable {
+    private int id;
     private String details;
     @Json(name = "user_id")
     private int userID;
@@ -27,6 +27,8 @@ public class Review implements Serializable {
     public String getDetails() {
         return details;
     }
+
+    public void setDetails(String newDetails) { this.details = newDetails; }
 
     public int getUserID() {
         return userID;
@@ -54,5 +56,9 @@ public class Review implements Serializable {
 
     public String getAuthorName() {
         return authorName;
+    }
+
+    public int getReviewID() {
+        return this.id;
     }
 }

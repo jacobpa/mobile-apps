@@ -5,9 +5,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatRatingBar;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,11 +27,16 @@ import com.cse5236.bowlbuddy.util.APIService;
 import com.cse5236.bowlbuddy.util.APISingleton;
 import com.cse5236.bowlbuddy.models.Bathroom;
 import com.cse5236.bowlbuddy.util.BowlBuddyCallback;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Response;
+
+import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
 
 
 /**
@@ -44,6 +52,10 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
     private List<Bathroom> bathroomList;
     private APIService service;
     private SharedPreferences sharedPreferences;
+    private FloatingActionButton menuFab;
+    private FloatingActionButton addReviewFab;
+    private FloatingActionButton gottaGoFab;
+    private boolean gottaGoEnabled = false;
 
     public MasterListFragment() {
         // Required empty public constructor
@@ -56,10 +68,6 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         view = inflater.inflate(R.layout.fragment_master_list, container, false);
         Activity activity = getActivity();
 
-        service = APISingleton.getInstance();
-        sharedPreferences = activity.getSharedPreferences("Session", Context.MODE_PRIVATE);
-
-
         bathroomAdapter = new BathroomAdapter();
         bathroomLayoutManager = new LinearLayoutManager(activity);
         bathroomRecyclerView = view.findViewById(R.id.masterRecyclerView);
@@ -70,21 +78,68 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         NavigationView nav = view.findViewById(R.id.master_nav_view);
         nav.setNavigationItemSelectedListener(this);
 
-        service.getAllBathrooms(sharedPreferences.getString("jwt", ""))
-                .enqueue(new GetBathroomsCallback(getContext(), view));
+        // Initialize the menu, add review, and gotta go fab buttons
+        menuFab = view.findViewById(R.id.menu_fab);
+        gottaGoFab = view.findViewById(R.id.gotta_go);
+        addReviewFab = view.findViewById(R.id.add_review);
+
+        // Set the on click method for clicking the menu FAB
+        menuFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View fabView) {
+                if (gottaGoFab.getVisibility() == INVISIBLE) {
+                    gottaGoFab.setVisibility(VISIBLE);
+                    addReviewFab.setVisibility(VISIBLE);
+                } else {
+                    gottaGoFab.setVisibility(INVISIBLE);
+                    addReviewFab.setVisibility(INVISIBLE);
+                }
+            }
+        });
+
+        // Set the on click method for clicking the gotta go FAB
+        gottaGoFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View fabView) {
+                startGottaGo();
+            }
+        });
+
+        // Set the on click method for clicking the add review FAB
+        addReviewFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View fabView) {
+                startAddReview();
+            }
+        });
 
         Log.d(TAG, "onCreateView: View successfully created");
         return view;
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        // Make these FABs invisible when the fragment starts
+        gottaGoFab.setVisibility(INVISIBLE);
+        addReviewFab.setVisibility(INVISIBLE);
+    }
+
+    @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
         switch (item.getItemId()) {
             case R.id.log_out:
                 logOutAction();
                 return true;
             case R.id.action_profile:
                 launchProfileActivity();
+                return true;
+            case R.id.my_reviews:
+                launchMyReviewsActivity();
+                return true;
+            case R.id.favorites:
+                launchFavoritesActivity();
                 return true;
         }
 
@@ -107,6 +162,54 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         startActivity(i);
 
         getActivity().finish();
+    }
+
+    private void launchMyReviewsActivity () {
+        Intent i = new Intent(getActivity(), MyReviewsActivity.class);
+        startActivity(i);
+    }
+
+    private void launchFavoritesActivity() {
+        Intent i = new Intent(getActivity(), FavoritesMapActivity.class);
+        startActivity(i);
+    }
+
+    public void startGottaGo() {
+
+        int color = Color.YELLOW;
+
+        if (gottaGoEnabled) {
+            color = Color.WHITE;
+        }
+
+        changeRecyclerViewHighlight(color);
+
+        gottaGoEnabled = !gottaGoEnabled;
+    }
+
+    public void startAddReview() {
+        Intent intent = new Intent(getActivity(), ReviewActivity.class);
+        startActivity(intent);
+    }
+
+    public void changeRecyclerViewHighlight(int color) {
+        for (int i = 0; i < 3; i++) {
+            View bathroom = bathroomRecyclerView.getChildAt(i);
+
+            if (bathroom != null) {
+
+                bathroom.setBackgroundColor(color);
+
+            }
+        }
+    }
+
+    public void bathroomChanged(List<Bathroom> activityBathroomList) {
+        if (gottaGoEnabled) {
+            changeRecyclerViewHighlight(Color.WHITE);
+        }
+        bathroomList = activityBathroomList;
+        bathroomAdapter.notifyDataSetChanged();
     }
 
     private class BathroomHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -203,43 +306,4 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
 
     }
 
-    private class GetBathroomsCallback extends BowlBuddyCallback<List<Bathroom>> {
-        public GetBathroomsCallback(Context context, View view) {
-            super(context, view);
-        }
-
-        @Override
-        public void onResponse(Call<List<Bathroom>> call, Response<List<Bathroom>> response) {
-            if (response.isSuccessful()) {
-                bathroomList = response.body();
-
-                for (Bathroom bathroom : bathroomList) {
-                    service.getLocation(bathroom.getBuildingID(), sharedPreferences.getString("jwt", ""))
-                            .enqueue(new GetBathroomBuildingCallback(getContext(), view, bathroom));
-                }
-                Log.d(TAG, "onResponse: Response is " + bathroomList);
-            } else {
-                parseError(response);
-            }
-        }
-    }
-
-    private class GetBathroomBuildingCallback extends BowlBuddyCallback<Building> {
-        private Bathroom bathroom;
-
-        public GetBathroomBuildingCallback(Context context, View view, Bathroom bathroom) {
-            super(context, view);
-            this.bathroom = bathroom;
-        }
-
-        @Override
-        public void onResponse(Call<Building> call, Response<Building> response) {
-            if (response.isSuccessful()) {
-                bathroom.setBuilding(response.body());
-                bathroomAdapter.notifyDataSetChanged();
-            } else {
-                parseError(response);
-            }
-        }
-    }
 }

@@ -8,6 +8,16 @@
             android:icon="@drawable/ic_account_circle"
             android:title="@string/action_my_profile" />
     </group>
+    <group android:checkableBehavior="none">
+        <item
+            android:id="@+id/my_reviews"
+            android:title="My Reviews"/>
+    </group>
+    <group>
+        <item
+            android:id="@+id/favorites"
+            android:title="Favorites"/>
+    </group>
     <group>
         <item
             android:id="@+id/log_out"
