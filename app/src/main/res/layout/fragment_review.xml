@@ -9,24 +9,41 @@
 
     <AutoCompleteTextView
         android:id="@+id/autoCompleteTextView"
-        android:layout_width="241dp"
-        android:layout_height="134dp"
-        android:layout_marginTop="44dp"
-        android:layout_marginEnd="80dp"
+        android:layout_width="300dp"
+        android:layout_height="119dp"
+        android:layout_marginStart="45dp"
         android:text="Enter Review"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/planets_spinner" />
+
+    <Spinner
+        android:id="@+id/planets_spinner"
+        android:layout_width="250dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="25dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/floor_spinner"
+        android:layout_width="77dp"
+        android:layout_height="41dp"
+        android:layout_marginStart="300dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/linearLayout4"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="391dp"
+        android:layout_height="469dp"
         android:orientation="vertical"
-        tools:layout_editor_absoluteX="63dp"
-        tools:layout_editor_absoluteY="44dp">
+        tools:layout_editor_absoluteX="-3dp"
+        tools:layout_editor_absoluteY="93dp">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="46dp"
             android:layout_marginStart="80dp"
             android:layout_marginTop="212dp"
@@ -45,10 +62,10 @@
             <RatingBar
                 android:id="@+id/smellRating"
                 style="@style/Widget.AppCompat.RatingBar.Indicator"
-                android:isIndicator="false"
-                android:stepSize="1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:isIndicator="false"
+                android:stepSize="1"
                 tools:layout_editor_absoluteX="102dp"
                 tools:layout_editor_absoluteY="332dp" />
 
@@ -61,24 +78,23 @@
             <RatingBar
                 android:id="@+id/cleanRating"
                 style="@style/Widget.AppCompat.RatingBar.Indicator"
-                android:stepSize="1"
-                android:isIndicator="false"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="116dp"
+                android:isIndicator="false"
+                android:stepSize="1"
                 app:layout_constraintStart_toStartOf="parent"
                 tools:layout_editor_absoluteY="0dp" />
 
             <RatingBar
                 android:id="@+id/quietRating"
                 style="@style/Widget.AppCompat.RatingBar.Indicator"
-                android:stepSize="1"
-                android:isIndicator="false"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="116dp"
                 android:layout_marginTop="8dp"
-                app:layout_constraintStart_toStartOf="parent"
+                android:isIndicator="false"
+                android:stepSize="1"
+                app:layout_constraintStart_toEndOf="@+id/textView13"
                 app:layout_constraintTop_toBottomOf="@+id/cleanRating" />
 
             <TextView
@@ -146,5 +162,25 @@
         android:src="@android:drawable/ic_dialog_email"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/floor_field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="231dp"
+        android:text="Floor"
+        app:layout_constraintBottom_toTopOf="@+id/floor_spinner"
+        app:layout_constraintStart_toEndOf="@+id/textView6" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="7dp"
+        android:text="Building"
+        app:layout_constraintBottom_toTopOf="@+id/planets_spinner"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
