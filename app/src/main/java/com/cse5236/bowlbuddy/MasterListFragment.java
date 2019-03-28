@@ -30,6 +30,7 @@ import com.cse5236.bowlbuddy.util.BowlBuddyCallback;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -50,6 +51,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
     private RecyclerView.Adapter bathroomAdapter;
     private RecyclerView.LayoutManager bathroomLayoutManager;
     private List<Bathroom> bathroomList;
+    private ArrayList<Bathroom> favoritesList;
     private APIService service;
     private SharedPreferences sharedPreferences;
     private FloatingActionButton menuFab;
@@ -112,6 +114,11 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
                 startAddReview();
             }
         });
+
+        service.getAllBathrooms(sharedPreferences.getString("jwt", ""))
+                .enqueue(new GetBathroomsCallback(getContext(), view));
+        service.getFavorites(sharedPreferences.getInt("id", 0), sharedPreferences.getString("jwt", ""))
+                .enqueue(new GetFavoritesCallback(getContext(), view));
 
         Log.d(TAG, "onCreateView: View successfully created");
         return view;
@@ -251,6 +258,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         public void openDetails() {
             Bundle bundle = new Bundle();
             bundle.putSerializable("bathroom", this.bathroom);
+            bundle.putSerializable("favorites", favoritesList);
 
             Intent intent = new Intent(getActivity(), DetailsActivity.class);
             intent.putExtras(bundle);
@@ -307,4 +315,58 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
 
     }
 
+    private class GetBathroomsCallback extends BowlBuddyCallback<List<Bathroom>> {
+        public GetBathroomsCallback(Context context, View view) {
+            super(context, view);
+        }
+
+        @Override
+        public void onResponse(Call<List<Bathroom>> call, Response<List<Bathroom>> response) {
+            if (response.isSuccessful()) {
+                bathroomList = response.body();
+
+                for (Bathroom bathroom : bathroomList) {
+                    service.getLocation(bathroom.getBuildingID(), sharedPreferences.getString("jwt", ""))
+                            .enqueue(new GetBathroomBuildingCallback(getContext(), view, bathroom));
+                }
+                Log.d(TAG, "onResponse: Response is " + bathroomList);
+            } else {
+                parseError(response);
+            }
+        }
+    }
+
+    private class GetBathroomBuildingCallback extends BowlBuddyCallback<Building> {
+        private Bathroom bathroom;
+
+        public GetBathroomBuildingCallback(Context context, View view, Bathroom bathroom) {
+            super(context, view);
+            this.bathroom = bathroom;
+        }
+
+        @Override
+        public void onResponse(Call<Building> call, Response<Building> response) {
+            if (response.isSuccessful()) {
+                bathroom.setBuilding(response.body());
+                bathroomAdapter.notifyDataSetChanged();
+            } else {
+                parseError(response);
+            }
+        }
+    }
+
+    private class GetFavoritesCallback extends BowlBuddyCallback<List<Bathroom>> {
+        public GetFavoritesCallback(Context context, View view) {
+            super(context, view);
+        }
+
+        @Override
+        public void onResponse(Call<List<Bathroom>> call, Response<List<Bathroom>> response) {
+            if (response.isSuccessful()) {
+                favoritesList = new ArrayList<>(response.body());
+            } else {
+                parseError(response);
+            }
+        }
+    }
 }

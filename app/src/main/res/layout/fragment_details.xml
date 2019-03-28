@@ -7,18 +7,50 @@
     tools:context=".DetailsActivityFragment"
     tools:showIn="@layout/activity_details">
 
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/fab"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="bottom|end"-->
+        <!--android:layout_margin="@dimen/fab_margin"-->
+        <!--android:layout_marginEnd="16dp"-->
+        <!--android:layout_marginBottom="16dp"-->
+        <!--app:backgroundTint="@color/colorPrimaryDark"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:srcCompat="@android:drawable/ic_input_add" />-->
+
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/details_root_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
+        app:srcCompat="@drawable/ic_menu_white"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        app:backgroundTint="@color/colorPrimaryDark"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/add_review_fab"
+        android:layout_width="48dp"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_add_white"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@id/details_root_fab"
+        app:layout_constraintEnd_toEndOf="@id/details_root_fab"
+        app:layout_constraintBottom_toTopOf="@id/details_root_fab" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/favorite_fab"
+        android:layout_width="48dp"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_favorite_border_white"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@id/add_review_fab"
+        app:layout_constraintEnd_toEndOf="@id/add_review_fab"
+        app:layout_constraintBottom_toTopOf="@id/add_review_fab" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/view_pager"

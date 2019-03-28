@@ -3,17 +3,13 @@ package com.cse5236.bowlbuddy;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
 import com.cse5236.bowlbuddy.models.Bathroom;
 import com.cse5236.bowlbuddy.models.Building;
-import com.cse5236.bowlbuddy.models.Review;
 import com.cse5236.bowlbuddy.util.APIService;
 import com.cse5236.bowlbuddy.util.APISingleton;
 import com.cse5236.bowlbuddy.util.BowlBuddyCallback;
@@ -51,7 +47,7 @@ public class FavoritesMapActivity extends FragmentActivity implements OnMapReady
         service = APISingleton.getInstance();
         sharedPreferences = getSharedPreferences("Session", Context.MODE_PRIVATE);
 
-        service.getFavoriteBathrooms(sharedPreferences.getInt("id", -1), sharedPreferences.getString("jwt", ""))
+        service.getFavorites(sharedPreferences.getInt("id", -1), sharedPreferences.getString("jwt", ""))
                 .enqueue(new GetFavoritesCallback(this, view));
 
         smf.getMapAsync(this);

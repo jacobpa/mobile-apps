@@ -126,17 +126,17 @@ public interface APIService {
                                 @Query("details") String reviewStr,
                                 @Header("Authorization") String token);
 
-    @GET("users/{user_id}/favorites")
-    Call<List<Bathroom>> getFavoriteBathrooms(@Path("user_id") int id,
-                                              @Header("Authorization") String token);
-
-    @POST("users/{user_id}/favorites")
-    Call<Void> addFavoriteBathroom(@Path("user_id") int id,
-                                   @Query("bathroom_id") int bathroomId,
-                                   @Header("Authorization") String token);
-
-    @DELETE("users/{user_id}/favorites")
-    Call<Void> deleteFavoriteBathroom(@Path("user_id") int id,
-                                      @Query("bathroom_id") int bathroomId,
+    @GET("users/{id}/favorites")
+    Call<List<Bathroom>> getFavorites(@Path("id") int userID,
                                       @Header("Authorization") String token);
+
+    @POST("users/{id}/favorites")
+    Call<List<Bathroom>> addFavorite(@Path("id") int userID,
+                                     @Query("bathroom_id") int bathroomID,
+                                     @Header("Authorization") String token);
+
+    @DELETE("users/{id}/favorites")
+    Call<List<Bathroom>> deleteFavorite(@Path("id") int userID,
+                                        @Query("bathroom_id") int bathroomID,
+                                        @Header("Authorization") String token);
 }

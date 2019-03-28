@@ -18,12 +18,11 @@ import android.widget.TextView;
 
 import com.cse5236.bowlbuddy.models.Bathroom;
 import com.cse5236.bowlbuddy.models.Review;
-import com.cse5236.bowlbuddy.models.User;
 import com.cse5236.bowlbuddy.util.APIService;
 import com.cse5236.bowlbuddy.util.APISingleton;
 import com.cse5236.bowlbuddy.util.BowlBuddyCallback;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -41,12 +40,16 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
     RatingBar ratingBar;
     APIService service;
     View view;
+    private FloatingActionButton rootFAB;
+    private FloatingActionButton addFAB;
+    private FloatingActionButton favoriteFAB;
     private Bathroom bathroom;
     private SharedPreferences sharedPrefs;
     private RecyclerView reviewRecyclerView;
     private RecyclerView.Adapter reviewAdapter;
     private RecyclerView.LayoutManager reviewLayoutManager;
     private List<Review> reviewList;
+    private ArrayList<Bathroom> favoritesList;
 
 
     // TODO: Programmatically request image urls from webserver
@@ -74,16 +77,18 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         RatingBar ratingBar = view.findViewById(R.id.ratingBar);
 
         DetailsActivity activity = (DetailsActivity) getActivity();
+        sharedPrefs = activity.getSharedPreferences("Session", Context.MODE_PRIVATE);
 
         bathroom = (Bathroom) activity.getIntent().getExtras().getSerializable("bathroom");
+        favoritesList = (ArrayList<Bathroom>) activity.getIntent().getExtras().getSerializable("favorites");
 
         setGender(bathroom.getGender());
         setHandicap(bathroom.isHandicap());
         setTitle(bathroom.getBuilding().getName());
 
-        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-        if(fab != null) {
-            fab.setOnClickListener(new View.OnClickListener() {
+        addFAB = view.findViewById(R.id.add_review_fab);
+        if(addFAB != null) {
+            addFAB.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(getActivity(), ReviewActivity.class);
@@ -92,6 +97,51 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
                     bundle.putString("caller", "DetailsActivityFragment");
                     intent.putExtras(bundle);
                     startActivity(intent);
+                }
+            });
+        }
+
+        favoriteFAB = view.findViewById(R.id.favorite_fab);
+        if (favoriteFAB != null) {
+            boolean contains = false;
+            for(Bathroom b : favoritesList) {
+                if (b.getId().equals(bathroom.getId())) {
+                    favoriteFAB.setImageResource(R.drawable.ic_favorite_white);
+                    contains = true;
+                }
+            }
+
+            if (contains) {
+                favoriteFAB.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        service.deleteFavorite(sharedPrefs.getInt("id", 0), bathroom.getId(), sharedPrefs.getString("jwt", ""))
+                                .enqueue(new DeleteFavoriteCallback(getContext(), view));
+                    }
+                });
+            } else {
+                favoriteFAB.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        service.addFavorite(sharedPrefs.getInt("id", 0), bathroom.getId(), sharedPrefs.getString("jwt", ""))
+                                .enqueue(new AddFavoriteCallback(getContext(), view));
+                    }
+                });
+            }
+        }
+
+        rootFAB = view.findViewById(R.id.details_root_fab);
+        if (rootFAB != null) {
+            rootFAB.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (addFAB.getVisibility() == View.GONE) {
+                        addFAB.setVisibility(View.VISIBLE);
+                        favoriteFAB.setVisibility(View.VISIBLE);
+                    } else {
+                        addFAB.setVisibility(View.GONE);
+                        favoriteFAB.setVisibility(View.GONE);
+                    }
                 }
             });
         }
@@ -107,8 +157,6 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         reviewRecyclerView.setHasFixedSize(true);
         reviewRecyclerView.setLayoutManager(reviewLayoutManager);
         reviewRecyclerView.setAdapter(reviewAdapter);
-
-        sharedPrefs = activity.getSharedPreferences("Session", Context.MODE_PRIVATE);
 
         service = APISingleton.getInstance();
         service.getBathroomReviews(bathroom.getId(), sharedPrefs.getString("jwt", ""))
@@ -224,6 +272,36 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
                     noReviewMessage.setVisibility(View.VISIBLE);
                 }
                 reviewAdapter.notifyDataSetChanged();
+            } else {
+                parseError(response);
+            }
+        }
+    }
+
+    private class AddFavoriteCallback extends BowlBuddyCallback<List<Bathroom>> {
+        public AddFavoriteCallback(Context context, View view) {
+            super(context, view);
+        }
+
+        @Override
+        public void onResponse(Call<List<Bathroom>> call, Response<List<Bathroom>> response) {
+            if (response.isSuccessful()) {
+                favoriteFAB.setImageResource(R.drawable.ic_favorite_white);
+            } else {
+                parseError(response);
+            }
+        }
+    }
+
+    private class DeleteFavoriteCallback extends BowlBuddyCallback<List<Bathroom>> {
+        public DeleteFavoriteCallback(Context context, View view) {
+            super(context, view);
+        }
+
+        @Override
+        public void onResponse(Call<List<Bathroom>> call, Response<List<Bathroom>> response) {
+            if (response.isSuccessful()) {
+                favoriteFAB.setImageResource(R.drawable.ic_favorite_border_white);
             } else {
                 parseError(response);
             }
