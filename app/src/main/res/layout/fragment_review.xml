@@ -14,10 +14,10 @@
         android:layout_marginStart="45dp"
         android:text="Enter Review"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/planets_spinner" />
+        app:layout_constraintTop_toBottomOf="@+id/building_spinner" />
 
     <Spinner
-        android:id="@+id/planets_spinner"
+        android:id="@+id/building_spinner"
         android:layout_width="250dp"
         android:layout_height="40dp"
         android:layout_marginStart="20dp"
@@ -182,7 +182,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="7dp"
         android:text="Building"
-        app:layout_constraintBottom_toTopOf="@+id/planets_spinner"
+        app:layout_constraintBottom_toTopOf="@+id/building_spinner"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

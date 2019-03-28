@@ -7,11 +7,13 @@ import android.graphics.Color;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.Spinner;
@@ -22,6 +24,8 @@ import com.cse5236.bowlbuddy.util.APIService;
 import com.cse5236.bowlbuddy.util.APISingleton;
 import com.cse5236.bowlbuddy.util.BowlBuddyCallback;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -46,6 +50,7 @@ public class ReviewActivityFragment extends Fragment {
     String gender;
 
     List<Building> buildingList;
+    Building building;
     private Spinner buildingSpn;
     private Spinner floorSpn;
 
@@ -147,6 +152,11 @@ public class ReviewActivityFragment extends Fragment {
             }
         });
 
+        floorSpn = viewVar.findViewById(R.id.floor_spinner);
+        Integer[] floors = new Integer[]{1,2,3,4,5,6,7,8,9,10};
+        ArrayAdapter<Integer> floorAdapter = new ArrayAdapter<>(getActivity(),
+                android.R.layout.simple_spinner_item, floors);
+        floorSpn.setAdapter(floorAdapter);
         return viewVar;
     }
 
@@ -157,10 +167,27 @@ public class ReviewActivityFragment extends Fragment {
 
         @Override
         public void onResponse(Call<List<Building>> call, Response<List<Building>> response) {
+            List<String> titles = new ArrayList<String>();
             if (response.isSuccessful()) {
                 buildingList = response.body();
 
                 Log.d(TAG, "onResponse: Response is " + buildingList);
+
+                buildingSpn = viewVar.findViewById(R.id.building_spinner);
+                ArrayAdapter<Building> adapter = new ArrayAdapter<Building>(getActivity(),
+                        android.R.layout.simple_spinner_item, buildingList);
+                buildingSpn.setAdapter(adapter);
+                buildingSpn.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                        building = buildingList.get(position);
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parentView) {
+                        // left blank
+                    }
+                });
             } else {
                 parseError(response);
             }

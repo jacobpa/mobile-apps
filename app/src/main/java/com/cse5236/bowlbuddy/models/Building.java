@@ -18,6 +18,10 @@ public class Building implements Serializable {
     public Building() {
     }
 
+    public String toString() {
+        return name;
+    }
+
     public Integer getFloors() {
         return floors;
     }
