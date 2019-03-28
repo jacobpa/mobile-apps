@@ -87,6 +87,10 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(getActivity(), ReviewActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("bathroom", bathroom);
+                    bundle.putString("caller", "DetailsActivityFragment");
+                    intent.putExtras(bundle);
                     startActivity(intent);
                 }
             });

@@ -189,6 +189,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
 
     public void startAddReview() {
         Intent intent = new Intent(getActivity(), ReviewActivity.class);
+        intent.putExtra("caller", "MasterListFragment");
         startActivity(intent);
     }
 
