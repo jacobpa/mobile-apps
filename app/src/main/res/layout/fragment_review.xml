@@ -8,7 +8,7 @@
     tools:showIn="@layout/activity_review">
 
     <AutoCompleteTextView
-        android:id="@+id/autoCompleteTextView"
+        android:id="@+id/review_field"
         android:layout_width="300dp"
         android:layout_height="119dp"
         android:layout_marginStart="45dp"

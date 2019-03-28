@@ -7,18 +7,18 @@ import android.graphics.Color;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cse5236.bowlbuddy.models.Bathroom;
 import com.cse5236.bowlbuddy.models.Building;
@@ -26,10 +26,6 @@ import com.cse5236.bowlbuddy.util.APIService;
 import com.cse5236.bowlbuddy.util.APISingleton;
 import com.cse5236.bowlbuddy.util.BowlBuddyCallback;
 
-import org.w3c.dom.Text;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -48,6 +44,8 @@ public class ReviewActivityFragment extends Fragment {
     private Button genderBtn;
     private Button handicapBtn;
     private Button tpBtn;
+
+    private AutoCompleteTextView entry;
 
     private boolean handicap;
     private boolean ply;
@@ -73,7 +71,7 @@ public class ReviewActivityFragment extends Fragment {
 
         service = APISingleton.getInstance();
         Intent intent = getActivity().getIntent();
-        SharedPreferences sharedPrefs = getActivity().getSharedPreferences("Session", Context.MODE_PRIVATE);
+        final SharedPreferences sharedPrefs = getActivity().getSharedPreferences("Session", Context.MODE_PRIVATE);
 
         floorSpn = viewVar.findViewById(R.id.floor_spinner);
         buildingSpn = viewVar.findViewById(R.id.building_spinner);
@@ -103,9 +101,13 @@ public class ReviewActivityFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // TODO: Pass user ID in
+                service.addReview(2, bathroom.getId(), entry.getText().toString(), sharedPrefs.getString("jwt", "")).enqueue(new AddReviewCallback(getContext(), viewVar));
+                Toast.makeText(getActivity(), "Review Sent", Toast.LENGTH_SHORT).show();
             }
         });
 
+        entry = viewVar.findViewById(R.id.review_field);
         RatingBar smellBar = viewVar.findViewById(R.id.smellRating);
         RatingBar quietBar = viewVar.findViewById(R.id.cleanRating);
         RatingBar cleanBar = viewVar.findViewById(R.id.quietRating);
@@ -179,6 +181,22 @@ public class ReviewActivityFragment extends Fragment {
         });
 
         return viewVar;
+    }
+
+    private class AddReviewCallback extends BowlBuddyCallback<Void> {
+        public AddReviewCallback(Context context, View view) {
+            super(context, view);
+        }
+        @Override
+        public void onResponse(Call<Void> call, Response<Void> response) {
+            if (response.isSuccessful()) { Log.d(TAG, "onResponse: Response is " + response); }
+            else { parseError(response); }
+        }
+
+        @Override
+        public void onFailure(Call<Void> call, Throwable t) {
+            super.onFailure(call, t);
+        }
     }
 
     private class GetBuildingsCallback extends BowlBuddyCallback<List<Building>> {
