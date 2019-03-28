@@ -65,7 +65,7 @@ public class ReviewActivityFragment extends Fragment {
         Intent intent = getActivity().getIntent();
         SharedPreferences sharedPrefs = getActivity().getSharedPreferences("Session", Context.MODE_PRIVATE);
 
-        service.getAllBathrooms(sharedPrefs.getString("jwt", "")).enqueue(new GetBuildingsCallback(getContext(),viewVar));
+        service.getAllBuildings(sharedPrefs.getString("jwt", "")).enqueue(new GetBuildingsCallback(getContext(),viewVar));
 
         FloatingActionButton fab = (FloatingActionButton) viewVar.findViewById(R.id.sendButton);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -164,6 +164,12 @@ public class ReviewActivityFragment extends Fragment {
             } else {
                 parseError(response);
             }
+        }
+
+        @Override
+        public void onFailure(Call<List<Building>> call, Throwable t) {
+            super.onFailure(call, t);
+            Log.d(TAG, t.toString());
         }
     }
 
