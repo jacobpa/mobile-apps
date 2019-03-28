@@ -13,7 +13,7 @@ public class ReviewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_review);
         Log.d(TAG, "onCreate: Successfully created");
     }
-et
+
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy: Successfully ended activity");

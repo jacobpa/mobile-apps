@@ -131,13 +131,6 @@ public class ReviewActivityFragment extends Fragment {
             }
         });
 
-        buildingSpn.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-            }
-        });
-
         return viewVar;
     }
 
