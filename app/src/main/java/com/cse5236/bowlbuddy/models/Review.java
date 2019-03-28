@@ -18,11 +18,10 @@ public class Review implements Serializable {
     public Review() {
     }
 
-    public Review(int reviewID, String details, int userID, int bathroomID) {
+    public Review(String details, int userID, int bathroomID) {
         this.details = details;
         this.userID = userID;
         this.bathroomID = bathroomID;
-        this.id = reviewID;
     }
 
     public String getDetails() {
@@ -58,8 +57,11 @@ public class Review implements Serializable {
     public String getAuthorName() {
         return authorName;
     }
+<<<<<<< HEAD
 
     public int getReviewID() {
         return this.id;
     }
+=======
+>>>>>>> master
 }

@@ -90,7 +90,6 @@ public interface APIService {
     Call<Building> getLocation(@Path("id") int id,
                                @Header("Authorization") String token);
 
-
     @GET("users/{user_id}/reviews")
     Call<List<Review>> getUserReviews(@Path("user_id") int id,
                                       @Header("Authorization") String token);

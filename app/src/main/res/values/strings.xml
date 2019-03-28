@@ -27,5 +27,6 @@
     <string name="profile_greeting">Hello, %1$s!</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
     <string name="no_reviews_found">No reviews found!</string>
 </resources>
