@@ -57,11 +57,8 @@ public class Review implements Serializable {
     public String getAuthorName() {
         return authorName;
     }
-<<<<<<< HEAD
 
     public int getReviewID() {
         return this.id;
     }
-=======
->>>>>>> master
 }
