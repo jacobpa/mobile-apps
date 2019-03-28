@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.cse5236.bowlbuddy.util.APIService;
+import com.cse5236.bowlbuddy.util.APISingleton;
 import com.cse5236.bowlbuddy.util.BowlBuddyCallback;
 
 import org.json.JSONException;
@@ -38,6 +40,7 @@ public class LoginFragment extends Fragment {
     private EditText passwordField;
     private String userName;
     private String password;
+    private APIService service;
 
     public LoginFragment() {
         // Required empty public constructor
@@ -55,6 +58,8 @@ public class LoginFragment extends Fragment {
         usernameField = viewVar.findViewById(R.id.usernameField);
         passwordField = viewVar.findViewById(R.id.passwordField);
 
+        service = APISingleton.getInstance();
+
         if (loginButton != null) {
             loginButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -63,7 +68,7 @@ public class LoginFragment extends Fragment {
                     userName = usernameField.getText().toString();
                     password = passwordField.getText().toString();
 
-                    activity.getService().login(userName, password).enqueue(new LoginCallback(getContext(), view));
+                    service.login(userName, password).enqueue(new LoginCallback(getContext(), view));
                 }
             });
         }
