@@ -83,6 +83,9 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         view = inflater.inflate(R.layout.fragment_master_list, container, false);
         Activity activity = getActivity();
 
+        service = APISingleton.getInstance();
+        sharedPreferences = activity.getSharedPreferences("Session", Context.MODE_PRIVATE);
+
         bathroomAdapter = new BathroomAdapter();
         bathroomLayoutManager = new LinearLayoutManager(activity);
         bathroomRecyclerView = view.findViewById(R.id.masterRecyclerView);
