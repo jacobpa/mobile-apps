@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.cse5236.bowlbuddy.models.Bathroom;
@@ -37,6 +38,7 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
     TextView handicapField;
     TextView titleField;
     TextView noReviewMessage;
+    RatingBar ratingBar;
     APIService service;
     View view;
     private Bathroom bathroom;
@@ -69,6 +71,7 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         handicapField = view.findViewById(R.id.handicapField);
         titleField = view.findViewById(R.id.titleField);
         noReviewMessage = view.findViewById(R.id.no_reviews_message);
+        RatingBar ratingBar = view.findViewById(R.id.ratingBar);
 
         DetailsActivity activity = (DetailsActivity) getActivity();
 
@@ -119,10 +122,6 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
 
     public void setGender(String gender) {
         genderField.setText(gender);
-    }
-
-    public void setAverageRating(Float rating) {
-
     }
 
     public void setHandicap(Boolean handicap) {
