@@ -1,5 +1,6 @@
 package com.cse5236.bowlbuddy;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.content.Context;
@@ -50,6 +51,7 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
     private RecyclerView.LayoutManager reviewLayoutManager;
     private List<Review> reviewList;
     private ArrayList<Bathroom> favoritesList;
+    private boolean isFavorited;
 
 
     // TODO: Programmatically request image urls from webserver
@@ -103,31 +105,23 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
 
         favoriteFAB = view.findViewById(R.id.favorite_fab);
         if (favoriteFAB != null) {
-            boolean contains = false;
-            for(Bathroom b : favoritesList) {
-                if (b.getId().equals(bathroom.getId())) {
-                    favoriteFAB.setImageResource(R.drawable.ic_favorite_white);
-                    contains = true;
-                }
+            if (favoritesList.contains(bathroom)) {
+                favoriteFAB.setImageResource(R.drawable.ic_favorite_white);
+                isFavorited = true;
             }
 
-            if (contains) {
-                favoriteFAB.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
+            favoriteFAB.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (isFavorited) {
                         service.deleteFavorite(sharedPrefs.getInt("id", 0), bathroom.getId(), sharedPrefs.getString("jwt", ""))
                                 .enqueue(new DeleteFavoriteCallback(getContext(), view));
-                    }
-                });
-            } else {
-                favoriteFAB.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
+                    } else {
                         service.addFavorite(sharedPrefs.getInt("id", 0), bathroom.getId(), sharedPrefs.getString("jwt", ""))
                                 .enqueue(new AddFavoriteCallback(getContext(), view));
                     }
-                });
-            }
+                }
+            });
         }
 
         rootFAB = view.findViewById(R.id.details_root_fab);
@@ -233,6 +227,12 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         }
     }
 
+    public void returnResult() {
+        Intent data = new Intent();
+        data.putExtra("favorites", favoritesList);
+        getActivity().setResult(Activity.RESULT_OK, data);
+    }
+
     private class ReviewAdapter extends RecyclerView.Adapter<ReviewHolder> {
 
         @NonNull
@@ -287,6 +287,10 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         public void onResponse(Call<List<Bathroom>> call, Response<List<Bathroom>> response) {
             if (response.isSuccessful()) {
                 favoriteFAB.setImageResource(R.drawable.ic_favorite_white);
+                favoritesList.clear();
+                favoritesList.addAll(response.body());
+                isFavorited = true;
+                returnResult();
             } else {
                 parseError(response);
             }
@@ -302,6 +306,10 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         public void onResponse(Call<List<Bathroom>> call, Response<List<Bathroom>> response) {
             if (response.isSuccessful()) {
                 favoriteFAB.setImageResource(R.drawable.ic_favorite_border_white);
+                favoritesList.clear();
+                favoritesList.addAll(response.body());
+                isFavorited = false;
+                returnResult();
             } else {
                 parseError(response);
             }

@@ -38,6 +38,7 @@ import retrofit2.Response;
 
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
+import static android.app.Activity.RESULT_OK;
 
 
 /**
@@ -45,6 +46,7 @@ import static android.view.View.VISIBLE;
  */
 public class MasterListFragment extends Fragment implements NavigationView.OnNavigationItemSelectedListener {
     private final static String TAG = MasterListFragment.class.getSimpleName();
+    private static final int UPDATE_FAVORITES_REQUEST = 1;
 
     private View view;
     private RecyclerView bathroomRecyclerView;
@@ -61,6 +63,17 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
 
     public MasterListFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == UPDATE_FAVORITES_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                Bundle bundle = data.getExtras();
+                favoritesList = (ArrayList<Bathroom>) bundle.getSerializable("favorites");
+            }
+        }
     }
 
     @Override
@@ -262,7 +275,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
 
             Intent intent = new Intent(getActivity(), DetailsActivity.class);
             intent.putExtras(bundle);
-            startActivity(intent);
+            startActivityForResult(intent, UPDATE_FAVORITES_REQUEST);
         }
 
         public String getGender() {
