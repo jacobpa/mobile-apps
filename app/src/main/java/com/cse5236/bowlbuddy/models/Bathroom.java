@@ -3,6 +3,7 @@ package com.cse5236.bowlbuddy.models;
 import com.squareup.moshi.Json;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class Bathroom implements Serializable {
     private Integer id;
@@ -134,5 +135,16 @@ public class Bathroom implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        return Objects.equals(((Bathroom) obj).getId(), this.id);
     }
 }
