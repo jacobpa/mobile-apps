@@ -1,10 +1,13 @@
 package com.cse5236.bowlbuddy;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,16 +16,25 @@ import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.Spinner;
 
+import com.cse5236.bowlbuddy.models.Bathroom;
+import com.cse5236.bowlbuddy.models.Building;
 import com.cse5236.bowlbuddy.util.APIService;
 import com.cse5236.bowlbuddy.util.APISingleton;
+import com.cse5236.bowlbuddy.util.BowlBuddyCallback;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Response;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class ReviewActivityFragment extends Fragment {
+    private final static String TAG = ReviewActivityFragment.class.getSimpleName();
 
     APIService service;
-
+    private SharedPreferences sharedPreferences;
     private View viewVar;
 
     private Button genderBtn;
@@ -33,6 +45,7 @@ public class ReviewActivityFragment extends Fragment {
     private boolean ply;
     String gender;
 
+    List<Building> buildingList;
     private Spinner buildingSpn;
     private Spinner floorSpn;
 
@@ -50,6 +63,9 @@ public class ReviewActivityFragment extends Fragment {
 
         service = APISingleton.getInstance();
         Intent intent = getActivity().getIntent();
+        SharedPreferences sharedPrefs = getActivity().getSharedPreferences("Session", Context.MODE_PRIVATE);
+
+        service.getAllBathrooms(sharedPrefs.getString("jwt", "")).enqueue(new GetBuildingsCallback(getContext(),viewVar));
 
         FloatingActionButton fab = (FloatingActionButton) viewVar.findViewById(R.id.sendButton);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -132,6 +148,23 @@ public class ReviewActivityFragment extends Fragment {
         });
 
         return viewVar;
+    }
+
+    private class GetBuildingsCallback extends BowlBuddyCallback<List<Building>> {
+        public GetBuildingsCallback(Context context, View view) {
+            super(context, view);
+        }
+
+        @Override
+        public void onResponse(Call<List<Building>> call, Response<List<Building>> response) {
+            if (response.isSuccessful()) {
+                buildingList = response.body();
+
+                Log.d(TAG, "onResponse: Response is " + buildingList);
+            } else {
+                parseError(response);
+            }
+        }
     }
 
 }
