@@ -173,10 +173,10 @@
         android:layout_marginStart="231dp"
         android:text="Floor"
         app:layout_constraintBottom_toTopOf="@+id/floor_spinner"
-        app:layout_constraintStart_toEndOf="@+id/textView6" />
+        app:layout_constraintStart_toEndOf="@+id/building_field" />
 
     <TextView
-        android:id="@+id/textView6"
+        android:id="@+id/building_field"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -184,6 +184,24 @@
         android:text="Building"
         app:layout_constraintBottom_toTopOf="@+id/building_spinner"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/title_field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/floor_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="231dp"
+        android:layout_marginTop="6dp"
+        app:layout_constraintStart_toEndOf="@+id/building_field"
         app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

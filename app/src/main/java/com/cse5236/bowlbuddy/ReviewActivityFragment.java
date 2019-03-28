@@ -15,14 +15,18 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.cse5236.bowlbuddy.models.Bathroom;
 import com.cse5236.bowlbuddy.models.Building;
 import com.cse5236.bowlbuddy.util.APIService;
 import com.cse5236.bowlbuddy.util.APISingleton;
 import com.cse5236.bowlbuddy.util.BowlBuddyCallback;
+
+import org.w3c.dom.Text;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -51,6 +55,7 @@ public class ReviewActivityFragment extends Fragment {
 
     List<Building> buildingList;
     Building building;
+    Bathroom bathroom;
     private Spinner buildingSpn;
     private Spinner floorSpn;
 
@@ -70,13 +75,34 @@ public class ReviewActivityFragment extends Fragment {
         Intent intent = getActivity().getIntent();
         SharedPreferences sharedPrefs = getActivity().getSharedPreferences("Session", Context.MODE_PRIVATE);
 
-        service.getAllBuildings(sharedPrefs.getString("jwt", "")).enqueue(new GetBuildingsCallback(getContext(),viewVar));
+        floorSpn = viewVar.findViewById(R.id.floor_spinner);
+        buildingSpn = viewVar.findViewById(R.id.building_spinner);
+        if(intent.getStringExtra("caller").equals("MasterListFragment")) {
+            service.getAllBuildings(sharedPrefs.getString("jwt", "")).enqueue(new GetBuildingsCallback(getContext(),viewVar));
+            Integer[] floors = new Integer[]{1,2,3,4,5,6,7,8,9,10};
+            ArrayAdapter<Integer> floorAdapter = new ArrayAdapter<>(getActivity(),
+                    android.R.layout.simple_spinner_item, floors);
+            floorSpn.setAdapter(floorAdapter);
+        }
+        else {
+            TextView floorField = viewVar.findViewById(R.id.floor_field);
+            TextView titleField = viewVar.findViewById(R.id.building_field);
+            floorField.setVisibility(View.INVISIBLE);
+            titleField.setVisibility(View.INVISIBLE);
+            buildingSpn.setVisibility(View.INVISIBLE);
+            floorSpn.setVisibility(View.INVISIBLE);
+            TextView title = viewVar.findViewById(R.id.title_field);
+            TextView floor = viewVar.findViewById(R.id.floor_header);
+            Bundle bundle = intent.getExtras();
+            bathroom = (Bathroom) bundle.getSerializable("bathroom");
+            title.setText(bathroom.getBuilding().toString());
+            floor.setText(bathroom.getFloor().toString());
+        }
 
         FloatingActionButton fab = (FloatingActionButton) viewVar.findViewById(R.id.sendButton);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: Post Review Details
             }
         });
 
@@ -152,11 +178,6 @@ public class ReviewActivityFragment extends Fragment {
             }
         });
 
-        floorSpn = viewVar.findViewById(R.id.floor_spinner);
-        Integer[] floors = new Integer[]{1,2,3,4,5,6,7,8,9,10};
-        ArrayAdapter<Integer> floorAdapter = new ArrayAdapter<>(getActivity(),
-                android.R.layout.simple_spinner_item, floors);
-        floorSpn.setAdapter(floorAdapter);
         return viewVar;
     }
 
@@ -167,13 +188,11 @@ public class ReviewActivityFragment extends Fragment {
 
         @Override
         public void onResponse(Call<List<Building>> call, Response<List<Building>> response) {
-            List<String> titles = new ArrayList<String>();
             if (response.isSuccessful()) {
                 buildingList = response.body();
 
                 Log.d(TAG, "onResponse: Response is " + buildingList);
 
-                buildingSpn = viewVar.findViewById(R.id.building_spinner);
                 ArrayAdapter<Building> adapter = new ArrayAdapter<Building>(getActivity(),
                         android.R.layout.simple_spinner_item, buildingList);
                 buildingSpn.setAdapter(adapter);
