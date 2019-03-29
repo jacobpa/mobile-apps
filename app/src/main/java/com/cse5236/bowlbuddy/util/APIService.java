@@ -146,4 +146,10 @@ public interface APIService {
     Call<List<Bathroom>> deleteFavorite(@Path("id") int userID,
                                         @Query("bathroom_id") int bathroomID,
                                         @Header("Authorization") String token);
+
+    @PATCH("buildings/{buildingID}/bathrooms/{bathroomID}")
+    Call<Bathroom> updateBathroom(@Path("buildingID") int buildingID,
+                                  @Path("bathroomID") int bathroomID,
+                                  @QueryMap Map<String, String> queries,
+                                  @Header("Authorization") String token);
 }

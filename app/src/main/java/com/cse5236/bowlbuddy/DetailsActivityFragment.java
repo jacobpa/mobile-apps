@@ -158,7 +158,7 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         reviewRecyclerView.setHasFixedSize(true);
         reviewRecyclerView.setLayoutManager(reviewLayoutManager);
         reviewRecyclerView.setAdapter(reviewAdapter);
-        
+
         return view;
     }
 
