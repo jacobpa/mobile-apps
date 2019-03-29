@@ -47,13 +47,8 @@ public class MasterListActivity extends AppCompatActivity {
     private List<Bathroom> bathroomList;
     private APIService service;
     private SharedPreferences sharedPreferences;
-    private boolean bathroomChanged = false;
     private Fragment fragment;
     private View view;
-    private double latitude = 0;
-    private double longitude = 0;
-    private LocationManager locationManager;
-    private LocationListener locationListener;
 
     private static final String DISTANCE_SORT = "Distance";
     private static final String RATING_SORT = "Rating";
@@ -62,25 +57,6 @@ public class MasterListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_master_list);
-
-        // Declare variable that will manage the calls to the gps for location coordinates
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-        // Declare variable that will be used to listen for responses from the GPS
-        locationListener = new UserLocationListener();
-
-        // Check for location permissions before requesting updates from the GPS
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                int PERMISSION_REQUEST_LOCATION = 1;
-                requestPermissions(new String[]{ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_LOCATION);
-            } else {
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
-            }
-        } else {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
-        }
 
 //        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
 //        {
@@ -133,17 +109,6 @@ public class MasterListActivity extends AppCompatActivity {
 
         service.getAllBathrooms(sharedPreferences.getString("jwt", ""))
                 .enqueue(new GetBathroomsCallback(this, view));
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            if (checkSelfPermission(ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
-            }
-        } else {
-            Snackbar.make(view, "Cannot sort bathrooms by distance without location permissions.", Snackbar.LENGTH_LONG).show();
-        }
     }
 
     @Override
@@ -203,78 +168,7 @@ public class MasterListActivity extends AppCompatActivity {
         FragmentManager fm = getSupportFragmentManager();
         MasterListFragment fragment = (MasterListFragment) fm.findFragmentById(R.id.master_list_container);
 
-        if (sortOrder.equals(DISTANCE_SORT)) {
-            // Order list by bathroom distance
-            Collections.sort(bathroomList, new DistanceSort());
-        } else if (sortOrder.equals(RATING_SORT)) {
-            // Order list by bathroom rating
-            Collections.sort(bathroomList, new RatingSort());
-        }
-
-        fragment.bathroomChanged(bathroomList);
-    }
-
-    class RatingSort implements Comparator<Bathroom>
-    {
-        public int compare(Bathroom bathroom1, Bathroom bathroom2) {
-            int result = 0;
-            if (bathroom1.getAverageRating() < bathroom2.getAverageRating()) {
-                result = 1;
-            } else if (bathroom1.getAverageRating() > bathroom2.getAverageRating()) {
-                result = -1;
-            }
-            return result;
-        }
-    }
-
-    class DistanceSort implements Comparator<Bathroom> {
-        public int compare(Bathroom bathroom1, Bathroom bathroom2) {
-            int result = 0;
-
-            if (bathroom1.getBuilding() != null && bathroom2.getBuilding() != null  || !(latitude == 0 && longitude == 0)) {
-
-                Location location1 = new Location("Bathroom 1");
-                Location location2 = new Location("Bathroom 2");
-                Location userLocation = new Location ("User Location");
-
-                location1.setLatitude(bathroom1.getBuilding().getLatitude());
-                location1.setLongitude(bathroom1.getBuilding().getLongitude());
-
-                location2.setLatitude(bathroom2.getBuilding().getLatitude());
-                location2.setLongitude(bathroom2.getBuilding().getLongitude());
-
-                userLocation.setLatitude(latitude);
-                userLocation.setLongitude(longitude);
-
-                float distance1 = location1.distanceTo(userLocation);
-                float distance2 = location2.distanceTo(userLocation);
-
-                if (distance1 < distance2) {
-                    result = -1;
-                } else if (distance1 > distance2) {
-                    result = 1;
-                }
-            }
-
-            return result;
-        }
-    }
-
-    private class UserLocationListener implements LocationListener {
-        @Override
-        public void onLocationChanged(Location userLocation) {
-            latitude = userLocation.getLatitude();
-            longitude = userLocation.getLongitude();
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {}
-
-        @Override
-        public void onProviderEnabled(String provider) {}
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {}
+        fragment.bathroomChanged(bathroomList, sortOrder);
     }
 
     private class GetBathroomsCallback extends BowlBuddyCallback<List<Bathroom>> {

@@ -26,6 +26,7 @@ import com.cse5236.bowlbuddy.util.APIService;
 import com.cse5236.bowlbuddy.util.APISingleton;
 import com.cse5236.bowlbuddy.util.BowlBuddyCallback;
 
+import java.io.Serializable;
 import java.util.List;
 
 import retrofit2.Call;
@@ -38,6 +39,8 @@ import retrofit2.Response;
  */
 public class MyReviewsFragment extends Fragment {
     private static final String TAG = MyReviewsFragment.class.getSimpleName();
+    private static final int UPDATE_FAVORITES_REQUEST = 1;
+
     private View view;
     private RecyclerView reviewsRecyclerView;
     private RecyclerView.Adapter reviewsAdapter;
@@ -45,6 +48,7 @@ public class MyReviewsFragment extends Fragment {
     private List<Review> reviewList;
     private APIService service;
     private SharedPreferences sharedPreferences;
+    private List<Bathroom> favoritesList;
 
     public MyReviewsFragment() {
         // Required empty public constructor
@@ -70,6 +74,9 @@ public class MyReviewsFragment extends Fragment {
 
         service.getUserReviews(sharedPreferences.getInt("id", -1), sharedPreferences.getString("jwt", ""))
                 .enqueue(new GetReviewsCallback(getContext(), view));
+
+        service.getFavorites(sharedPreferences.getInt("id", -1), sharedPreferences.getString("jwt", ""))
+                .enqueue(new GetFavoritesCallback(getContext(), view));
 
         Log.d(TAG, "onCreateView: View successfully created");
         // Inflate the layout for this fragment
@@ -136,8 +143,25 @@ public class MyReviewsFragment extends Fragment {
                     cancelReview();
                     break;
                 default:
+                    // Review Detail pressed.  Start the details activity for review.
+                    openDetails();
                     break;
             }
+        }
+
+        public void openDetails() {
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("bathroom", this.bathroom);
+
+            while (favoritesList == null) {
+                // Wait for favorites list value to be populated
+            }
+
+            bundle.putSerializable("favorites", (Serializable) favoritesList);
+
+            Intent intent = new Intent(getActivity(), DetailsActivity.class);
+            intent.putExtras(bundle);
+            startActivityForResult(intent, UPDATE_FAVORITES_REQUEST);
         }
 
         public void deleteReview() {
@@ -300,6 +324,16 @@ public class MyReviewsFragment extends Fragment {
         }
     }
 
+    private class GetFavoritesCallback extends BowlBuddyCallback<List<Bathroom>> {
+        public GetFavoritesCallback(Context context, View view) { super(context, view); }
 
-
+        @Override
+        public void onResponse(Call<List<Bathroom>> call, Response<List<Bathroom>> response) {
+            if(response.isSuccessful()) {
+                favoritesList = response.body();
+            } else {
+                parseError(response);
+            }
+        }
     }
+}
