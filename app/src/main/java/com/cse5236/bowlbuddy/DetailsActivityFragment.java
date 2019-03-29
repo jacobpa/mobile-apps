@@ -88,8 +88,6 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         bathroom = (Bathroom) activity.getIntent().getExtras().getSerializable("bathroom");
         favoritesList = (ArrayList<Bathroom>) activity.getIntent().getExtras().getSerializable("favorites");
 
-        ratingBar.setRating(activity.getIntent().getExtras().getInt("rating"));
-
         setStars(bathroom.getAverageRating());
         setRoom(bathroom.getRmNum());
         setFloor(bathroom.getFloor());
@@ -160,44 +158,7 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         reviewRecyclerView.setHasFixedSize(true);
         reviewRecyclerView.setLayoutManager(reviewLayoutManager);
         reviewRecyclerView.setAdapter(reviewAdapter);
-
-        service = APISingleton.getInstance();
-        service.getBathroomReviews(bathroom.getId(), sharedPrefs.getString("jwt", ""))
-                .enqueue(new ReviewListCallback(getContext(), view));
-
-        reviewAdapter = new ReviewAdapter();
-        reviewLayoutManager = new LinearLayoutManager(activity);
-        reviewRecyclerView = view.findViewById(R.id.review_recycler_view);
-        reviewRecyclerView.setHasFixedSize(true);
-        reviewRecyclerView.setLayoutManager(reviewLayoutManager);
-        reviewRecyclerView.setAdapter(reviewAdapter);
-
-        sharedPrefs = activity.getSharedPreferences("Session", Context.MODE_PRIVATE);
-
-        service = APISingleton.getInstance();
-        service.getBathroomReviews(bathroom.getId(), sharedPrefs.getString("jwt", ""))
-                .enqueue(new ReviewListCallback(getContext(), view));
-
-        reviewAdapter = new ReviewAdapter();
-        reviewLayoutManager = new LinearLayoutManager(activity);
-        reviewRecyclerView = view.findViewById(R.id.review_recycler_view);
-        reviewRecyclerView.setHasFixedSize(true);
-        reviewRecyclerView.setLayoutManager(reviewLayoutManager);
-        reviewRecyclerView.setAdapter(reviewAdapter);
-
-        sharedPrefs = activity.getSharedPreferences("Session", Context.MODE_PRIVATE);
-
-        service = APISingleton.getInstance();
-        service.getBathroomReviews(bathroom.getId(), sharedPrefs.getString("jwt", ""))
-                .enqueue(new ReviewListCallback(getContext(), view));
-
-        reviewAdapter = new ReviewAdapter();
-        reviewLayoutManager = new LinearLayoutManager(activity);
-        reviewRecyclerView = view.findViewById(R.id.review_recycler_view);
-        reviewRecyclerView.setHasFixedSize(true);
-        reviewRecyclerView.setLayoutManager(reviewLayoutManager);
-        reviewRecyclerView.setAdapter(reviewAdapter);
-
+        
         return view;
     }
 
