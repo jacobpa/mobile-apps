@@ -98,9 +98,6 @@ public class MasterListActivity extends AppCompatActivity {
 
         view = findViewById(R.id.activity_master_list);
 
-        service.getAllBathrooms(sharedPreferences.getString("jwt", ""))
-                .enqueue(new GetBathroomsCallback(this, view));
-
         // Manually set action bar, with menu button
         Toolbar tb = findViewById(R.id.toolbar);
         setSupportActionBar(tb);
@@ -120,6 +117,22 @@ public class MasterListActivity extends AppCompatActivity {
                     .commit();
         }
         Log.d(TAG, "onCreate: Successfully created");
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        service.getAllBathrooms(sharedPreferences.getString("jwt", ""))
+                .enqueue(new GetBathroomsCallback(this, view));
+    }
+
+    @Override
+    public void onRestart() {
+        super.onRestart();
+
+        service.getAllBathrooms(sharedPreferences.getString("jwt", ""))
+                .enqueue(new GetBathroomsCallback(this, view));
     }
 
     @Override
@@ -274,13 +287,15 @@ public class MasterListActivity extends AppCompatActivity {
         @Override
         public void onResponse(Call<List<Bathroom>> call, Response<List<Bathroom>> response) {
             if (response.isSuccessful()) {
-                bathroomList = response.body();
+                if (bathroomList == null || bathroomList.size() != response.body().size()) {
+                    bathroomList = response.body();
 
-                for (Bathroom bathroom : bathroomList) {
-                    service.getLocation(bathroom.getBuildingID(), sharedPreferences.getString("jwt", ""))
-                            .enqueue(new GetBathroomBuildingCallback(this.callbackContext, view, bathroom));
+                    for (Bathroom bathroom : bathroomList) {
+                        service.getLocation(bathroom.getBuildingID(), sharedPreferences.getString("jwt", ""))
+                                .enqueue(new GetBathroomBuildingCallback(this.callbackContext, view, bathroom));
+                    }
+                    Log.d(TAG, "onResponse: Response is " + bathroomList);
                 }
-                Log.d(TAG, "onResponse: Response is " + bathroomList);
             } else {
                 parseError(response);
             }

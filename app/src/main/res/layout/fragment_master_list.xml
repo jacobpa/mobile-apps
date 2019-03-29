@@ -69,14 +69,5 @@
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/ml_drawer_view" />
 
-    <android.support.design.widget.NavigationView
-        android:id="@+id/master_search_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="end"
-        android:fitsSystemWindows="true"
-        app:headerLayout="@layout/nav_header"
-        app:menu="@menu/ml_drawer_view" />
-
 
 </android.support.v4.widget.DrawerLayout>
