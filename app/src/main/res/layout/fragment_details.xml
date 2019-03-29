@@ -139,9 +139,46 @@
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/hoursIcon"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintVertical_bias="1.0"
+        tools:layout_editor_absoluteX="0dp">
 
     </android.support.v7.widget.RecyclerView>
+
+    <TextView
+        android:id="@+id/floorIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="Floor:"
+        app:layout_constraintBottom_toTopOf="@+id/titleField"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/floor_field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/titleField"
+        app:layout_constraintStart_toEndOf="@+id/floorIcon" />
+
+    <TextView
+        android:id="@+id/room_field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="204dp"
+        app:layout_constraintStart_toEndOf="@+id/room_icon"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/room_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="26dp"
+        android:text="Room:"
+        app:layout_constraintBottom_toTopOf="@+id/titleField"
+        app:layout_constraintStart_toEndOf="@+id/floor_field" />
 
 </android.support.constraint.ConstraintLayout>

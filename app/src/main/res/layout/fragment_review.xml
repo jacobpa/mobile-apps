@@ -18,7 +18,7 @@
 
     <Spinner
         android:id="@+id/building_spinner"
-        android:layout_width="250dp"
+        android:layout_width="182dp"
         android:layout_height="40dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="25dp"
@@ -29,7 +29,7 @@
         android:id="@+id/floor_spinner"
         android:layout_width="77dp"
         android:layout_height="41dp"
-        android:layout_marginStart="300dp"
+        android:layout_marginStart="220dp"
         android:layout_marginTop="24dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -170,7 +170,7 @@
         android:id="@+id/floor_field"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="231dp"
+        android:layout_marginStart="148dp"
         android:text="Floor"
         app:layout_constraintBottom_toTopOf="@+id/floor_spinner"
         app:layout_constraintStart_toEndOf="@+id/building_field" />
@@ -199,9 +199,28 @@
         android:id="@+id/floor_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="231dp"
-        android:layout_marginTop="6dp"
-        app:layout_constraintStart_toEndOf="@+id/building_field"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintStart_toEndOf="@+id/floor_field"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/room_field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="1dp"
+        android:text="Room:"
+        app:layout_constraintBottom_toTopOf="@+id/room_entry"
+        app:layout_constraintStart_toEndOf="@+id/floor_spinner" />
+
+    <MultiAutoCompleteTextView
+        android:id="@+id/room_entry"
+        android:layout_width="76dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="2dp"
+        app:layout_constraintBottom_toTopOf="@+id/review_field"
+        app:layout_constraintStart_toEndOf="@+id/floor_spinner" />
 
 </android.support.constraint.ConstraintLayout>

@@ -37,8 +37,9 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
     TextView genderField;
     TextView handicapField;
     TextView titleField;
+    TextView roomField;
     TextView noReviewMessage;
-    RatingBar ratingBar;
+    TextView floorField;
     APIService service;
     View view;
     private FloatingActionButton rootFAB;
@@ -73,8 +74,11 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getActivity(), imageUrls);
         viewPager.setAdapter(adapter);
         genderField = view.findViewById(R.id.genderField);
+        floorField = view.findViewById(R.id.floor_field);
         handicapField = view.findViewById(R.id.handicapField);
         titleField = view.findViewById(R.id.titleField);
+        roomField = view.findViewById(R.id.room_field);
+
         noReviewMessage = view.findViewById(R.id.no_reviews_message);
         RatingBar ratingBar = view.findViewById(R.id.ratingBar);
 
@@ -87,6 +91,9 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         favoritesList = (ArrayList<Bathroom>) activity.getIntent().getExtras().getSerializable("favorites");
 
         ratingBar.setRating(activity.getIntent().getExtras().getInt("rating"));
+
+        setRoom(bathroom.getRmNum());
+        setFloor(bathroom.getFloor());
         setGender(bathroom.getGender());
         setHandicap(bathroom.isHandicap());
         setTitle(bathroom.getBuilding().getName());
@@ -202,7 +209,7 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
     public void setHandicap(Boolean handicap) {
         String access = "Handicap Accessible";
         String no_access = "Not Accessible";
-        if (handicap != null && handicap) {
+        if (handicap != null && !handicap) {
             handicapField.setText(access);
         } else {
             handicapField.setText(no_access);
@@ -212,6 +219,10 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
     public void setTitle(String title) {
         titleField.setText(title);
     }
+
+    public void setFloor(Integer floor) { floorField.setText(floor.toString());}
+
+    public void setRoom(Integer room) { roomField.setText(room.toString()); }
 
     private class ReviewHolder extends RecyclerView.ViewHolder {
         private TextView username;

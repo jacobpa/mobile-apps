@@ -45,6 +45,7 @@ public class ReviewActivityFragment extends Fragment {
     private Button tpBtn;
 
     private AutoCompleteTextView entry;
+    private AutoCompleteTextView roomEntry;
 
     private boolean handicap;
     private boolean ply;
@@ -75,6 +76,7 @@ public class ReviewActivityFragment extends Fragment {
 
         floorSpn = viewVar.findViewById(R.id.floor_spinner);
         buildingSpn = viewVar.findViewById(R.id.building_spinner);
+        roomEntry = viewVar.findViewById(R.id.room_entry);
         if(intent.getStringExtra("caller").equals("MasterListFragment")) {
             service.getAllBuildings(sharedPrefs.getString("jwt", "")).enqueue(new GetBuildingsCallback(getContext(),viewVar));
             Integer[] floors = new Integer[]{1,2,3,4,5,6,7,8,9,10};
@@ -96,10 +98,14 @@ public class ReviewActivityFragment extends Fragment {
         else {
             TextView floorField = viewVar.findViewById(R.id.floor_field);
             TextView titleField = viewVar.findViewById(R.id.building_field);
+            TextView roomField = viewVar.findViewById(R.id.room_field);
+
             floorField.setVisibility(View.INVISIBLE);
             titleField.setVisibility(View.INVISIBLE);
             buildingSpn.setVisibility(View.INVISIBLE);
             floorSpn.setVisibility(View.INVISIBLE);
+            roomEntry.setVisibility(View.INVISIBLE);
+            roomField.setVisibility(View.INVISIBLE);
             TextView title = viewVar.findViewById(R.id.title_field);
             TextView floor = viewVar.findViewById(R.id.floor_header);
             Bundle bundle = intent.getExtras();
@@ -112,8 +118,10 @@ public class ReviewActivityFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 if(getActivity().getIntent().getStringExtra("caller").equals("MasterListFragment")) {
-                    service.addBathroom(building.getId(), floor, 400, gender, cleanStars, quietStars, smellStars, sharedPrefs.getString("jwt", "")).enqueue(new AddBathroomCallback(getContext(), viewVar));
+                    int room = Integer.parseInt(roomEntry.getText().toString());
+                    service.addBathroom(building.getId(), floor, room, gender, cleanStars, quietStars, smellStars, sharedPrefs.getString("jwt", "")).enqueue(new AddBathroomCallback(getContext(), viewVar));
                     //service.addReview(sharedPrefs.getInt("id", 0), bathroomId, entry.getText().toString(), sharedPrefs.getString("jwt", "")).enqueue(new AddReviewCallback(getContext(), viewVar));
                 }
                 else {
@@ -156,11 +164,11 @@ public class ReviewActivityFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if(gender.equals("Male")) {
-                    genderBtn.setBackgroundColor(Color.parseColor("#4286f4"));
+                    genderBtn.setBackgroundColor(Color.parseColor("#ff91f5"));
                     gender = "Female";
                 }
                 else {
-                    genderBtn.setBackgroundColor(Color.parseColor("#ff91f5"));
+                    genderBtn.setBackgroundColor(Color.parseColor("#4286f4"));
                     gender = "Male";
                 }
             }
@@ -171,7 +179,7 @@ public class ReviewActivityFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (handicap) {
-                    handicapBtn.setBackgroundColor(Color.parseColor("#BCBDBD"));
+                    handicapBtn.setBackgroundColor(Color.parseColor(""));
                     handicap = false;
                 }
                 else {
