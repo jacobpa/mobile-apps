@@ -169,7 +169,7 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
     public void setHandicap(Boolean handicap) {
         String access = "Handicap Accessible";
         String no_access = "Not Accessible";
-        if (handicap != null && !handicap) {
+        if (handicap) {
             handicapField.setText(access);
         } else {
             handicapField.setText(no_access);
