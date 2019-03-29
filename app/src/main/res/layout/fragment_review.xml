@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ReviewActivityFragment" >
+    tools:context=".ReviewActivityFragment">
 
     <TextView
         android:id="@+id/building_field_desc"
@@ -29,18 +29,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Floor"
-        app:layout_constraintTop_toTopOf="@id/building_field_desc"
-        app:layout_constraintStart_toStartOf="@id/floor_entry" />
+        app:layout_constraintStart_toStartOf="@id/floor_entry"
+        app:layout_constraintTop_toTopOf="@id/building_field_desc" />
 
     <EditText
         android:id="@+id/floor_entry"
-        android:inputType="number"
-        android:hint="1"
         android:layout_width="77dp"
         android:layout_height="40dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintStart_toEndOf="@id/building_spinner"
+        android:hint="1"
+        android:inputType="number"
         app:layout_constraintEnd_toStartOf="@id/room_entry"
+        app:layout_constraintStart_toEndOf="@id/building_spinner"
         app:layout_constraintTop_toBottomOf="@id/floor_field_desc" />
 
     <TextView
@@ -49,163 +49,183 @@
         android:layout_height="wrap_content"
         android:text="Room"
         app:layout_constraintStart_toStartOf="@id/room_entry"
-        app:layout_constraintTop_toTopOf="@id/floor_field_desc"/>
+        app:layout_constraintTop_toTopOf="@id/floor_field_desc" />
 
     <EditText
         android:id="@+id/room_entry"
-        android:inputType="number"
-        android:hint="1"
         android:layout_width="76dp"
         android:layout_height="40dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        app:layout_constraintTop_toBottomOf="@id/room_field_desc"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        android:hint="1"
+        android:inputType="number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/room_field_desc" />
 
     <TextView
         android:id="@+id/review_field_desc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Details"
         android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/building_spinner"
+        android:text="Details"
         app:layout_constraintBottom_toTopOf="@id/review_field"
-        app:layout_constraintStart_toStartOf="@id/review_field"/>
+        app:layout_constraintStart_toStartOf="@id/review_field"
+        app:layout_constraintTop_toBottomOf="@id/building_spinner" />
 
     <EditText
         android:id="@+id/review_field"
-        android:hint="Enter more details..."
-        android:inputType="textAutoComplete|textMultiLine|textLongMessage"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:maxHeight="128dp"
-        android:layout_marginTop="8dp"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:hint="Enter more details..."
+        android:inputType="textAutoComplete|textMultiLine|textLongMessage"
+        android:maxHeight="128dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/review_field_desc" />
 
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/review_field">
 
-    <LinearLayout
-        android:id="@+id/linearLayout4"
-        android:layout_width="391dp"
-        android:layout_height="469dp"
-        android:orientation="vertical"
-        tools:layout_editor_absoluteX="-3dp"
-        tools:layout_editor_absoluteY="93dp">
+        <android.support.constraint.Guideline
+            android:id="@+id/center_guideline"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.50" />
 
-        <LinearLayout
+        <android.support.constraint.Guideline
+            android:id="@+id/offset_guideline"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.33" />
+
+        <TextView
+            android:id="@+id/smellField"
             android:layout_width="wrap_content"
-            android:layout_height="46dp"
-            android:layout_marginStart="80dp"
-            android:layout_marginTop="212dp"
-            android:orientation="horizontal"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="Smell"
+            app:layout_constraintBottom_toBottomOf="@id/smellRating"
+            app:layout_constraintEnd_toStartOf="@id/offset_guideline"
+            app:layout_constraintTop_toTopOf="@id/smellRating" />
 
-            <TextView
-                android:id="@+id/smellField"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Smell"
-                app:layout_constraintStart_toStartOf="parent"
-                tools:layout_editor_absoluteY="271dp" />
+        <RatingBar
+            android:id="@+id/smellRating"
+            style="@style/Widget.AppCompat.RatingBar.Indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:isIndicator="false"
+            android:stepSize="1"
+            app:layout_constraintStart_toEndOf="@id/offset_guideline"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <RatingBar
-                android:id="@+id/smellRating"
-                style="@style/Widget.AppCompat.RatingBar.Indicator"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:isIndicator="false"
-                android:stepSize="1"
-                tools:layout_editor_absoluteX="102dp"
-                tools:layout_editor_absoluteY="332dp" />
+        <TextView
+            android:id="@+id/cleanField"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Clean"
+            app:layout_constraintBottom_toBottomOf="@id/cleanRating"
+            app:layout_constraintStart_toStartOf="@id/smellField"
+            app:layout_constraintTop_toTopOf="@id/cleanRating" />
 
-        </LinearLayout>
+        <RatingBar
+            android:id="@+id/cleanRating"
+            style="@style/Widget.AppCompat.RatingBar.Indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:isIndicator="false"
+            android:stepSize="1"
+            app:layout_constraintEnd_toEndOf="@id/smellRating"
+            app:layout_constraintTop_toBottomOf="@id/smellRating" />
 
-        <android.support.constraint.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/quietField"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Quiet"
+            app:layout_constraintBottom_toBottomOf="@id/quietRating"
+            app:layout_constraintStart_toStartOf="@id/cleanField"
+            app:layout_constraintTop_toTopOf="@id/quietRating" />
 
-            <RatingBar
-                android:id="@+id/cleanRating"
-                style="@style/Widget.AppCompat.RatingBar.Indicator"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="116dp"
-                android:isIndicator="false"
-                android:stepSize="1"
-                app:layout_constraintStart_toStartOf="parent"
-                tools:layout_editor_absoluteY="0dp" />
+        <RatingBar
+            android:id="@+id/quietRating"
+            style="@style/Widget.AppCompat.RatingBar.Indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:isIndicator="false"
+            android:stepSize="1"
+            app:layout_constraintEnd_toEndOf="@id/cleanRating"
+            app:layout_constraintTop_toBottomOf="@id/cleanRating" />
 
-            <RatingBar
-                android:id="@+id/quietRating"
-                style="@style/Widget.AppCompat.RatingBar.Indicator"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:isIndicator="false"
-                android:stepSize="1"
-                app:layout_constraintStart_toEndOf="@+id/textView13"
-                app:layout_constraintTop_toBottomOf="@+id/cleanRating" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gender"
+            app:layout_constraintEnd_toEndOf="@id/quietField"
+            app:layout_constraintTop_toTopOf="@id/gender_spinner"
+            app:layout_constraintBottom_toBottomOf="@id/gender_spinner"/>
 
-            <TextView
-                android:id="@+id/textView12"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="81dp"
-                android:layout_marginTop="4dp"
-                android:text="Clean"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+        <Spinner
+            android:id="@+id/gender_spinner"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="8dp"
+            android:spinnerMode="dropdown"
+            style="@style/Widget.AppCompat.Spinner"
+            app:layout_constraintEnd_toEndOf="@id/quietRating"
+            app:layout_constraintStart_toStartOf="@id/quietRating"
+            app:layout_constraintTop_toBottomOf="@id/quietRating" />
 
-            <TextView
-                android:id="@+id/textView13"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="84dp"
-                android:layout_marginTop="28dp"
-                android:text="Quiet"
-                app:layout_constraintEnd_toStartOf="@+id/quietRating"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView12" />
+        <TextView
+            android:id="@+id/handicap_field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Handicap Access"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintTop_toTopOf="@id/handicap_switch"
+            app:layout_constraintBottom_toBottomOf="@id/handicap_switch"
+            app:layout_constraintEnd_toStartOf="@id/center_guideline"/>
 
-            <Button
-                android:id="@+id/handicapButton"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
-                android:layout_marginStart="81dp"
-                android:layout_marginTop="12dp"
-                android:background="@color/button"
-                android:text="&#9855;"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/quietRating" />
+        <Switch
+            android:id="@+id/handicap_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintTop_toBottomOf="@id/gender_spinner"
+            app:layout_constraintStart_toStartOf="@id/center_guideline"/>
 
-            <Button
-                android:id="@+id/plyButton"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="12dp"
-                android:background="@color/button"
-                app:layout_constraintStart_toEndOf="@+id/handicapButton"
-                app:layout_constraintTop_toBottomOf="@+id/quietRating" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Two Ply Paper"
+            app:layout_constraintTop_toTopOf="@id/ply_switch"
+            app:layout_constraintBottom_toBottomOf="@id/ply_switch"
+            app:layout_constraintEnd_toEndOf="@id/handicap_field"/>
 
-            <Button
-                android:id="@+id/genderButton"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
-                android:layout_marginStart="36dp"
-                android:layout_marginTop="12dp"
-                android:background="@color/button"
-                android:text="🚺"
-                app:layout_constraintStart_toEndOf="@+id/plyButton"
-                app:layout_constraintTop_toBottomOf="@+id/quietRating" />
-
-        </android.support.constraint.ConstraintLayout>
-
-    </LinearLayout>
+        <Switch
+            android:id="@+id/ply_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/handicap_switch"
+            app:layout_constraintStart_toStartOf="@id/handicap_switch"/>
+    </android.support.constraint.ConstraintLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/sendButton"
@@ -214,7 +234,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:clickable="true"
-        android:src="@android:drawable/ic_dialog_email"
+        android:src="@drawable/ic_send_white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

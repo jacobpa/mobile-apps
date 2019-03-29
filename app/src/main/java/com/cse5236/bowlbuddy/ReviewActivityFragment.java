@@ -3,8 +3,8 @@ package com.cse5236.bowlbuddy;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.text.Editable;
@@ -16,9 +16,11 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.cse5236.bowlbuddy.models.Bathroom;
@@ -42,31 +44,31 @@ import retrofit2.Response;
 public class ReviewActivityFragment extends Fragment {
     private final static String TAG = ReviewActivityFragment.class.getSimpleName();
 
-    APIService service;
+    private APIService service;
     private View viewVar;
-
-    private Button genderBtn;
-    private Button handicapBtn;
-    private Button tpBtn;
-
-    private boolean handicap;
-    private boolean ply;
-    String gender;
+    private SharedPreferences sharedPrefs;
 
     List<Building> buildingList;
-    ArrayAdapter<Building> adapter;
+    ArrayAdapter<Building> buildingAdapter;
     Building building;
     Bathroom bathroom;
+
     private Spinner buildingSpn;
     private EditText floorEntry;
     private EditText detailsEntry;
     private EditText roomEntry;
+    private Spinner genderSpinner;
+    private Switch handicapSwitch;
+    private Switch plySwitch;
 
     int smellStars;
     int quietStars;
     int cleanStars;
+    String gender;
     int floor;
     int room;
+    int ply;
+    boolean handicap;
 
     public ReviewActivityFragment() {
     }
@@ -78,7 +80,7 @@ public class ReviewActivityFragment extends Fragment {
 
         service = APISingleton.getInstance();
         Intent intent = getActivity().getIntent();
-        final SharedPreferences sharedPrefs = getActivity().getSharedPreferences("Session", Context.MODE_PRIVATE);
+        sharedPrefs = getActivity().getSharedPreferences("Session", Context.MODE_PRIVATE);
 
         floorEntry = viewVar.findViewById(R.id.floor_entry);
         roomEntry = viewVar.findViewById(R.id.room_entry);
@@ -87,9 +89,24 @@ public class ReviewActivityFragment extends Fragment {
         RatingBar smellBar = viewVar.findViewById(R.id.smellRating);
         RatingBar quietBar = viewVar.findViewById(R.id.cleanRating);
         RatingBar cleanBar = viewVar.findViewById(R.id.quietRating);
-        handicapBtn = viewVar.findViewById(R.id.handicapButton);
-        genderBtn = viewVar.findViewById(R.id.genderButton);
-        tpBtn = viewVar.findViewById(R.id.plyButton);
+        handicapSwitch = viewVar.findViewById(R.id.handicap_switch);
+        plySwitch = viewVar.findViewById(R.id.ply_switch);
+
+        genderSpinner = viewVar.findViewById(R.id.gender_spinner);
+        ArrayAdapter<CharSequence> genderAdapter = ArrayAdapter.createFromResource(getContext(), R.array.genders, android.R.layout.simple_spinner_item);
+        genderAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        genderSpinner.setAdapter(genderAdapter);
+        genderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                gender = (String) adapterView.getItemAtPosition(i);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                gender = "";
+            }
+        });
 
         String caller = intent.getStringExtra("caller");
         // Populate building spinner
@@ -163,44 +180,26 @@ public class ReviewActivityFragment extends Fragment {
             }
         });
 
-        gender = "Male";
-        genderBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (gender.equals("Male")) {
-                    genderBtn.setBackgroundColor(Color.parseColor("#ff91f5"));
-                    gender = "Female";
-                } else {
-                    genderBtn.setBackgroundColor(Color.parseColor("#4286f4"));
-                    gender = "Male";
-                }
-            }
-        });
-
         handicap = false;
-        handicapBtn.setOnClickListener(new View.OnClickListener() {
+        handicapSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                if (handicap) {
-                    handicapBtn.setBackgroundColor(Color.parseColor("#BCBDBD"));
-                    handicap = false;
-                } else {
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
                     handicap = true;
-                    handicapBtn.setBackgroundColor(Color.parseColor("#4286f4"));
+                } else {
+                    handicap = false;
                 }
             }
         });
 
-        ply = false;
-        tpBtn.setOnClickListener(new View.OnClickListener() {
+        ply = 1;
+        plySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                if (ply) {
-                    tpBtn.setBackgroundColor(Color.parseColor("#BCBDBD"));
-                    ply = false;
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    ply = 2;
                 } else {
-                    ply = true;
-                    tpBtn.setBackgroundColor(Color.parseColor("#4286f4"));
+                    ply = 1;
                 }
             }
         });
@@ -209,22 +208,30 @@ public class ReviewActivityFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Map<String, String> queries = new HashMap<>();
                 if (getActivity().getIntent().getStringExtra("caller").equals("MasterListFragment")) {
                     // This must be a new bathroom, submit both bathroom and review
-                    Map<String, String> queries = new HashMap<>();
                     queries.put("floor", Integer.toString(floor));
                     queries.put("rmNum", Integer.toString(room));
                     queries.put("gender", gender);
                     queries.put("cleanRating", Integer.toString(cleanStars));
                     queries.put("emptyRating", Integer.toString(quietStars));
                     queries.put("smellRating", Integer.toString(smellStars));
+                    queries.put("handicap", Boolean.toString(handicap));
+                    queries.put("plyCount", Integer.toString(ply));
 
                     service.addBathroom(building.getId(), queries, sharedPrefs.getString("jwt", "")).
-                            enqueue(new AddBathroomCallback(getContext(), viewVar));
+                            enqueue(new AddBathroomCallback(getContext(), viewVar, !detailsEntry.getText().toString().trim().isEmpty()));
                 } else {
-                    service.addReview(sharedPrefs.getInt("id", 0), bathroom.getId(), detailsEntry.getText().toString(), sharedPrefs.getString("jwt", "")).enqueue(new AddReviewCallback(getContext(), viewVar));
+                    queries.put("cleanRating", Integer.toString(cleanStars));
+                    queries.put("emptyRating", Integer.toString(quietStars));
+                    queries.put("smellRating", Integer.toString(smellStars));
+                    queries.put("handicap", Boolean.toString(handicap));
+                    queries.put("plyCount", Integer.toString(ply));
+                    service.addReview(sharedPrefs.getInt("id", 0), bathroom.getId(), detailsEntry.getText().toString().trim(), sharedPrefs.getString("jwt", "")).enqueue(new AddReviewCallback(getContext(), viewVar));
                 }
-                Toast.makeText(getActivity(), "Review Sent", Toast.LENGTH_SHORT).show();
+
+                Snackbar.make(getView(), "Review sent!", Snackbar.LENGTH_LONG).show();
             }
         });
 
@@ -252,14 +259,23 @@ public class ReviewActivityFragment extends Fragment {
     }
 
     private class AddBathroomCallback extends BowlBuddyCallback<Bathroom> {
-        public AddBathroomCallback(Context context, View view) {
+        private boolean hasReview;
+
+        public AddBathroomCallback(Context context, View view, boolean hasReview) {
             super(context, view);
+            this.hasReview = hasReview;
         }
 
         @Override
         public void onResponse(Call<Bathroom> call, Response<Bathroom> response) {
             if (response.isSuccessful()) {
+                Bathroom b = response.body();
                 Log.d(TAG, "onResponse: Response is " + response);
+
+                if(hasReview) {
+                    service.addReview(sharedPrefs.getInt("id", 0), b.getId(), detailsEntry.getText().toString(), sharedPrefs.getString("jwt", ""))
+                            .enqueue(new AddReviewCallback(getContext(), viewVar));
+                }
             } else {
                 parseError(response);
             }
@@ -289,14 +305,14 @@ public class ReviewActivityFragment extends Fragment {
                 });
 
                 // Set ArrayAdapter for spinner
-                adapter = new ArrayAdapter<>(getActivity(),
+                buildingAdapter = new ArrayAdapter<>(getActivity(),
                         android.R.layout.simple_spinner_item, buildingList);
-                buildingSpn.setAdapter(adapter);
+                buildingSpn.setAdapter(buildingAdapter);
 
                 // Set listeners for spinner, or disable if not needed
                 if (bathroomExists) {
                     // Set building selection, disable input
-                    buildingSpn.setSelection(adapter.getPosition(bathroom.getBuilding()));
+                    buildingSpn.setSelection(buildingAdapter.getPosition(bathroom.getBuilding()));
                     buildingSpn.setEnabled(false);
                 } else {
                     buildingSpn.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
