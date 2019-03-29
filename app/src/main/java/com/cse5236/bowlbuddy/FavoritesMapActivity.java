@@ -74,7 +74,6 @@ public class FavoritesMapActivity extends FragmentActivity implements OnMapReady
     @Override
     public void onStart() {
         super.onStart();
-
         // Get updated list of favorites
         service.getFavorites(sharedPreferences.getInt("id", -1), sharedPreferences.getString("jwt", ""))
                 .enqueue(new GetFavoritesCallback(this, view));
@@ -83,6 +82,10 @@ public class FavoritesMapActivity extends FragmentActivity implements OnMapReady
     @Override
     public void onRestart() {
         super.onRestart();
+
+        // Clear map then check for removed favorites
+        mMap.clear();
+
         // Get updated list of favorites
         service.getFavorites(sharedPreferences.getInt("id", -1), sharedPreferences.getString("jwt", ""))
                 .enqueue(new GetFavoritesCallback(this, view));
@@ -184,7 +187,7 @@ public class FavoritesMapActivity extends FragmentActivity implements OnMapReady
                             .enqueue(new GetBuildingCallback(this.callbackContext, view, bathroom));
                 }
 
-                deleteMarkers();
+                //deleteMarkers();
 
                 Log.d(TAG, "onResponse: Response is " + favoritesList);
             } else {
