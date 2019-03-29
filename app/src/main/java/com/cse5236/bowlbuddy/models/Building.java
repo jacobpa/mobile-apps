@@ -5,6 +5,7 @@ import com.squareup.moshi.Json;
 import java.io.Serializable;
 
 public class Building implements Serializable {
+    private Integer id;
     private Integer floors;
     private String address;
     private String name;
@@ -21,6 +22,8 @@ public class Building implements Serializable {
     public String toString() {
         return name;
     }
+
+    public Integer getId() {return id;}
 
     public Integer getFloors() {
         return floors;

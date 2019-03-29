@@ -86,6 +86,14 @@ public interface APIService {
     @GET("bathrooms")
     Call<List<Bathroom>> getAllBathrooms(@Header("Authorization") String token);
 
+    @POST("buildings/{building_id}/bathrooms/{id}")
+    Call<Void> addBathroom(@Path("building_id") int buildingId,
+                           @Path("id") int  bathroomId,
+                           @Query("floor") int floor,
+                           @Query("rNum") int roomNum,
+                           @Query("gender") String gender,
+                           @Header("Authorization") String token);
+
     @GET("buildings")
     Call<List<Building>> getAllBuildings(@Header("Authorization") String token);
 

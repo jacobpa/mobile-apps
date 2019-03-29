@@ -61,6 +61,7 @@ public class ReviewActivityFragment extends Fragment {
     int smellStars;
     int quietStars;
     int cleanStars;
+    int floor;
 
     public ReviewActivityFragment() {
     }
@@ -82,6 +83,17 @@ public class ReviewActivityFragment extends Fragment {
             ArrayAdapter<Integer> floorAdapter = new ArrayAdapter<>(getActivity(),
                     android.R.layout.simple_spinner_item, floors);
             floorSpn.setAdapter(floorAdapter);
+            floorSpn.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    floor = position + 1;
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                    // left blank
+                }
+            });
         }
         else {
             TextView floorField = viewVar.findViewById(R.id.floor_field);
@@ -102,8 +114,14 @@ public class ReviewActivityFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: Pass user ID in
-                service.addReview(sharedPrefs.getInt("id", 0), bathroom.getId(), entry.getText().toString(), sharedPrefs.getString("jwt", "")).enqueue(new AddReviewCallback(getContext(), viewVar));
+                int bathroomId = (int)Math.round(Math.random() * 1000000.0);
+                if(getActivity().getIntent().getStringExtra("caller").equals("MasterListFragment")) {
+                    service.addBathroom(building.getId(), bathroomId, floor, 400, gender, sharedPrefs.getString("jwt", "")).enqueue(new AddBathroomCallback(getContext(), viewVar));
+                    service.addReview(sharedPrefs.getInt("id", 0), bathroomId, entry.getText().toString(), sharedPrefs.getString("jwt", "")).enqueue(new AddReviewCallback(getContext(), viewVar));
+                }
+                else {
+                    service.addReview(sharedPrefs.getInt("id", 0), bathroom.getId(), entry.getText().toString(), sharedPrefs.getString("jwt", "")).enqueue(new AddReviewCallback(getContext(), viewVar));
+                }
                 Toast.makeText(getActivity(), "Review Sent", Toast.LENGTH_SHORT).show();
             }
         });
@@ -186,6 +204,22 @@ public class ReviewActivityFragment extends Fragment {
 
     private class AddReviewCallback extends BowlBuddyCallback<Void> {
         public AddReviewCallback(Context context, View view) {
+            super(context, view);
+        }
+        @Override
+        public void onResponse(Call<Void> call, Response<Void> response) {
+            if (response.isSuccessful()) { Log.d(TAG, "onResponse: Response is " + response); }
+            else { parseError(response); }
+        }
+
+        @Override
+        public void onFailure(Call<Void> call, Throwable t) {
+            super.onFailure(call, t);
+        }
+    }
+
+    private class AddBathroomCallback extends BowlBuddyCallback<Void> {
+        public AddBathroomCallback(Context context, View view) {
             super(context, view);
         }
         @Override
