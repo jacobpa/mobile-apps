@@ -257,6 +257,10 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
 
         changeRecyclerViewHighlight(color);
 
+
+        LinearLayoutManager linearLayoutManager = (LinearLayoutManager) bathroomLayoutManager;
+        linearLayoutManager.scrollToPositionWithOffset(0,0);
+
         gottaGoEnabled = !gottaGoEnabled;
     }
 
@@ -268,6 +272,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
 
     public void changeRecyclerViewHighlight(int color) {
         for (int i = 0; i < 3; i++) {
+            Snackbar.make(view, "changing colors: " + color, Snackbar.LENGTH_SHORT).show();
             View bathroom = bathroomRecyclerView.getChildAt(i);
             BathroomHolder holder = (BathroomHolder) bathroomRecyclerView.getChildViewHolder(bathroom);
 
@@ -308,8 +313,6 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         }
 
         bathroomList = unsortedBathroomList;
-        LinearLayoutManager linearLayoutManager = (LinearLayoutManager) bathroomLayoutManager;
-        linearLayoutManager.scrollToPositionWithOffset(0,0);
         bathroomAdapter.notifyDataSetChanged();
     }
 
