@@ -129,7 +129,11 @@ public class ReviewActivityFragment extends Fragment {
 
                 @Override
                 public void afterTextChanged(Editable editable) {
-                    floor = Integer.parseInt(editable.toString());
+                    if (!TextUtils.isEmpty(editable)) {
+                        floor = Integer.parseInt(editable.toString());
+                    } else {
+                        floor = -1;
+                    }
                 }
             });
             roomEntry.addTextChangedListener(new TextWatcher() {
@@ -145,7 +149,11 @@ public class ReviewActivityFragment extends Fragment {
 
                 @Override
                 public void afterTextChanged(Editable editable) {
-                    room = Integer.parseInt(editable.toString());
+                    if(!TextUtils.isEmpty(editable)) {
+                        room = Integer.parseInt(editable.toString());
+                    } else {
+                        room = -1;
+                    }
                 }
             });
         } else {
@@ -272,8 +280,6 @@ public class ReviewActivityFragment extends Fragment {
             queries.put("plyCount", Integer.toString(ply));
             service.updateBathroom(building.getId(), bathroom.getId(), queries, sharedPrefs.getString("jwt", "")).enqueue(new AddBathroomCallback(getContext(), viewVar, !reviewEmpty));
         }
-
-        Snackbar.make(getView(), "Review sent!", Snackbar.LENGTH_LONG).show();
     }
 
     private class AddReviewCallback extends BowlBuddyCallback<Void> {
@@ -314,6 +320,8 @@ public class ReviewActivityFragment extends Fragment {
                     service.addReview(sharedPrefs.getInt("id", 0), b.getId(), detailsEntry.getText().toString(), sharedPrefs.getString("jwt", ""))
                             .enqueue(new AddReviewCallback(getContext(), viewVar));
                 }
+
+                Snackbar.make(viewVar, "Review sent!", Snackbar.LENGTH_LONG).show();
             } else {
                 parseError(response);
             }
