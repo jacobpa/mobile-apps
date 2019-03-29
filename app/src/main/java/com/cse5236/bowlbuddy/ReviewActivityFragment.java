@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.cse5236.bowlbuddy.models.Bathroom;
 import com.cse5236.bowlbuddy.models.Building;
+import com.cse5236.bowlbuddy.models.User;
 import com.cse5236.bowlbuddy.util.APIService;
 import com.cse5236.bowlbuddy.util.APISingleton;
 import com.cse5236.bowlbuddy.util.BowlBuddyCallback;
@@ -102,7 +103,7 @@ public class ReviewActivityFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 // TODO: Pass user ID in
-                service.addReview(2, bathroom.getId(), entry.getText().toString(), sharedPrefs.getString("jwt", "")).enqueue(new AddReviewCallback(getContext(), viewVar));
+                service.addReview(sharedPrefs.getInt("id", 0), bathroom.getId(), entry.getText().toString(), sharedPrefs.getString("jwt", "")).enqueue(new AddReviewCallback(getContext(), viewVar));
                 Toast.makeText(getActivity(), "Review Sent", Toast.LENGTH_SHORT).show();
             }
         });
