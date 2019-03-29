@@ -62,9 +62,13 @@ public class MyReviewsFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_my_reviews, container, false);
         Activity activity = getActivity();
 
+        // Initialize the service variable that makes queries to the server
         service = APISingleton.getInstance();
+
+        // Get shared user information
         sharedPreferences = activity.getSharedPreferences("Session", Context.MODE_PRIVATE);
 
+        // Set up and initialize the recycler view that shows the user's reviews
         reviewsAdapter = new ReviewsAdapter();
         reviewsLayoutManager = new LinearLayoutManager(activity);
         reviewsRecyclerView = view.findViewById(R.id.recycler_view);
@@ -72,13 +76,16 @@ public class MyReviewsFragment extends Fragment {
         reviewsRecyclerView.setLayoutManager(reviewsLayoutManager);
         reviewsRecyclerView.setAdapter(reviewsAdapter);
 
+        // Send a request to the server to get the user's reviews
         service.getUserReviews(sharedPreferences.getInt("id", -1), sharedPreferences.getString("jwt", ""))
                 .enqueue(new GetReviewsCallback(getContext(), view));
 
+        // Send a request to the server to get the user's favorite bathrooms
         service.getFavorites(sharedPreferences.getInt("id", -1), sharedPreferences.getString("jwt", ""))
                 .enqueue(new GetFavoritesCallback(getContext(), view));
 
         Log.d(TAG, "onCreateView: View successfully created");
+
         // Inflate the layout for this fragment
         return view;
 
@@ -99,6 +106,7 @@ public class MyReviewsFragment extends Fragment {
 
             itemView.setOnClickListener(this);
 
+            // Initialize all of the views used in this holder
             bathroomName = itemView.findViewById(R.id.bathroom_name);
             reviewDetails = itemView.findViewById(R.id.bathroom_desc);
             editDetails = itemView.findViewById(R.id.edit_details);
@@ -149,6 +157,9 @@ public class MyReviewsFragment extends Fragment {
             }
         }
 
+        /**
+         * Method used for opening a details activity for the bathroom that was selected.
+         */
         public void openDetails() {
             Bundle bundle = new Bundle();
             bundle.putSerializable("bathroom", this.bathroom);
@@ -159,34 +170,57 @@ public class MyReviewsFragment extends Fragment {
 
             bundle.putSerializable("favorites", (Serializable) favoritesList);
 
+            // Start the details activity for the review that was selected
             Intent intent = new Intent(getActivity(), DetailsActivity.class);
             intent.putExtras(bundle);
             startActivityForResult(intent, UPDATE_FAVORITES_REQUEST);
         }
 
+        /**
+         * Method used to delete a selected review
+         */
         public void deleteReview() {
 
+            // Send a request to the server to delete the selected review
             service.deleteReview(this.review.getUserID(), this.review.getReviewID(), sharedPreferences.getString("jwt", ""))
             .enqueue(new DeleteReviewCallback(getContext(), view));
 
+            // Remove the review from the recycler view and notify view of change
             reviewList.remove(getAdapterPosition());
             reviewsAdapter.notifyItemRemoved(getAdapterPosition());
             reviewsAdapter.notifyItemRangeChanged(getAdapterPosition(), reviewList.size());
 
         }
 
+        /**
+         * Method used to edit the details of a review
+         */
         public void editReview() {
+            // Change visibility of layouts to allow user to update review
             editDetailsLayout.setVisibility(View.VISIBLE);
             buttonLayout.setVisibility(View.GONE);
         }
 
+        /**
+         * Method used to save the updated review to the server.
+         */
         public void saveReview() {
+            // Get the text for the updated review
             String newReview = editDetails.getText().toString();
+
+            // Make sure the review has information in it
             if (!newReview.equals("")) {
+                // Change the details of the review in the class
                 review.setDetails(newReview);
+
+                // Send a request to the server to update the review
                 service.updateUserReview(this.review.getUserID(), this.review.getReviewID(), newReview, sharedPreferences.getString("jwt", ""))
                         .enqueue(new UpdateUserReviewCallback(getContext(), view));
+
+                // Change the text of the review on the UI
                 reviewDetails.setText(newReview);
+
+                // Change layout visibility after changing the review has complete.
                 editDetailsLayout.setVisibility(View.GONE);
                 buttonLayout.setVisibility(View.VISIBLE);
             } else {
@@ -194,6 +228,9 @@ public class MyReviewsFragment extends Fragment {
             }
         }
 
+        /**
+         * Method used to cancel the edit review process.
+         */
         public void cancelReview() {
             editDetailsLayout.setVisibility(View.GONE);
             buttonLayout.setVisibility(View.VISIBLE);
@@ -237,15 +274,19 @@ public class MyReviewsFragment extends Fragment {
 
         @Override
         public void onResponse(Call<List<Review>> call, Response<List<Review>> response) {
+            // Check if response was successful
             if (response.isSuccessful()) {
+                // Update the review list
                 reviewList = response.body();
 
+                // Get bathrooms for all of the reviews
                 for (Review review : reviewList) {
                     service.getBathroom(review.getBathroomID(), sharedPreferences.getString("jwt", ""))
                             .enqueue(new GetBathroomCallback(this.callbackContext, view, review));
                 }
                 Log.d(TAG, "onResponse: Response is " + reviewList);
             } else {
+                // Print error if present
                 parseError(response);
             }
         }
@@ -264,11 +305,16 @@ public class MyReviewsFragment extends Fragment {
 
         @Override
         public void onResponse(Call<Bathroom> call, Response<Bathroom> response) {
+            // Check if response was successful
             if (response.isSuccessful()) {
+                // Update the review's bathroom
                 this.review.setBathroom(response.body());
+
+                // Get the building for the bathroom
                 service.getLocation(this.review.getBathroom().getBuildingID(), sharedPreferences.getString("jwt", ""))
                         .enqueue(new GetBuildingCallback(this.callbackContext, view, this.review.getBathroom()));
             } else {
+                // Print error if present
                 parseError(response);
             }
         }
@@ -287,10 +333,15 @@ public class MyReviewsFragment extends Fragment {
 
         @Override
         public void onResponse(Call<Building> call, Response<Building> response) {
+            // Check if response was successful
             if (response.isSuccessful()) {
+                // Update the building for the bathroom
                 this.bathroom.setBuilding(response.body());
+
+                // Notify the recycler view of item changes
                 reviewsAdapter.notifyDataSetChanged();
             } else {
+                // Print error if present
                 parseError(response);
             }
         }
@@ -329,9 +380,12 @@ public class MyReviewsFragment extends Fragment {
 
         @Override
         public void onResponse(Call<List<Bathroom>> call, Response<List<Bathroom>> response) {
+            // Check if response was successful
             if(response.isSuccessful()) {
+                // Update the favorites list
                 favoritesList = response.body();
             } else {
+                // Print error if present
                 parseError(response);
             }
         }
