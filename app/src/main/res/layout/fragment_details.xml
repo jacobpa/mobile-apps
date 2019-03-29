@@ -156,7 +156,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/floor_field"
+        android:id="@+id/floor_field_desc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
@@ -164,7 +164,7 @@
         app:layout_constraintStart_toEndOf="@+id/floorIcon" />
 
     <TextView
-        android:id="@+id/room_field"
+        android:id="@+id/room_field_desc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
@@ -179,7 +179,7 @@
         android:layout_marginStart="26dp"
         android:text="Room:"
         app:layout_constraintBottom_toTopOf="@+id/titleField"
-        app:layout_constraintStart_toEndOf="@+id/floor_field" />
+        app:layout_constraintStart_toEndOf="@+id/floor_field_desc" />
 
     <TextView
         android:id="@+id/time_field"

@@ -6,6 +6,7 @@ import com.cse5236.bowlbuddy.models.Bathroom;
 import com.cse5236.bowlbuddy.models.Building;
 
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -16,6 +17,7 @@ import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.QueryMap;
 
 public interface APIService {
     // User and Session endpoints
@@ -88,12 +90,7 @@ public interface APIService {
 
     @POST("buildings/{building_id}/bathrooms")
     Call<Bathroom> addBathroom(@Path("building_id") int buildingId,
-                               @Query("floor") int floor,
-                               @Query("rNum") int roomNum,
-                               @Query("gender") String gender,
-                               @Query("cleanRating") int cleanRating,
-                               @Query("emptyRating") int quietRating,
-                               @Query("smellRating") int smellRating,
+                               @QueryMap Map<String, String> queries,
                                @Header("Authorization") String token);
 
     @GET("buildings")

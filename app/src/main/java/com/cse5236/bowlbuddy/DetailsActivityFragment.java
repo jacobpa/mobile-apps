@@ -75,10 +75,10 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getActivity(), imageUrls);
         viewPager.setAdapter(adapter);
         genderField = view.findViewById(R.id.genderField);
-        floorField = view.findViewById(R.id.floor_field);
+        floorField = view.findViewById(R.id.floor_field_desc);
         handicapField = view.findViewById(R.id.handicapField);
         titleField = view.findViewById(R.id.titleField);
-        roomField = view.findViewById(R.id.room_field);
+        roomField = view.findViewById(R.id.room_field_desc);
         noReviewMessage = view.findViewById(R.id.no_reviews_message);
         ratingBar = view.findViewById(R.id.ratingBar);
 
