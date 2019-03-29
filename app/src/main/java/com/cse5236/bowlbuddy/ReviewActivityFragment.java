@@ -77,6 +77,7 @@ public class ReviewActivityFragment extends Fragment {
         floorSpn = viewVar.findViewById(R.id.floor_spinner);
         buildingSpn = viewVar.findViewById(R.id.building_spinner);
         roomEntry = viewVar.findViewById(R.id.room_entry);
+
         if(intent.getStringExtra("caller").equals("MasterListFragment")) {
             service.getAllBuildings(sharedPrefs.getString("jwt", "")).enqueue(new GetBuildingsCallback(getContext(),viewVar));
             Integer[] floors = new Integer[]{1,2,3,4,5,6,7,8,9,10};
@@ -121,7 +122,6 @@ public class ReviewActivityFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 if(getActivity().getIntent().getStringExtra("caller").equals("MasterListFragment")) {
                     int room = Integer.parseInt(roomEntry.getText().toString());
                     service.addBathroom(building.getId(), floor, room, gender, cleanStars, quietStars, smellStars, sharedPrefs.getString("jwt", "")).enqueue(new AddBathroomCallback(getContext(), viewVar));
@@ -228,21 +228,18 @@ public class ReviewActivityFragment extends Fragment {
         }
     }
 
-    private class AddBathroomCallback extends BowlBuddyCallback<Void> {
+    private class AddBathroomCallback extends BowlBuddyCallback<Bathroom> {
         public AddBathroomCallback(Context context, View view) {
             super(context, view);
         }
-        @Override
-        public void onResponse(Call<Void> call, Response<Void> response) {
-            if (response.isSuccessful()) {
-                Log.d(TAG, "onResponse: Response is " + response);
-            }
-            else { parseError(response); }
-        }
 
         @Override
-        public void onFailure(Call<Void> call, Throwable t) {
-            super.onFailure(call, t);
+        public void onResponse(Call<Bathroom> call, Response<Bathroom> response) {
+            if (response.isSuccessful()) {
+                Log.d(TAG, "onResponse: Response is " + response);
+            } else {
+                parseError(response);
+            }
         }
     }
 
