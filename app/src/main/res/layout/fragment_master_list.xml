@@ -27,11 +27,10 @@
             android:layout_marginRight="24dp"
             android:layout_marginBottom="2dp"
             android:visibility="invisible"
-            app:backgroundTint="@color/colorPrimaryDark"
             app:fabSize="mini"
             app:layout_constraintBottom_toTopOf="@id/gotta_go"
             app:layout_constraintEnd_toEndOf="parent"
-            app:srcCompat="@android:drawable/ic_input_add" />
+            app:srcCompat="@drawable/ic_add_white" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/gotta_go"
@@ -40,9 +39,8 @@
             android:layout_gravity="end|bottom"
             android:layout_marginRight="24dp"
             android:layout_marginBottom="2dp"
-            android:src="?android:attr/alertDialogIcon"
+            android:src="@drawable/ic_warning_black"
             android:visibility="invisible"
-            app:backgroundTint="@color/colorPrimaryDark"
             app:fabSize="mini"
             app:layout_constraintBottom_toTopOf="@id/menu_fab"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -52,9 +50,8 @@
             android:id="@+id/menu_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:backgroundTint="@color/colorPrimaryDark"
             android:layout_margin="16dp"
-            android:src="@drawable/ic_menu_white"
+            app:srcCompat="@drawable/ic_menu_white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 

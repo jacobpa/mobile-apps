@@ -12,17 +12,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/ic_menu_white"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_margin="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/add_review_fab"
-        android:layout_width="48dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:fabSize="mini"
         app:srcCompat="@drawable/ic_add_white"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="2dp"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="@id/details_root_fab"
         app:layout_constraintEnd_toEndOf="@id/details_root_fab"
@@ -30,10 +30,11 @@
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/favorite_fab"
-        android:layout_width="48dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/ic_favorite_border_white"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="2dp"
+        app:fabSize="mini"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="@id/add_review_fab"
         app:layout_constraintEnd_toEndOf="@id/add_review_fab"
