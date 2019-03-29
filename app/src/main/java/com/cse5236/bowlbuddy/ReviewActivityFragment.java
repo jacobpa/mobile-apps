@@ -106,10 +106,13 @@ public class ReviewActivityFragment extends Fragment {
             floorSpn.setVisibility(View.INVISIBLE);
             roomEntry.setVisibility(View.INVISIBLE);
             roomField.setVisibility(View.INVISIBLE);
+
             TextView title = viewVar.findViewById(R.id.title_field);
             TextView floor = viewVar.findViewById(R.id.floor_header);
+
             Bundle bundle = intent.getExtras();
             bathroom = (Bathroom) bundle.getSerializable("bathroom");
+
             title.setText(bathroom.getBuilding().toString());
             floor.setText(bathroom.getFloor().toString());
         }
@@ -135,6 +138,7 @@ public class ReviewActivityFragment extends Fragment {
         RatingBar smellBar = viewVar.findViewById(R.id.smellRating);
         RatingBar quietBar = viewVar.findViewById(R.id.cleanRating);
         RatingBar cleanBar = viewVar.findViewById(R.id.quietRating);
+
         smellBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
@@ -159,6 +163,7 @@ public class ReviewActivityFragment extends Fragment {
         handicapBtn = viewVar.findViewById(R.id.handicapButton);
         genderBtn = viewVar.findViewById(R.id.genderButton);
         tpBtn = viewVar.findViewById(R.id.plyButton);
+
         gender = "Male";
         genderBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -179,7 +184,7 @@ public class ReviewActivityFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (handicap) {
-                    handicapBtn.setBackgroundColor(Color.parseColor(""));
+                    handicapBtn.setBackgroundColor(Color.parseColor("#BCBDBD"));
                     handicap = false;
                 }
                 else {
@@ -229,7 +234,9 @@ public class ReviewActivityFragment extends Fragment {
         }
         @Override
         public void onResponse(Call<Void> call, Response<Void> response) {
-            if (response.isSuccessful()) { Log.d(TAG, "buffalo onResponse: Response is " + response); }
+            if (response.isSuccessful()) {
+                Log.d(TAG, "onResponse: Response is " + response);
+            }
             else { parseError(response); }
         }
 

@@ -53,6 +53,7 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
     private List<Review> reviewList;
     private ArrayList<Bathroom> favoritesList;
     private boolean isFavorited;
+    private RatingBar ratingBar;
 
 
     // TODO: Programmatically request image urls from webserver
@@ -78,20 +79,18 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         handicapField = view.findViewById(R.id.handicapField);
         titleField = view.findViewById(R.id.titleField);
         roomField = view.findViewById(R.id.room_field);
-
         noReviewMessage = view.findViewById(R.id.no_reviews_message);
-        RatingBar ratingBar = view.findViewById(R.id.ratingBar);
-
+        ratingBar = view.findViewById(R.id.ratingBar);
 
         DetailsActivity activity = (DetailsActivity) getActivity();
         sharedPrefs = activity.getSharedPreferences("Session", Context.MODE_PRIVATE);
-
 
         bathroom = (Bathroom) activity.getIntent().getExtras().getSerializable("bathroom");
         favoritesList = (ArrayList<Bathroom>) activity.getIntent().getExtras().getSerializable("favorites");
 
         ratingBar.setRating(activity.getIntent().getExtras().getInt("rating"));
 
+        setStars(bathroom.getAverageRating());
         setRoom(bathroom.getRmNum());
         setFloor(bathroom.getFloor());
         setGender(bathroom.getGender());
@@ -214,6 +213,10 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         } else {
             handicapField.setText(no_access);
         }
+    }
+
+    public void setStars(Float rating) {
+        ratingBar.setRating(rating);
     }
 
     public void setTitle(String title) {

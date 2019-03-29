@@ -181,4 +181,12 @@
         app:layout_constraintBottom_toTopOf="@+id/titleField"
         app:layout_constraintStart_toEndOf="@+id/floor_field" />
 
+    <TextView
+        android:id="@+id/time_field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="10:00pm"
+        app:layout_constraintStart_toEndOf="@+id/hoursIcon"
+        app:layout_constraintTop_toBottomOf="@+id/ratingBar" />
+
 </android.support.constraint.ConstraintLayout>
