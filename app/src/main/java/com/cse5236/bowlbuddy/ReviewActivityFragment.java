@@ -22,7 +22,6 @@ import android.widget.Toast;
 
 import com.cse5236.bowlbuddy.models.Bathroom;
 import com.cse5236.bowlbuddy.models.Building;
-import com.cse5236.bowlbuddy.models.User;
 import com.cse5236.bowlbuddy.util.APIService;
 import com.cse5236.bowlbuddy.util.APISingleton;
 import com.cse5236.bowlbuddy.util.BowlBuddyCallback;
@@ -39,7 +38,6 @@ public class ReviewActivityFragment extends Fragment {
     private final static String TAG = ReviewActivityFragment.class.getSimpleName();
 
     APIService service;
-    private SharedPreferences sharedPreferences;
     private View viewVar;
 
     private Button genderBtn;
@@ -110,14 +108,13 @@ public class ReviewActivityFragment extends Fragment {
             floor.setText(bathroom.getFloor().toString());
         }
 
-        FloatingActionButton fab = (FloatingActionButton) viewVar.findViewById(R.id.sendButton);
+        FloatingActionButton fab = viewVar.findViewById(R.id.sendButton);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int bathroomId = (int)Math.round(Math.random() * 1000000.0);
                 if(getActivity().getIntent().getStringExtra("caller").equals("MasterListFragment")) {
-                    service.addBathroom(building.getId(), bathroomId, floor, 400, gender, sharedPrefs.getString("jwt", "")).enqueue(new AddBathroomCallback(getContext(), viewVar));
-                    service.addReview(sharedPrefs.getInt("id", 0), bathroomId, entry.getText().toString(), sharedPrefs.getString("jwt", "")).enqueue(new AddReviewCallback(getContext(), viewVar));
+                    service.addBathroom(building.getId(), floor, 400, gender, cleanStars, quietStars, smellStars, sharedPrefs.getString("jwt", "")).enqueue(new AddBathroomCallback(getContext(), viewVar));
+                    //service.addReview(sharedPrefs.getInt("id", 0), bathroomId, entry.getText().toString(), sharedPrefs.getString("jwt", "")).enqueue(new AddReviewCallback(getContext(), viewVar));
                 }
                 else {
                     service.addReview(sharedPrefs.getInt("id", 0), bathroom.getId(), entry.getText().toString(), sharedPrefs.getString("jwt", "")).enqueue(new AddReviewCallback(getContext(), viewVar));
@@ -154,17 +151,17 @@ public class ReviewActivityFragment extends Fragment {
         handicapBtn = viewVar.findViewById(R.id.handicapButton);
         genderBtn = viewVar.findViewById(R.id.genderButton);
         tpBtn = viewVar.findViewById(R.id.plyButton);
-        gender = "male";
+        gender = "Male";
         genderBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(gender.equals("male")) {
+                if(gender.equals("Male")) {
                     genderBtn.setBackgroundColor(Color.parseColor("#4286f4"));
-                    gender = "female";
+                    gender = "Female";
                 }
                 else {
                     genderBtn.setBackgroundColor(Color.parseColor("#ff91f5"));
-                    gender = "male";
+                    gender = "Male";
                 }
             }
         });
@@ -224,7 +221,7 @@ public class ReviewActivityFragment extends Fragment {
         }
         @Override
         public void onResponse(Call<Void> call, Response<Void> response) {
-            if (response.isSuccessful()) { Log.d(TAG, "onResponse: Response is " + response); }
+            if (response.isSuccessful()) { Log.d(TAG, "buffalo onResponse: Response is " + response); }
             else { parseError(response); }
         }
 

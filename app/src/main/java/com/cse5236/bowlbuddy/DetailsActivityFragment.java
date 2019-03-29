@@ -78,12 +78,15 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         noReviewMessage = view.findViewById(R.id.no_reviews_message);
         RatingBar ratingBar = view.findViewById(R.id.ratingBar);
 
+
         DetailsActivity activity = (DetailsActivity) getActivity();
         sharedPrefs = activity.getSharedPreferences("Session", Context.MODE_PRIVATE);
+
 
         bathroom = (Bathroom) activity.getIntent().getExtras().getSerializable("bathroom");
         favoritesList = (ArrayList<Bathroom>) activity.getIntent().getExtras().getSerializable("favorites");
 
+        ratingBar.setRating(activity.getIntent().getExtras().getInt("rating"));
         setGender(bathroom.getGender());
         setHandicap(bathroom.isHandicap());
         setTitle(bathroom.getBuilding().getName());
