@@ -7,6 +7,9 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -35,6 +38,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Response;
 
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.location.Location.distanceBetween;
 
 public class MasterListActivity extends AppCompatActivity {
@@ -46,8 +50,10 @@ public class MasterListActivity extends AppCompatActivity {
     private boolean bathroomChanged = false;
     private Fragment fragment;
     private View view;
-    private double latitude;
-    private double longitude;
+    private double latitude = 0;
+    private double longitude = 0;
+    private LocationManager locationManager;
+    private LocationListener locationListener;
 
     private static final String DISTANCE_SORT = "Distance";
     private static final String RATING_SORT = "Rating";
@@ -58,22 +64,34 @@ public class MasterListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_master_list);
 
         // Declare variable that will manage the calls to the gps for location coordinates
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         // Declare variable that will be used to listen for responses from the GPS
-        LocationListener locationListener = new UserLocationListener();
+        locationListener = new UserLocationListener();
 
         // Check for location permissions before requesting updates from the GPS
-        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-        {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
-        } else {
-            int PERMISSION_REQUEST_LOCATION = 1;
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_LOCATION);
-            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                int PERMISSION_REQUEST_LOCATION = 1;
+                requestPermissions(new String[]{ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_LOCATION);
+            } else {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
             }
+        } else {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
         }
+
+//        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+//        {
+//            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+//        } else {
+//            int PERMISSION_REQUEST_LOCATION = 1;
+//            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_LOCATION);
+//            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+//                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+//            }
+//        }
 
         service = APISingleton.getInstance();
         sharedPreferences = this.getSharedPreferences("Session", Context.MODE_PRIVATE);
@@ -104,8 +122,15 @@ public class MasterListActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: Successfully created");
     }
 
-    public List<Bathroom> getBathroomList() {
-        return this.bathroomList;
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (checkSelfPermission(ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+            }
+        } else {
+            Snackbar.make(view, "Cannot sort bathrooms by distance without location permissions.", Snackbar.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -193,7 +218,7 @@ public class MasterListActivity extends AppCompatActivity {
         public int compare(Bathroom bathroom1, Bathroom bathroom2) {
             int result = 0;
 
-            if (bathroom1.getBuilding() != null && bathroom2.getBuilding() != null) {
+            if (bathroom1.getBuilding() != null && bathroom2.getBuilding() != null  || !(latitude == 0 && longitude == 0)) {
 
                 Location location1 = new Location("Bathroom 1");
                 Location location2 = new Location("Bathroom 2");
