@@ -1,16 +1,32 @@
 package com.cse5236.bowlbuddy;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 public class ReviewActivity extends AppCompatActivity {
     private final static String TAG = ReviewActivity.class.getSimpleName();
 
+    private Fragment fragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_review);
+
+        FragmentManager fm = getSupportFragmentManager();
+
+        // Try to find the Fragment if it's already been created
+        fragment = fm.findFragmentById(R.id.review_container);
+
+        if(fragment == null) {
+            fragment = new ReviewActivityFragment();
+            fm.beginTransaction()
+                    .add(R.id.review_container, fragment)
+                    .commit();
+        }
         Log.d(TAG, "onCreate: Successfully created");
     }
 

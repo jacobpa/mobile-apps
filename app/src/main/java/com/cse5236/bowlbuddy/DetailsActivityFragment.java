@@ -37,8 +37,9 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
     TextView genderField;
     TextView handicapField;
     TextView titleField;
+    TextView roomField;
     TextView noReviewMessage;
-    RatingBar ratingBar;
+    TextView floorField;
     APIService service;
     View view;
     private FloatingActionButton rootFAB;
@@ -52,6 +53,7 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
     private List<Review> reviewList;
     private ArrayList<Bathroom> favoritesList;
     private boolean isFavorited;
+    private RatingBar ratingBar;
 
 
     // TODO: Programmatically request image urls from webserver
@@ -73,10 +75,12 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getActivity(), imageUrls);
         viewPager.setAdapter(adapter);
         genderField = view.findViewById(R.id.genderField);
+        floorField = view.findViewById(R.id.floor_field_desc);
         handicapField = view.findViewById(R.id.handicapField);
         titleField = view.findViewById(R.id.titleField);
+        roomField = view.findViewById(R.id.room_field_desc);
         noReviewMessage = view.findViewById(R.id.no_reviews_message);
-        RatingBar ratingBar = view.findViewById(R.id.ratingBar);
+        ratingBar = view.findViewById(R.id.ratingBar);
 
         DetailsActivity activity = (DetailsActivity) getActivity();
         sharedPrefs = activity.getSharedPreferences("Session", Context.MODE_PRIVATE);
@@ -84,6 +88,9 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         bathroom = (Bathroom) activity.getIntent().getExtras().getSerializable("bathroom");
         favoritesList = (ArrayList<Bathroom>) activity.getIntent().getExtras().getSerializable("favorites");
 
+        setStars(bathroom.getAverageRating());
+        setRoom(bathroom.getRmNum());
+        setFloor(bathroom.getFloor());
         setGender(bathroom.getGender());
         setHandicap(bathroom.isHandicap());
         setTitle(bathroom.getBuilding().getName());
@@ -152,43 +159,6 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         reviewRecyclerView.setLayoutManager(reviewLayoutManager);
         reviewRecyclerView.setAdapter(reviewAdapter);
 
-        service = APISingleton.getInstance();
-        service.getBathroomReviews(bathroom.getId(), sharedPrefs.getString("jwt", ""))
-                .enqueue(new ReviewListCallback(getContext(), view));
-
-        reviewAdapter = new ReviewAdapter();
-        reviewLayoutManager = new LinearLayoutManager(activity);
-        reviewRecyclerView = view.findViewById(R.id.review_recycler_view);
-        reviewRecyclerView.setHasFixedSize(true);
-        reviewRecyclerView.setLayoutManager(reviewLayoutManager);
-        reviewRecyclerView.setAdapter(reviewAdapter);
-
-        sharedPrefs = activity.getSharedPreferences("Session", Context.MODE_PRIVATE);
-
-        service = APISingleton.getInstance();
-        service.getBathroomReviews(bathroom.getId(), sharedPrefs.getString("jwt", ""))
-                .enqueue(new ReviewListCallback(getContext(), view));
-
-        reviewAdapter = new ReviewAdapter();
-        reviewLayoutManager = new LinearLayoutManager(activity);
-        reviewRecyclerView = view.findViewById(R.id.review_recycler_view);
-        reviewRecyclerView.setHasFixedSize(true);
-        reviewRecyclerView.setLayoutManager(reviewLayoutManager);
-        reviewRecyclerView.setAdapter(reviewAdapter);
-
-        sharedPrefs = activity.getSharedPreferences("Session", Context.MODE_PRIVATE);
-
-        service = APISingleton.getInstance();
-        service.getBathroomReviews(bathroom.getId(), sharedPrefs.getString("jwt", ""))
-                .enqueue(new ReviewListCallback(getContext(), view));
-
-        reviewAdapter = new ReviewAdapter();
-        reviewLayoutManager = new LinearLayoutManager(activity);
-        reviewRecyclerView = view.findViewById(R.id.review_recycler_view);
-        reviewRecyclerView.setHasFixedSize(true);
-        reviewRecyclerView.setLayoutManager(reviewLayoutManager);
-        reviewRecyclerView.setAdapter(reviewAdapter);
-
         return view;
     }
 
@@ -199,16 +169,24 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
     public void setHandicap(Boolean handicap) {
         String access = "Handicap Accessible";
         String no_access = "Not Accessible";
-        if (handicap != null && handicap) {
+        if (handicap) {
             handicapField.setText(access);
         } else {
             handicapField.setText(no_access);
         }
     }
 
+    public void setStars(Float rating) {
+        ratingBar.setRating(rating);
+    }
+
     public void setTitle(String title) {
         titleField.setText(title);
     }
+
+    public void setFloor(Integer floor) { floorField.setText(floor.toString());}
+
+    public void setRoom(Integer room) { roomField.setText(room.toString()); }
 
     private class ReviewHolder extends RecyclerView.ViewHolder {
         private TextView username;

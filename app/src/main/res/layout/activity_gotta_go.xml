@@ -7,7 +7,7 @@
     tools:context=".GottaGoActivity">
 
     <TextView
-        android:id="@+id/building_field"
+        android:id="@+id/building_field_desc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Gotta Go Page"

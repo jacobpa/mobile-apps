@@ -3,8 +3,10 @@ package com.cse5236.bowlbuddy.models;
 import com.squareup.moshi.Json;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class Building implements Serializable {
+    private Integer id;
     private Integer floors;
     private String address;
     private String name;
@@ -21,6 +23,8 @@ public class Building implements Serializable {
     public String toString() {
         return name;
     }
+
+    public Integer getId() {return id;}
 
     public Integer getFloors() {
         return floors;
@@ -76,5 +80,16 @@ public class Building implements Serializable {
 
     public void setLatitude(double latitude) {
         this.latitude = latitude;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        return Objects.equals(((Building) obj).getId(), this.id);
     }
 }

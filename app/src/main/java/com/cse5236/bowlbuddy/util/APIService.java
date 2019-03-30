@@ -6,6 +6,7 @@ import com.cse5236.bowlbuddy.models.Bathroom;
 import com.cse5236.bowlbuddy.models.Building;
 
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -16,6 +17,7 @@ import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.QueryMap;
 
 public interface APIService {
     // User and Session endpoints
@@ -91,6 +93,20 @@ public interface APIService {
      */
     @GET("bathrooms")
     Call<List<Bathroom>> getAllBathrooms(@Header("Authorization") String token);
+
+
+    /**
+     * Add a new bathroom connected to a builidng to the server.
+     *
+     * @param buildingId The id of the building the bathroom will be added to
+     * @param queries The information about the bathroom being added
+     * @param token The user's JWT authentication token
+     * @return A Call object of type Bathroom that contains the bathroom that was just added
+     */
+    @POST("buildings/{building_id}/bathrooms")
+    Call<Bathroom> addBathroom(@Path("building_id") int buildingId,
+                               @QueryMap Map<String, String> queries,
+                               @Header("Authorization") String token);
 
     /**
      * Get all buildings from the database.
@@ -235,4 +251,19 @@ public interface APIService {
     Call<List<Bathroom>> deleteFavorite(@Path("id") int userID,
                                         @Query("bathroom_id") int bathroomID,
                                         @Header("Authorization") String token);
+
+    /**
+     * Update a bathroom that is already in the server.
+     *
+     * @param buildingID The id of the building that contains the bathroom being updated
+     * @param bathroomID The id of the bathroom being modified
+     * @param queries The new information about the bathroom being modified
+     * @param token The user's JWT authentication token
+     * @return A Call object that contains the bathroom that was just modified
+     */
+    @PATCH("buildings/{buildingID}/bathrooms/{bathroomID}")
+    Call<Bathroom> updateBathroom(@Path("buildingID") int buildingID,
+                                  @Path("bathroomID") int bathroomID,
+                                  @QueryMap Map<String, String> queries,
+                                  @Header("Authorization") String token);
 }

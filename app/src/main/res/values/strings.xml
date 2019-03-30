@@ -29,4 +29,11 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="no_reviews_found">No reviews found!</string>
+
+    <string-array name="genders">
+        <item>Male</item>
+        <item>Female</item>
+        <item>Unigender</item>
+        <item>Other</item>
+    </string-array>
 </resources>

@@ -34,63 +34,37 @@ public class Bathroom implements Serializable {
     }
 
     public int getPlyCount() {
+        if (plyCount == null)
+            return 1;
         return plyCount;
     }
 
-    public void setPlyCount(int plyCount) {
-        this.plyCount = plyCount;
-    }
-
     public boolean isPaperTowels() {
+        if (paperTowels == null)
+            return false;
         return paperTowels;
     }
 
-    public void setPaperTowels(boolean paperTowels) {
-        this.paperTowels = paperTowels;
-    }
-
     public boolean isHandicap() {
-        if (handicap != null) {
-            return handicap;
-        } else {
+        if (handicap == null)
             return false;
-        }
-    }
-
-    public void setHandicap(boolean handicap) {
-        this.handicap = handicap;
+        return handicap;
     }
 
     public float getCleanRating() {
         return cleanRating;
     }
 
-    public void setCleanRating(float cleanRating) {
-        this.cleanRating = cleanRating;
-    }
-
     public float getEmptyRating() {
         return emptyRating;
-    }
-
-    public void setEmptyRating(float emptyRating) {
-        this.emptyRating = emptyRating;
     }
 
     public float getSmellRating() {
         return smellRating;
     }
 
-    public void setSmellRating(float smellRating) {
-        this.smellRating = smellRating;
-    }
-
     public String getGender() {
         return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
     }
 
     public float getAverageRating() {
@@ -101,24 +75,12 @@ public class Bathroom implements Serializable {
         return floor;
     }
 
-    public void setFloor(Integer floor) {
-        this.floor = floor;
-    }
-
     public Integer getRmNum() {
         return rmNum;
     }
 
-    public void setRmNum(Integer rmNum) {
-        this.rmNum = rmNum;
-    }
-
     public int getBuildingID() {
         return buildingID;
-    }
-
-    public void setBuildingID(int buildingID) {
-        this.buildingID = buildingID;
     }
 
     public Building getBuilding() {
