@@ -30,7 +30,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 
 
@@ -102,7 +101,7 @@ public class MyReviewsFragment extends Fragment {
         private LinearLayout buttonLayout;
 
         public ReviewHolder(LayoutInflater inflater, ViewGroup parent) {
-            super(inflater.inflate(R.layout.my_reviews_list, parent, false));
+            super(inflater.inflate(R.layout.list_my_reviews, parent, false));
 
             itemView.setOnClickListener(this);
 

@@ -27,7 +27,7 @@ import retrofit2.Response;
 public class SignUpFragment extends Fragment implements View.OnClickListener {
     private final static String TAG = SignUpFragment.class.getSimpleName();
 
-    private View viewVar;
+    private View view;
     private Button signUpButton;
     private Button backButton;
     private EditText usernameField;
@@ -46,14 +46,16 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        viewVar = inflater.inflate(R.layout.sign_up_fragment, container, false);
+        view = inflater.inflate(R.layout.fragment_sign_up, container, false);
 
-        signUpButton = viewVar.findViewById(R.id.signUpButton);
-        backButton = viewVar.findViewById(R.id.backButton);
-        usernameField = viewVar.findViewById(R.id.usernameField);
-        passwordField = viewVar.findViewById(R.id.passwordField);
-        confirmPasswordField = viewVar.findViewById(R.id.confirmPasswordField);
+        // Get instances for the buttons and user information
+        signUpButton = view.findViewById(R.id.signUpButton);
+        backButton = view.findViewById(R.id.backButton);
+        usernameField = view.findViewById(R.id.usernameField);
+        passwordField = view.findViewById(R.id.passwordField);
+        confirmPasswordField = view.findViewById(R.id.confirmPasswordField);
 
+        // Set the button listeners to this fragment
         if (signUpButton != null) {
             signUpButton.setOnClickListener(this);
         }
@@ -62,7 +64,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
         }
 
         Log.d(TAG, "onCreateView: View successfully created");
-        return viewVar;
+        return view;
     }
 
 
@@ -82,8 +84,13 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    /**
+     * Method used to by a user to sign up with a new account
+     */
     private void startSignUp() {
         LoadingScreenActivity activity = (LoadingScreenActivity) getActivity();
+
+        // Get the user input username, password, and conformation password
         userName = usernameField.getText().toString();
         password = passwordField.getText().toString();
         confirmPassword = confirmPasswordField.getText().toString();
@@ -93,12 +100,12 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
         boolean fieldsEmpty = password.isEmpty() || confirmPassword.isEmpty();
 
         if (!passwordsMatch) {
-            Snackbar.make(viewVar, "Password and Confirmation Password did not match.", Snackbar.LENGTH_LONG)
+            Snackbar.make(view, "Password and Confirmation Password did not match.", Snackbar.LENGTH_LONG)
                     .show();
             return;
         }
         if (fieldsEmpty) {
-            Snackbar.make(viewVar, "Password fields can not be empty.", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(view, "Password fields can not be empty.", Snackbar.LENGTH_LONG).show();
             return;
         }
 
@@ -108,7 +115,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
             return;
         }
 
-        activity.getService().signUp(userName, password, confirmPassword).enqueue(new SignUpCallback(getContext(), viewVar));
+        activity.getService().signUp(userName, password, confirmPassword).enqueue(new SignUpCallback(getContext(), view));
     }
 
     private void goBack() {

@@ -3,14 +3,6 @@ package com.cse5236.bowlbuddy;
 import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
@@ -31,15 +23,10 @@ import com.cse5236.bowlbuddy.util.APIService;
 import com.cse5236.bowlbuddy.util.APISingleton;
 import com.cse5236.bowlbuddy.util.BowlBuddyCallback;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Response;
-
-import static android.Manifest.permission.ACCESS_FINE_LOCATION;
-import static android.location.Location.distanceBetween;
 
 public class MasterListActivity extends AppCompatActivity {
     private final static String TAG = MasterListActivity.class.getSimpleName();
@@ -50,6 +37,7 @@ public class MasterListActivity extends AppCompatActivity {
     private Fragment fragment;
     private View view;
 
+    // Literals used to know how to sort the bathroom list
     private static final String DISTANCE_SORT = "Distance";
     private static final String RATING_SORT = "Rating";
 
@@ -58,20 +46,13 @@ public class MasterListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_master_list);
 
-//        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-//        {
-//            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
-//        } else {
-//            int PERMISSION_REQUEST_LOCATION = 1;
-//            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_LOCATION);
-//            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-//                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
-//            }
-//        }
-
+        // Get service instance to talk to the server
         service = APISingleton.getInstance();
+
+        // Initialize variable to get user information
         sharedPreferences = this.getSharedPreferences("Session", Context.MODE_PRIVATE);
 
+        // Get instance of current activity
         view = findViewById(R.id.activity_master_list);
 
         // Manually set action bar, with menu button
@@ -81,6 +62,7 @@ public class MasterListActivity extends AppCompatActivity {
         ab.setDisplayHomeAsUpEnabled(true);
         ab.setHomeAsUpIndicator(R.drawable.ic_menu_white);
 
+        // Get an instance of the fragment manager
         FragmentManager fm = getSupportFragmentManager();
 
         // Try to find the Fragment if it's already been created
@@ -99,6 +81,7 @@ public class MasterListActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
 
+        // Send a request to the server for the list of bathrooms when activity starts
         service.getAllBathrooms(sharedPreferences.getString("jwt", ""))
                 .enqueue(new GetBathroomsCallback(this, view));
     }
@@ -107,6 +90,7 @@ public class MasterListActivity extends AppCompatActivity {
     public void onRestart() {
         super.onRestart();
 
+        // Check for bathroom updates when activity restarts
         service.getAllBathrooms(sharedPreferences.getString("jwt", ""))
                 .enqueue(new GetBathroomsCallback(this, view));
     }
@@ -115,6 +99,7 @@ public class MasterListActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
 
+        // Display the menu bar on the activity
         inflater.inflate(R.menu.menu_toolbar, menu);
 
         return super.onCreateOptionsMenu(menu);
@@ -126,6 +111,7 @@ public class MasterListActivity extends AppCompatActivity {
         DrawerLayout drawerLayout = findViewById(R.id.master_drawer);
 
         switch(item.getItemId()) {
+            // The menu bar on the top left was selected
             case android.R.id.home:
                 if(drawerLayout.isDrawerOpen(GravityCompat.START)) {
                     drawerLayout.closeDrawer(GravityCompat.START);
@@ -165,9 +151,11 @@ public class MasterListActivity extends AppCompatActivity {
 
     private void notifyBathroomListChange(String sortOrder) {
 
+        // Get an instance of the MasterListFragment
         FragmentManager fm = getSupportFragmentManager();
         MasterListFragment fragment = (MasterListFragment) fm.findFragmentById(R.id.master_list_container);
 
+        // Inform the fragment how to sort the list
         fragment.bathroomChanged(bathroomList, sortOrder);
     }
 
@@ -180,10 +168,13 @@ public class MasterListActivity extends AppCompatActivity {
 
         @Override
         public void onResponse(Call<List<Bathroom>> call, Response<List<Bathroom>> response) {
+            // Check if response was successful
             if (response.isSuccessful()) {
+                // Determine if the bathroom list has changed or has not been initialized yet
                 if (bathroomList == null || bathroomList.size() != response.body().size()) {
                     bathroomList = response.body();
 
+                    // Get the buildings that each bathroom on this list is located in
                     for (Bathroom bathroom : bathroomList) {
                         service.getLocation(bathroom.getBuildingID(), sharedPreferences.getString("jwt", ""))
                                 .enqueue(new GetBathroomBuildingCallback(this.callbackContext, view, bathroom));
@@ -191,6 +182,7 @@ public class MasterListActivity extends AppCompatActivity {
                     Log.d(TAG, "onResponse: Response is " + bathroomList);
                 }
             } else {
+                // Print errors if present
                 parseError(response);
             }
         }
@@ -206,10 +198,15 @@ public class MasterListActivity extends AppCompatActivity {
 
         @Override
         public void onResponse(Call<Building> call, Response<Building> response) {
+            // Check if the response was successful
             if (response.isSuccessful()) {
+                // Set the building that the bathroom is located in
                 bathroom.setBuilding(response.body());
+
+                // Default to distance sort for bathroom list
                 notifyBathroomListChange(DISTANCE_SORT);
             } else {
+                // Print errors if present
                 parseError(response);
             }
         }

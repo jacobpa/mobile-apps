@@ -1,15 +1,14 @@
 package com.cse5236.bowlbuddy;
 
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 import android.widget.Button;
 
 
@@ -19,7 +18,7 @@ import android.widget.Button;
 public class HomePageFragment extends Fragment implements View.OnClickListener {
     private final static String TAG = HomePageFragment.class.getSimpleName();
 
-    private View viewVar;
+    private View view;
     private Button loginButton;
     private Button signUpButton;
 
@@ -33,11 +32,13 @@ public class HomePageFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        viewVar = inflater.inflate(R.layout.home_page_fragment, container, false);
+        view = inflater.inflate(R.layout.fragment_home_page, container, false);
 
-        loginButton = viewVar.findViewById(R.id.loginButton);
-        signUpButton = viewVar.findViewById(R.id.signUpButton);
+        // Get instances for the home page buttons
+        loginButton = view.findViewById(R.id.loginButton);
+        signUpButton = view.findViewById(R.id.signUpButton);
 
+        // Set this fragment to be the listener for the sign up and login buttons
         if (loginButton != null) {
             loginButton.setOnClickListener(this);
         }
@@ -46,13 +47,11 @@ public class HomePageFragment extends Fragment implements View.OnClickListener {
         }
 
         Log.d(TAG, "onCreateView: View successfully created");
-        return viewVar;
+        return view;
     }
 
     @Override
     public void onClick(View view) {
-
-        Activity activity = getActivity();
 
         switch (view.getId()) {
             case R.id.loginButton:
@@ -62,26 +61,36 @@ public class HomePageFragment extends Fragment implements View.OnClickListener {
                 startSignUp();
                 break;
             default:
-                Toast.makeText(activity, "unrecognized button id", Toast.LENGTH_SHORT).show();
+                Snackbar.make(view, "unrecognized button id", Snackbar.LENGTH_SHORT).show();
         }
 
 
     }
 
+    /**
+     * Method used to handle when a user wants to login
+     */
     private void startLogin() {
+        // Get an instance of the login fragment
         Fragment loginFragment = new LoginFragment();
         FragmentManager manager = getFragmentManager();
 
+        // Start up the login fragment
         manager.beginTransaction()
                 .replace(R.id.loadingScreen, loginFragment, loginFragment.getTag())
                 .addToBackStack(null)  // Add to Fragments back stack for easy back navigation
                 .commit();
     }
 
+    /**
+     * Method used to handle when a user wants to sign up
+     */
     private void startSignUp() {
+        // Get an instance of the sigh up fragment
         Fragment signUpFragment = new SignUpFragment();
         FragmentManager manager = getFragmentManager();
 
+        // Start up the sign up fragment
         manager.beginTransaction()
                 .replace(R.id.loadingScreen, signUpFragment, signUpFragment.getTag())
                 .addToBackStack(null)

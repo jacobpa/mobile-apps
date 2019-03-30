@@ -33,7 +33,7 @@ import retrofit2.Response;
 public class LoginFragment extends Fragment {
     private final static String TAG = LoginFragment.class.getSimpleName();
 
-    private View viewVar;
+    private View view;
     private Button loginButton;
     private Button backButton;
     private EditText usernameField;
@@ -50,33 +50,38 @@ public class LoginFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        viewVar = inflater.inflate(R.layout.login_fragment, container, false);
+        view = inflater.inflate(R.layout.fragment_login, container, false);
 
         // Populate UI elements
-        loginButton = viewVar.findViewById(R.id.loginButton);
-        backButton = viewVar.findViewById(R.id.backButton);
-        usernameField = viewVar.findViewById(R.id.usernameField);
-        passwordField = viewVar.findViewById(R.id.passwordField);
+        loginButton = view.findViewById(R.id.loginButton);
+        backButton = view.findViewById(R.id.backButton);
+        usernameField = view.findViewById(R.id.usernameField);
+        passwordField = view.findViewById(R.id.passwordField);
 
+        // Initialize service variable that is used to communicate with the server
         service = APISingleton.getInstance();
 
         if (loginButton != null) {
+            // Set the listener for the login button
             loginButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    LoadingScreenActivity activity = (LoadingScreenActivity) getActivity();
+                    // Get the username and passwords for the user
                     userName = usernameField.getText().toString();
                     password = passwordField.getText().toString();
 
+                    // Check credentials to see if they match the server
                     service.login(userName, password).enqueue(new LoginCallback(getContext(), view));
                 }
             });
         }
 
         if (backButton != null) {
+            // Set the listener for the back button
             backButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    // Go back a fragment if the back button is pressed
                     FragmentManager fm = getFragmentManager();
                     fm.popBackStackImmediate();
                 }
@@ -84,12 +89,17 @@ public class LoginFragment extends Fragment {
         }
 
         Log.d(TAG, "onCreateView: View successfully created");
-        return viewVar;
+        return view;
     }
 
+    /**
+     * Method used to start the master list activity
+     */
     private void startNextActivity() {
+        // Start the MasterListActivity
         Intent intent = new Intent(getActivity(), MasterListActivity.class);
         startActivity(intent);
+
         // Finish current activity, so that the user cannot "back" into it.
         getActivity().finish();
     }
@@ -102,11 +112,16 @@ public class LoginFragment extends Fragment {
         @Override
         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
             try {
+                // Check if the response was successful
                 if (response.isSuccessful()) {
+                    // Get a json object of the login info
                     JSONObject json = new JSONObject(response.body().string());
 
+                    // Parse the authentication token for the user
                     String jwt = json.getString("jwt");
                     String username = json.getString("username");
+
+                    // Get the user ide
                     int id = json.getInt("id");
 
                     // Store user info to "Session" SharedPreferences
@@ -115,8 +130,10 @@ public class LoginFragment extends Fragment {
                     sharedPrefs.edit().putString("username", username).apply();
                     sharedPrefs.edit().putInt("id", id).apply();
 
+                    // Start MasterListActivity
                     startNextActivity();
                 } else {
+                    // Print error if present
                     parseError(response);
                 }
             } catch (JSONException e) {

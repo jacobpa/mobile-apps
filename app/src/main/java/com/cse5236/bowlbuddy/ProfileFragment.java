@@ -29,7 +29,7 @@ import retrofit2.Response;
 public class ProfileFragment extends Fragment {
     private final static String TAG = ProfileFragment.class.getCanonicalName();
 
-    private View v;
+    private View view;
     private TextView usernameCircle;
     private TextView greeting;
     private Button usernameChangeButton;
@@ -38,7 +38,7 @@ public class ProfileFragment extends Fragment {
     private EditText[] passwordFields = new EditText[2];
     private Button deleteAccountButton;
     private APIService service;
-    private SharedPreferences sp;
+    private SharedPreferences sharedPreferences;
 
     public ProfileFragment() {
 
@@ -47,20 +47,22 @@ public class ProfileFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        v = inflater.inflate(R.layout.fragment_profile, container, false);
+        view = inflater.inflate(R.layout.fragment_profile, container, false);
 
+        // Get instance of service to communicate with the server
         service = APISingleton.getInstance();
 
-        sp = getContext().getSharedPreferences("Session", Context.MODE_PRIVATE);
-        usernameCircle = v.findViewById(R.id.profile_username);
-        greeting = v.findViewById(R.id.profile_greeting);
+        // Get shared user information
+        sharedPreferences = getContext().getSharedPreferences("Session", Context.MODE_PRIVATE);
+        usernameCircle = view.findViewById(R.id.profile_username);
+        greeting = view.findViewById(R.id.profile_greeting);
 
-        updateUsernameCircle(sp.getString("username", getString(R.string.username_placeholder)));
-        greeting.setText(getString(R.string.profile_greeting, sp.getString("username", getString(R.string.username_placeholder))));
+        updateUsernameCircle(sharedPreferences.getString("username", getString(R.string.username_placeholder)));
+        greeting.setText(getString(R.string.profile_greeting, sharedPreferences.getString("username", getString(R.string.username_placeholder))));
 
-        usernameChangeButton = v.findViewById(R.id.username_change_submit);
-        passwordChangeButton = v.findViewById(R.id.password_change_submit);
-        deleteAccountButton = v.findViewById(R.id.delete_account_btn);
+        usernameChangeButton = view.findViewById(R.id.username_change_submit);
+        passwordChangeButton = view.findViewById(R.id.password_change_submit);
+        deleteAccountButton = view.findViewById(R.id.delete_account_btn);
 
         usernameChangeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,14 +83,20 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        usernameField = v.findViewById(R.id.new_username_field);
-        passwordFields[0] = v.findViewById(R.id.password_change_field);
-        passwordFields[1] = v.findViewById(R.id.password_change_confirm_field);
+        usernameField = view.findViewById(R.id.new_username_field);
+        passwordFields[0] = view.findViewById(R.id.password_change_field);
+        passwordFields[1] = view.findViewById(R.id.password_change_confirm_field);
 
-        return v;
+        return view;
     }
 
+    /**
+     * Method used to update the username
+     *
+     * @param username The new user name
+     */
     private void updateUsernameCircle(String username) {
+        // Check username formatting
         Pattern usernamePattern = Pattern.compile("[A-Za-z0-9]{1,2}");
         Matcher usernameMatcher = usernamePattern.matcher(username);
         String displayed;
@@ -99,48 +107,67 @@ public class ProfileFragment extends Fragment {
             displayed = username.substring(0, 2).toUpperCase();
         }
 
+        // Change the text of the username
         usernameCircle.setText(displayed);
         return;
     }
 
+    /**
+     * Method used to change the username
+     */
     private void changeUsername() {
+        // Get the new username
         String desiredUsername = usernameField.getText().toString();
+
+        // If username is valid, update the username to the server
         if (User.isUsernameValid(desiredUsername)) {
-            service.updateUsername(sp.getInt("id", -1),
+            service.updateUsername(sharedPreferences.getInt("id", -1),
                     desiredUsername,
-                    sp.getString("jwt", "")).enqueue(new ChangeUsernameCallback(getContext(), v));
+                    sharedPreferences.getString("jwt", "")).enqueue(new ChangeUsernameCallback(getContext(), view));
         } else {
-            Snackbar.make(v, "Username must only contain letters, digits, or underscores.", Snackbar.LENGTH_LONG)
+            Snackbar.make(view, "Username must only contain letters, digits, or underscores.", Snackbar.LENGTH_LONG)
                     .show();
         }
     }
 
+    /**
+     * Method used to change the password
+     */
     private void changePassword() {
+        // Get the new password and confirmation password
         String newPassword = passwordFields[0].getText().toString();
         String newPasswordConfirmation = passwordFields[1].getText().toString();
 
+        // Make sure both passwords match
         boolean passwordsMatch = newPassword.equals(newPasswordConfirmation);
         boolean fieldsEmpty = newPassword.isEmpty() || newPasswordConfirmation.isEmpty();
 
         if (!passwordsMatch) {
-            Snackbar.make(v, "Password and Confirmation Password did not match.", Snackbar.LENGTH_LONG)
+            Snackbar.make(view, "Password and Confirmation Password did not match.", Snackbar.LENGTH_LONG)
                     .show();
             return;
         }
         if (fieldsEmpty) {
-            Snackbar.make(v, "Password fields can not be empty.", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(view, "Password fields can not be empty.", Snackbar.LENGTH_LONG).show();
             return;
         }
 
-        service.updatePassword(sp.getInt("id", -1), newPassword, sp.getString("jwt", ""))
-                .enqueue(new ChangePasswordCallback(getContext(), v));
+        // Update the new password to the server
+        service.updatePassword(sharedPreferences.getInt("id", -1), newPassword, sharedPreferences.getString("jwt", ""))
+                .enqueue(new ChangePasswordCallback(getContext(), view));
     }
 
+    /**
+     * Method used to delete a user
+     */
     private void deleteUser() {
-        // TODO: Confirm that the user really wants to delete themselves.
-        service.deleteUser(sp.getInt("id", -1), sp.getString("jwt", "")).enqueue(new DeleteAccountCallback(getContext(), v));
+        // Send delete request to the server
+        service.deleteUser(sharedPreferences.getInt("id", -1), sharedPreferences.getString("jwt", "")).enqueue(new DeleteAccountCallback(getContext(), view));
     }
 
+    /**
+     * Method used to refresh the information on this fragment
+     */
     private void refreshFragment() {
         Fragment currentFragment = getFragmentManager().findFragmentById(R.id.profiler_container);
         getFragmentManager().beginTransaction()
@@ -159,7 +186,7 @@ public class ProfileFragment extends Fragment {
             if (response.isSuccessful()) {
                 User u = response.body();
                 Log.d(TAG, "onResponse: Username is " + u.getUsername());
-                sp.edit().putString("username", u.getUsername()).apply();
+                sharedPreferences.edit().putString("username", u.getUsername()).apply();
 
                 refreshFragment();
             } else {
@@ -177,7 +204,7 @@ public class ProfileFragment extends Fragment {
         public void onResponse(Call<User> call, Response<User> response) {
             if (response.isSuccessful()) {
                 // Don't need to serialize User object
-                Snackbar.make(v, "Password changed successfully.", Snackbar.LENGTH_LONG).show();
+                Snackbar.make(view, "Password changed successfully.", Snackbar.LENGTH_LONG).show();
             } else {
                 parseError(response);
             }
@@ -192,7 +219,7 @@ public class ProfileFragment extends Fragment {
         @Override
         public void onResponse(Call<Void> call, Response<Void> response) {
             if (response.isSuccessful()) {
-                sp.edit().clear().apply();
+                sharedPreferences.edit().clear().apply();
                 Intent i = new Intent(getActivity(), LoadingScreenActivity.class);
                 startActivity(i);
 

@@ -10,28 +10,32 @@ import android.util.Log;
 import com.cse5236.bowlbuddy.util.APIService;
 import com.cse5236.bowlbuddy.util.APISingleton;
 
-import retrofit2.Retrofit;
-import retrofit2.converter.moshi.MoshiConverterFactory;
-
 public class LoadingScreenActivity extends AppCompatActivity {
     private final static String TAG = LoadingScreenActivity.class.getSimpleName();
     private APIService service;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Check if the user is already logged in
         checkLoggedIn();
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.loading_screen_activity);
+        setContentView(R.layout.activity_loading_screen);
 
+        // Get instance of API used to communicate with server
         service = APISingleton.getInstance();
 
+        // Get instance of Home page fragment and start the home page activity
         HomePageFragment fragment = new HomePageFragment();
         FragmentManager manager = getSupportFragmentManager();
         manager.beginTransaction().replace(R.id.loadingScreen, fragment, fragment.getTag()).commit();
         Log.d(TAG, "onCreate: Successfully created");
     }
 
+    /**
+     * Method used to get the API service used to communicate with the server
+     * @return API to talk to the server
+     */
     public APIService getService() {
         return service;
     }
