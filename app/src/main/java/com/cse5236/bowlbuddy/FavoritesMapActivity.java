@@ -16,11 +16,13 @@ import com.cse5236.bowlbuddy.models.Building;
 import com.cse5236.bowlbuddy.util.APIService;
 import com.cse5236.bowlbuddy.util.APISingleton;
 import com.cse5236.bowlbuddy.util.BowlBuddyCallback;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -153,8 +155,17 @@ public class FavoritesMapActivity extends FragmentActivity implements OnMapReady
             newMarker.setTag(bathroom);
             activeMarkers.add(newMarker);
 
-            // Move the camera to the area where the bathrooms are shown
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(bathroomLocation));
+            // Initialize CameraUpdate variable to zoome to correct place on map
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            for (Marker marker : activeMarkers) {
+                builder.include(marker.getPosition());
+            }
+
+            CameraUpdate zoomCamera = CameraUpdateFactory.newLatLngBounds(builder.build(), 200);
+
+            // Move the camera to the area where the bathrooms are shown and zoome the camera
+            mMap.moveCamera(zoomCamera);
+            mMap.animateCamera(zoomCamera);
         }
 
     }
