@@ -40,17 +40,6 @@
         app:layout_constraintEnd_toEndOf="@id/add_review_fab"
         app:layout_constraintBottom_toTopOf="@id/add_review_fab" />
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/view_pager"
-        android:layout_width="wrap_content"
-        android:layout_height="200dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp">
-
-    </android.support.v4.view.ViewPager>
-
     <TextView
         android:id="@+id/titleField"
         android:layout_width="150dp"
@@ -61,7 +50,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view_pager" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <RatingBar
         android:id="@+id/ratingBar"
@@ -92,16 +81,17 @@
         android:text="&#9855;"
         android:textSize="24sp"
         app:layout_constraintStart_toEndOf="@+id/titleField"
-        app:layout_constraintTop_toBottomOf="@+id/view_pager" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/handicapField"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="29dp"
         android:text="TextView"
+        android:layout_marginStart="8dp"
         app:layout_constraintStart_toEndOf="@+id/accessIcon"
-        app:layout_constraintTop_toBottomOf="@+id/view_pager"
+        app:layout_constraintTop_toTopOf="@id/accessIcon"
+        app:layout_constraintBottom_toBottomOf="@id/accessIcon"
         tools:text="Acessible" />
 
     <TextView
@@ -118,9 +108,10 @@
         android:id="@+id/genderField"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="8dp"
         app:layout_constraintStart_toEndOf="@+id/genderIcon"
-        app:layout_constraintTop_toBottomOf="@+id/handicapField" />
+        app:layout_constraintTop_toTopOf="@id/genderIcon"
+        app:layout_constraintBottom_toBottomOf="@id/genderIcon"/>
 
     <TextView
         android:id="@+id/no_reviews_message"
@@ -160,18 +151,19 @@
         android:id="@+id/floor_field_desc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        app:layout_constraintBottom_toTopOf="@+id/titleField"
+        android:layout_marginStart="8dp"
+        app:layout_constraintTop_toTopOf="@id/floorIcon"
+        app:layout_constraintBottom_toBottomOf="@id/floorIcon"
         app:layout_constraintStart_toEndOf="@+id/floorIcon" />
 
     <TextView
         android:id="@+id/room_field_desc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
-        android:layout_marginTop="204dp"
+        android:layout_marginStart="8dp"
         app:layout_constraintStart_toEndOf="@+id/room_icon"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@id/room_icon"
+        app:layout_constraintBottom_toBottomOf="@id/room_icon"/>
 
     <TextView
         android:id="@+id/room_icon"
