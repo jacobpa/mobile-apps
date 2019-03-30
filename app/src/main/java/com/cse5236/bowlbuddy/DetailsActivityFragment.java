@@ -34,14 +34,14 @@ import retrofit2.Response;
  */
 public class DetailsActivityFragment extends android.support.v4.app.Fragment {
     private static final String TAG = DetailsActivityFragment.class.getSimpleName();
-    TextView genderField;
-    TextView handicapField;
-    TextView titleField;
-    TextView roomField;
-    TextView noReviewMessage;
-    TextView floorField;
-    APIService service;
-    View view;
+    private TextView genderField;
+    private TextView handicapField;
+    private TextView titleField;
+    private TextView roomField;
+    private TextView noReviewMessage;
+    private TextView floorField;
+    private APIService service;
+    private View view;
     private FloatingActionButton rootFAB;
     private FloatingActionButton addFAB;
     private FloatingActionButton favoriteFAB;

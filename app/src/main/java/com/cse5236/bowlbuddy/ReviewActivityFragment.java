@@ -45,7 +45,7 @@ public class ReviewActivityFragment extends Fragment {
     private final static String TAG = ReviewActivityFragment.class.getSimpleName();
 
     private APIService service;
-    private View viewVar;
+    private View view;
     private SharedPreferences sharedPrefs;
 
     private List<Building> buildingList;
@@ -60,6 +60,9 @@ public class ReviewActivityFragment extends Fragment {
     private Spinner genderSpinner;
     private Switch handicapSwitch;
     private Switch plySwitch;
+    private RatingBar smellBar;
+    private RatingBar quietBar;
+    private RatingBar cleanBar;
 
     private int smellStars;
     private boolean smellRatingEmpty = true;
@@ -79,23 +82,24 @@ public class ReviewActivityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        viewVar = inflater.inflate(R.layout.fragment_review, container, false);
+        view = inflater.inflate(R.layout.fragment_review, container, false);
 
         service = APISingleton.getInstance();
         Intent intent = getActivity().getIntent();
         sharedPrefs = getActivity().getSharedPreferences("Session", Context.MODE_PRIVATE);
 
-        floorEntry = viewVar.findViewById(R.id.floor_entry);
-        roomEntry = viewVar.findViewById(R.id.room_entry);
-        buildingSpn = viewVar.findViewById(R.id.building_spinner);
-        detailsEntry = viewVar.findViewById(R.id.review_field);
-        RatingBar smellBar = viewVar.findViewById(R.id.smellRating);
-        RatingBar quietBar = viewVar.findViewById(R.id.cleanRating);
-        RatingBar cleanBar = viewVar.findViewById(R.id.quietRating);
-        handicapSwitch = viewVar.findViewById(R.id.handicap_switch);
-        plySwitch = viewVar.findViewById(R.id.ply_switch);
+        floorEntry = view.findViewById(R.id.floor_entry);
+        roomEntry = view.findViewById(R.id.room_entry);
+        buildingSpn = view.findViewById(R.id.building_spinner);
+        detailsEntry = view.findViewById(R.id.review_field);
+        smellBar = view.findViewById(R.id.smellRating);
+        quietBar = view.findViewById(R.id.cleanRating);
+        cleanBar = view.findViewById(R.id.quietRating);
+        handicapSwitch = view.findViewById(R.id.handicap_switch);
+        plySwitch = view.findViewById(R.id.ply_switch);
 
-        genderSpinner = viewVar.findViewById(R.id.gender_spinner);
+        // Set up gender spinner
+        genderSpinner = view.findViewById(R.id.gender_spinner);
         ArrayAdapter<CharSequence> genderAdapter = ArrayAdapter.createFromResource(getContext(), R.array.genders, android.R.layout.simple_spinner_item);
         genderAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         genderSpinner.setAdapter(genderAdapter);
@@ -112,19 +116,17 @@ public class ReviewActivityFragment extends Fragment {
 
         String caller = intent.getStringExtra("caller");
         // Populate building spinner
-        service.getAllBuildings(sharedPrefs.getString("jwt", "")).enqueue(new GetBuildingsCallback(getContext(), viewVar, !caller.equals("MasterListFragment")));
+        service.getAllBuildings(sharedPrefs.getString("jwt", "")).enqueue(new GetBuildingsCallback(getContext(), view, !caller.equals("MasterListFragment")));
 
         if (caller.equals("MasterListFragment")) {
             // If called from the Master List, adding a new bathroom.
             floorEntry.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    // Nothing
                 }
 
                 @Override
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    // Nothing
                 }
 
                 @Override
@@ -229,7 +231,7 @@ public class ReviewActivityFragment extends Fragment {
             }
         });
 
-        FloatingActionButton fab = viewVar.findViewById(R.id.sendButton);
+        FloatingActionButton fab = view.findViewById(R.id.sendButton);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -237,7 +239,7 @@ public class ReviewActivityFragment extends Fragment {
             }
         });
 
-        return viewVar;
+        return view;
     }
 
     private void attemptReview(Building building, Bathroom bathroom) {
@@ -245,17 +247,17 @@ public class ReviewActivityFragment extends Fragment {
         boolean reviewEmpty = TextUtils.isEmpty(detailsEntry.getText());
 
         if (cleanRatingEmpty) {
-            Snackbar.make(viewVar, "Please rate how clean this bathroom is.", Toast.LENGTH_SHORT).show();
+            Snackbar.make(view, "Please rate how clean this bathroom is.", Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (smellRatingEmpty) {
-            Snackbar.make(viewVar, "Please rate how well this bathroom smells.", Toast.LENGTH_SHORT).show();
+            Snackbar.make(view, "Please rate how well this bathroom smells.", Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (quietRatingEmpty) {
-            Snackbar.make(viewVar, "Please rate how quiet, or empty, this bathroom typically is.", Toast.LENGTH_SHORT).show();
+            Snackbar.make(view, "Please rate how quiet, or empty, this bathroom typically is.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -271,14 +273,14 @@ public class ReviewActivityFragment extends Fragment {
             queries.put("plyCount", Integer.toString(ply));
 
             service.addBathroom(building.getId(), queries, sharedPrefs.getString("jwt", "")).
-                    enqueue(new AddBathroomCallback(getContext(), viewVar, !reviewEmpty));
+                    enqueue(new AddBathroomCallback(getContext(), view, !reviewEmpty));
         } else {
             queries.put("cleanRating", Integer.toString(cleanStars));
             queries.put("emptyRating", Integer.toString(quietStars));
             queries.put("smellRating", Integer.toString(smellStars));
             queries.put("handicap", Boolean.toString(handicap));
             queries.put("plyCount", Integer.toString(ply));
-            service.updateBathroom(building.getId(), bathroom.getId(), queries, sharedPrefs.getString("jwt", "")).enqueue(new AddBathroomCallback(getContext(), viewVar, !reviewEmpty));
+            service.updateBathroom(building.getId(), bathroom.getId(), queries, sharedPrefs.getString("jwt", "")).enqueue(new AddBathroomCallback(getContext(), view, !reviewEmpty));
         }
     }
 
@@ -318,10 +320,10 @@ public class ReviewActivityFragment extends Fragment {
 
                 if(hasReview) {
                     service.addReview(sharedPrefs.getInt("id", 0), b.getId(), detailsEntry.getText().toString(), sharedPrefs.getString("jwt", ""))
-                            .enqueue(new AddReviewCallback(getContext(), viewVar));
+                            .enqueue(new AddReviewCallback(getContext(), view));
                 }
 
-                Snackbar.make(viewVar, "Review sent!", Snackbar.LENGTH_LONG).show();
+                Snackbar.make(view, "Review sent!", Snackbar.LENGTH_LONG).show();
             } else {
                 parseError(response);
             }
@@ -370,7 +372,6 @@ public class ReviewActivityFragment extends Fragment {
 
                         @Override
                         public void onNothingSelected(AdapterView<?> parentView) {
-                            // left blank
                         }
                     });
                 }
