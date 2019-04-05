@@ -364,7 +364,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
             int result = 0;
 
             // Check for the buildings of the users location values being null
-            if (bathroom1.getBuilding() != null && bathroom2.getBuilding() != null  || !(latitude == 0 && longitude == 0)) {
+            if (bathroom1.getBuilding() != null && bathroom2.getBuilding() != null) {
 
                 // Initialize new location variables for the buildings and the user
                 Location location1 = new Location("Bathroom 1");
