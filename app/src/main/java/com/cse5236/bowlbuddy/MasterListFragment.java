@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -34,11 +35,13 @@ import com.cse5236.bowlbuddy.util.APISingleton;
 import com.cse5236.bowlbuddy.models.Bathroom;
 import com.cse5236.bowlbuddy.util.BowlBuddyCallback;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import java8.util.stream.StreamSupport;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -174,6 +177,8 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
         }
 
+        getBathroomList();
+
         Log.d(TAG, "onCreateView: View successfully created");
         return view;
     }
@@ -184,6 +189,14 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         // Make these FABs invisible when the fragment starts
         gottaGoFab.setVisibility(INVISIBLE);
         addReviewFab.setVisibility(INVISIBLE);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // Refresh list
+        getBathroomList();
     }
 
     @Override
@@ -272,7 +285,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         }
 
         // Sort the bathrooms by distance
-        bathroomChanged(bathroomList, DISTANCE_SORT);
+        bathroomChanged(DISTANCE_SORT);
 
         // Call method to highlight the top 3 bathrooms
         changeRecyclerViewHighlight(color);
@@ -318,10 +331,9 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
     /**
      * Method used to start the bathroom sorting process
      *
-     * @param unsortedBathroomList A list of the bathrooms that will be sorted
      * @param sortOrder The order in which the bathrooms will be sorted
      */
-    public void bathroomChanged(List<Bathroom> unsortedBathroomList, String sortOrder) {
+    public void bathroomChanged(String sortOrder) {
         // Change bathroom backgrounds before sorting
         if (gottaGoEnabled) {
             changeRecyclerViewHighlight(Color.WHITE);
@@ -329,15 +341,18 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
 
         if (sortOrder.equals(DISTANCE_SORT)) {
             // Order list by bathroom distance
-            Collections.sort(unsortedBathroomList, new DistanceSort());
+            Collections.sort(bathroomList, new DistanceSort());
         } else if (sortOrder.equals(RATING_SORT)) {
             // Order list by bathroom rating
-            Collections.sort(unsortedBathroomList, new RatingSort());
+            Collections.sort(bathroomList, new RatingSort());
         }
 
         // Save new bathroom list and notify recycler view of list change
-        bathroomList = unsortedBathroomList;
         bathroomAdapter.notifyDataSetChanged();
+    }
+
+    public void getBathroomList() {
+        new PopulateMasterListTask().execute();
     }
 
     /**
@@ -464,32 +479,6 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
             startActivityForResult(intent, UPDATE_FAVORITES_REQUEST);
         }
 
-        public String getGender() {
-            return bathroom.getGender();
-        }
-
-        public Boolean getHandicap() {
-            if (bathroom != null) {
-                return bathroom.isHandicap();
-            } else {
-                return false;
-            }
-        }
-
-        public float getAverageRating() {
-            return bathroom.getAverageRating();
-        }
-
-        public int getPlyCount() {
-            return bathroom.getPlyCount();
-        }
-
-        public String getTitle() {
-            return bathroomTitle.getText().toString();
-        }
-
-        public Bathroom getBathroom() { return this.bathroom; }
-
         public ConstraintLayout getConstraintLayout() { return this.layout; }
     }
 
@@ -519,7 +508,6 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
 
     }
 
-
     private class GetFavoritesCallback extends BowlBuddyCallback<List<Bathroom>> {
         public GetFavoritesCallback(Context context, View view) {
             super(context, view);
@@ -532,6 +520,43 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
             } else {
                 parseError(response);
             }
+        }
+    }
+
+    private class PopulateMasterListTask extends AsyncTask<Void, Void, List<Bathroom>> {
+        @Override
+        protected List<Bathroom> doInBackground(Void... voids) {
+            List<Bathroom> bList;
+            final List<Building> buildingList;
+
+            try {
+                Response<List<Bathroom>> bathroomResponse = service.getAllBathrooms(sharedPreferences.getString("jwt", "")).execute();
+                Response<List<Building>> buildingResponse = service.getAllBuildings(sharedPreferences.getString("jwt", "")).execute();
+
+                if (bathroomResponse.isSuccessful() && buildingResponse.isSuccessful()) {
+                    bList = bathroomResponse.body();
+                    buildingList = buildingResponse.body();
+
+                    StreamSupport.stream(bList).forEach(bathroom -> {
+                        bathroom.setBuilding(
+                                StreamSupport.stream(buildingList).filter(
+                                        building -> building.getId().equals(bathroom.getBuildingID())).findFirst().get()
+                        );
+                    });
+
+                    bathroomList = bList;
+                } else {
+                    Snackbar.make(view, "Error fetching bathrooms.", Snackbar.LENGTH_LONG).show();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(List<Bathroom> bathrooms) {
+            bathroomChanged("Distance");
         }
     }
 }

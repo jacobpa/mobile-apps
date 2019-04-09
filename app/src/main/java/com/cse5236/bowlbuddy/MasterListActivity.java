@@ -1,8 +1,5 @@
 package com.cse5236.bowlbuddy;
 
-import android.Manifest;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
@@ -15,27 +12,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-
-import com.cse5236.bowlbuddy.models.Bathroom;
-import com.cse5236.bowlbuddy.models.Building;
-import com.cse5236.bowlbuddy.util.APIService;
-import com.cse5236.bowlbuddy.util.APISingleton;
-import com.cse5236.bowlbuddy.util.BowlBuddyCallback;
-
-import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Response;
 
 public class MasterListActivity extends AppCompatActivity {
     private final static String TAG = MasterListActivity.class.getSimpleName();
 
-    private List<Bathroom> bathroomList;
-    private APIService service;
-    private SharedPreferences sharedPreferences;
     private Fragment fragment;
-    private View view;
 
     // Literals used to know how to sort the bathroom list
     private static final String DISTANCE_SORT = "Distance";
@@ -45,15 +26,6 @@ public class MasterListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_master_list);
-
-        // Get service instance to talk to the server
-        service = APISingleton.getInstance();
-
-        // Initialize variable to get user information
-        sharedPreferences = this.getSharedPreferences("Session", Context.MODE_PRIVATE);
-
-        // Get instance of current activity
-        view = findViewById(R.id.activity_master_list);
 
         // Manually set action bar, with menu button
         Toolbar tb = findViewById(R.id.toolbar);
@@ -75,24 +47,6 @@ public class MasterListActivity extends AppCompatActivity {
                     .commit();
         }
         Log.d(TAG, "onCreate: Successfully created");
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        // Send a request to the server for the list of bathrooms when activity starts
-        service.getAllBathrooms(sharedPreferences.getString("jwt", ""))
-                .enqueue(new GetBathroomsCallback(this, view));
-    }
-
-    @Override
-    public void onRestart() {
-        super.onRestart();
-
-        // Check for bathroom updates when activity restarts
-        service.getAllBathrooms(sharedPreferences.getString("jwt", ""))
-                .enqueue(new GetBathroomsCallback(this, view));
     }
 
     @Override
@@ -156,60 +110,7 @@ public class MasterListActivity extends AppCompatActivity {
         MasterListFragment fragment = (MasterListFragment) fm.findFragmentById(R.id.master_list_container);
 
         // Inform the fragment how to sort the list
-        fragment.bathroomChanged(bathroomList, sortOrder);
-    }
-
-    private class GetBathroomsCallback extends BowlBuddyCallback<List<Bathroom>> {
-        private Context callbackContext;
-        public GetBathroomsCallback(Context context, View view) {
-            super(context, view);
-            callbackContext = context;
-        }
-
-        @Override
-        public void onResponse(Call<List<Bathroom>> call, Response<List<Bathroom>> response) {
-            // Check if response was successful
-            if (response.isSuccessful()) {
-                // Determine if the bathroom list has changed or has not been initialized yet
-                if (bathroomList == null || bathroomList.size() != response.body().size()) {
-                    bathroomList = response.body();
-
-                    // Get the buildings that each bathroom on this list is located in
-                    for (Bathroom bathroom : bathroomList) {
-                        service.getLocation(bathroom.getBuildingID(), sharedPreferences.getString("jwt", ""))
-                                .enqueue(new GetBathroomBuildingCallback(this.callbackContext, view, bathroom));
-                    }
-                    Log.d(TAG, "onResponse: Response is " + bathroomList);
-                }
-            } else {
-                // Print errors if present
-                parseError(response);
-            }
-        }
-    }
-
-    private class GetBathroomBuildingCallback extends BowlBuddyCallback<Building> {
-        private Bathroom bathroom;
-
-        public GetBathroomBuildingCallback(Context context, View view, Bathroom bathroom) {
-            super(context, view);
-            this.bathroom = bathroom;
-        }
-
-        @Override
-        public void onResponse(Call<Building> call, Response<Building> response) {
-            // Check if the response was successful
-            if (response.isSuccessful()) {
-                // Set the building that the bathroom is located in
-                bathroom.setBuilding(response.body());
-
-                // Default to distance sort for bathroom list
-                notifyBathroomListChange(DISTANCE_SORT);
-            } else {
-                // Print errors if present
-                parseError(response);
-            }
-        }
+        fragment.bathroomChanged(sortOrder);
     }
 
 }
