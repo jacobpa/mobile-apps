@@ -15,10 +15,13 @@ public class MyReviewsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_my_reviews);
 
         FragmentManager fm = getSupportFragmentManager();
+        Fragment fragment = fm.findFragmentById(R.id.my_reviews_constraint);
 
-        Fragment fragment = new MyReviewsFragment();
-        fm.beginTransaction().add(R.id.my_reviews_constraint, fragment).commit();
-
+        // If fragment does not exist, create a new instance of it
+        if(fragment == null) {
+            fragment = new MyReviewsFragment();
+            fm.beginTransaction().add(R.id.my_reviews_constraint, fragment).commit();
+        }
         Log.d(TAG, "onCreate: Successfully created");
     }
 }
