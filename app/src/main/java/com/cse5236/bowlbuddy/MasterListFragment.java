@@ -34,6 +34,7 @@ import com.cse5236.bowlbuddy.util.APIService;
 import com.cse5236.bowlbuddy.util.APISingleton;
 import com.cse5236.bowlbuddy.models.Bathroom;
 import com.cse5236.bowlbuddy.util.BowlBuddyCallback;
+import com.cse5236.bowlbuddy.util.BuildingDBSingleton;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -63,6 +64,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
     private RecyclerView.Adapter bathroomAdapter;
     private RecyclerView.LayoutManager bathroomLayoutManager;
     private List<Bathroom> bathroomList;
+    private List<Building> buildingList;
     private ArrayList<Bathroom> favoritesList;
     private APIService service;
     private SharedPreferences sharedPreferences;
@@ -172,12 +174,14 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
                 requestPermissions(new String[]{ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_LOCATION);
             } else {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+                // Initialize latitude and longitude with last-known values
+                Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                latitude = lastLocation.getLatitude();
+                longitude = lastLocation.getLongitude();
             }
         } else {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
         }
-
-        getBathroomList();
 
         Log.d(TAG, "onCreateView: View successfully created");
         return view;
@@ -196,7 +200,11 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         super.onResume();
 
         // Refresh list
-        getBathroomList();
+        if (buildingList == null) {
+            getBuildings();
+        } else {
+            getBathroomList();
+        }
     }
 
     @Override
@@ -353,6 +361,10 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
 
     public void getBathroomList() {
         new PopulateMasterListTask().execute();
+    }
+
+    public void getBuildings() {
+        new PopulateBuildingsTask().execute();
     }
 
     /**
@@ -527,15 +539,12 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         @Override
         protected List<Bathroom> doInBackground(Void... voids) {
             List<Bathroom> bList;
-            final List<Building> buildingList;
 
             try {
                 Response<List<Bathroom>> bathroomResponse = service.getAllBathrooms(sharedPreferences.getString("jwt", "")).execute();
-                Response<List<Building>> buildingResponse = service.getAllBuildings(sharedPreferences.getString("jwt", "")).execute();
 
-                if (bathroomResponse.isSuccessful() && buildingResponse.isSuccessful()) {
+                if (bathroomResponse.isSuccessful()) {
                     bList = bathroomResponse.body();
-                    buildingList = buildingResponse.body();
 
                     StreamSupport.stream(bList).forEach(bathroom -> {
                         bathroom.setBuilding(
@@ -557,6 +566,37 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         @Override
         protected void onPostExecute(List<Bathroom> bathrooms) {
             bathroomChanged("Distance");
+        }
+    }
+
+    private class PopulateBuildingsTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            buildingList = BuildingDBSingleton.getAllBuildings(getContext());
+
+            if (buildingList == null || buildingList.size() == 0) {
+                try {
+                    Response<List<Building>> response = service.getAllBuildings(sharedPreferences.getString("jwt", "")).execute();
+
+                    if (response.isSuccessful()) {
+                        buildingList = response.body();
+                        StreamSupport.stream(buildingList).forEach(building -> {
+                            BuildingDBSingleton.addBuilding(getContext(), building);
+                        });
+                    } else {
+                        Snackbar.make(view, "Error fetching buildings.", Snackbar.LENGTH_LONG).show();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            getBathroomList();
         }
     }
 }

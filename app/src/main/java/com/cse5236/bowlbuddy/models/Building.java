@@ -20,6 +20,17 @@ public class Building implements Serializable {
     public Building() {
     }
 
+    public Building(Integer id, Integer floors, String address, String name, String openTime, String closeTime, Double longitude, Double latitude) {
+        this.id = id;
+        this.floors = floors;
+        this.address = address;
+        this.name = name;
+        this.openTime = openTime;
+        this.closeTime = closeTime;
+        this.longitude = longitude;
+        this.latitude = latitude;
+    }
+
     public String toString() {
         return name;
     }
