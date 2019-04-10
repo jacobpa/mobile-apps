@@ -19,6 +19,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.AppCompatRatingBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -63,6 +64,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
     private RecyclerView bathroomRecyclerView;
     private RecyclerView.Adapter bathroomAdapter;
     private RecyclerView.LayoutManager bathroomLayoutManager;
+    private SwipeRefreshLayout refreshLayout;
     private List<Bathroom> bathroomList;
     private List<Building> buildingList;
     private ArrayList<Bathroom> favoritesList;
@@ -118,6 +120,19 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         bathroomRecyclerView.setLayoutManager(bathroomLayoutManager);
         bathroomRecyclerView.setAdapter(bathroomAdapter);
         bathroomRecyclerView.setItemViewCacheSize(100);
+
+        // Initialize the RefreshLayout
+        refreshLayout = view.findViewById(R.id.master_refresh);
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if (buildingList == null) {
+                    getBuildings();
+                } else {
+                    getBathroomList();
+                }
+            }
+        });
 
         // Initialize the navigation view and set this fragment as it's listener
         NavigationView nav = view.findViewById(R.id.master_nav_view);
@@ -566,6 +581,8 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         @Override
         protected void onPostExecute(List<Bathroom> bathrooms) {
             bathroomChanged("Distance");
+
+            refreshLayout.setRefreshing(false);
         }
     }
 

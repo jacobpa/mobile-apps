@@ -13,11 +13,17 @@
         android:layout_width="wrap_content"
         android:id="@+id/master_constraint_layout">
 
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/masterRecyclerView"
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/master_refresh"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/masterRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </android.support.v4.widget.SwipeRefreshLayout>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/add_review"
