@@ -13,6 +13,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import static android.support.v4.print.PrintHelper.ORIENTATION_PORTRAIT;
+
 public class MasterListActivity extends AppCompatActivity {
     private final static String TAG = MasterListActivity.class.getSimpleName();
 
@@ -30,9 +32,14 @@ public class MasterListActivity extends AppCompatActivity {
         // Manually set action bar, with menu button
         Toolbar tb = findViewById(R.id.toolbar);
         setSupportActionBar(tb);
-        ActionBar ab = getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
-        ab.setHomeAsUpIndicator(R.drawable.ic_menu_white);
+
+        // Only load hamburger menu if in portrait mode
+        // For some reason, portrait and landscape are reversed so negation is used
+        if (getResources().getConfiguration().orientation != ORIENTATION_PORTRAIT) {
+            ActionBar ab = getSupportActionBar();
+            ab.setDisplayHomeAsUpEnabled(true);
+            ab.setHomeAsUpIndicator(R.drawable.ic_menu_white);
+        }
 
         // Get an instance of the fragment manager
         FragmentManager fm = getSupportFragmentManager();
@@ -62,11 +69,13 @@ public class MasterListActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // If populated in onCreate, returns null object, wait until created in fragment
-        DrawerLayout drawerLayout = findViewById(R.id.master_drawer);
 
         switch(item.getItemId()) {
             // The menu bar on the top left was selected
             case android.R.id.home:
+                // This option will only happen in portrait mode
+                DrawerLayout drawerLayout = findViewById(R.id.master_drawer);
+
                 if(drawerLayout.isDrawerOpen(GravityCompat.START)) {
                     drawerLayout.closeDrawer(GravityCompat.START);
                 } else {
@@ -90,7 +99,7 @@ public class MasterListActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy: Successfully ended activity");
-        finish();
+        //finish();
     }
 
     protected void onPause() {

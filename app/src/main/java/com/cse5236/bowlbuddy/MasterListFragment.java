@@ -20,12 +20,14 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.AppCompatRatingBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -104,9 +106,20 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_master_list, container, false);
+
         Activity activity = getActivity();
+
+        if (activity != null) {
+            int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
+            if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) {
+                view = inflater.inflate(R.layout.fragment_master_list_land, container, false);
+            } else {
+
+                // Inflate the layout for this fragment
+                view = inflater.inflate(R.layout.fragment_master_list, container, false);
+            }
+        }
+
 
         // Initialize variables for communicating with the server and getting user information
         service = APISingleton.getInstance();
@@ -189,14 +202,26 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
                 requestPermissions(new String[]{ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_LOCATION);
             } else {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
-                // Initialize latitude and longitude with last-known values
+
+                // Try to get the last known location of user
                 Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                latitude = lastLocation.getLatitude();
-                longitude = lastLocation.getLongitude();
+                if (lastLocation != null) {
+                    latitude = lastLocation.getLatitude();
+                    longitude = lastLocation.getLongitude();
+                }
+
             }
         } else {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+            // Try to get the last known location of user
+            Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (lastLocation != null) {
+                latitude = lastLocation.getLatitude();
+                longitude = lastLocation.getLongitude();
+            }
         }
+
+
 
         Log.d(TAG, "onCreateView: View successfully created");
         return view;
@@ -224,7 +249,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        // Check if location premissions were granted.
+        // Check if location permissions were granted.
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             if (getActivity().checkSelfPermission(ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
@@ -237,7 +262,6 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
         switch (item.getItemId()) {
             case R.id.log_out:
                 logOutAction();
