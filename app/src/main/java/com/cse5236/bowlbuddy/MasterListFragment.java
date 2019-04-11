@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import java8.util.stream.StreamSupport;
 import retrofit2.Call;
@@ -321,7 +322,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
      * Method used to start the gottaGo functionality.  It changes the color of the top 3 bathrooms
      * when it is selected so user knows the closes three bathrooms they can go to.
      */
-    public void startGottaGo() {
+    private void startGottaGo() {
 
         // Default the highlight color to yellow
         int color = Color.YELLOW;
@@ -349,7 +350,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
     /**
      * Method used to start the AddReview activity.
      */
-    public void startAddReview() {
+    private void startAddReview() {
         Intent intent = new Intent(getActivity(), ReviewActivity.class);
         intent.putExtra("caller", "MasterListFragment");
         startActivity(intent);
@@ -360,7 +361,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
      *
      * @param color The color to change the background to
      */
-    public void changeRecyclerViewHighlight(int color) {
+    private void changeRecyclerViewHighlight(int color) {
         // Change the color for the top 3 bathrooms
         for (int i = 0; i < 3; i++) {
             // Get the view and holder of the bathroom being changed
@@ -398,11 +399,11 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         bathroomAdapter.notifyDataSetChanged();
     }
 
-    public void updateList() {
+    private void updateList() {
         if (buildingList == null) {
-            new PopulateBuildingsTask().execute();
+            new PopulateBuildingsTask(this).execute();
         } else {
-            new PopulateBathroomsTask().execute();
+            new PopulateBathroomsTask(this).execute();
         }
     }
 
@@ -483,13 +484,13 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
     }
 
     private class BathroomHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private TextView bathroomTitle;
-        private TextView bathroomDesc;
-        private AppCompatRatingBar ratingBar;
+        private final TextView bathroomTitle;
+        private final TextView bathroomDesc;
+        private final AppCompatRatingBar ratingBar;
         private Bathroom bathroom;
-        private ConstraintLayout layout;
+        private final ConstraintLayout layout;
 
-        public BathroomHolder(LayoutInflater inflater, ViewGroup parent) {
+        BathroomHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.list_item_bathroom, parent, false));
             // Not using an anonymous class here, as all items use the same onClickListener
             itemView.setOnClickListener(this);
@@ -500,10 +501,10 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
             layout = itemView.findViewById(R.id.recycler_view_constraint_layout);
         }
 
-        public void bind(Bathroom bathroom) {
+        void bind(Bathroom bathroom) {
             this.bathroom = bathroom;
             if (bathroom != null && bathroom.getBuilding() != null) {
-                String title = String.format("%s: Floor %d, Room %d",
+                String title = String.format(Locale.getDefault(), "%s: Floor %d, Room %d",
                         bathroom.getBuilding().getName(),
                         bathroom.getFloor(),
                         bathroom.getRmNum());
@@ -522,7 +523,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         /**
          * Method used to open the details activity for the selected bathroom
          */
-        public void openDetails() {
+        void openDetails() {
             Bundle bundle = new Bundle();
             bundle.putSerializable("bathroom", this.bathroom);
             bundle.putSerializable("favorites", favoritesList);
@@ -532,7 +533,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
             startActivityForResult(intent, UPDATE_FAVORITES_REQUEST);
         }
 
-        public ConstraintLayout getConstraintLayout() {
+        ConstraintLayout getConstraintLayout() {
             return this.layout;
         }
     }
@@ -563,13 +564,13 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
     }
 
     private class GetFavoritesCallback extends BowlBuddyCallback<List<Bathroom>> {
-        public GetFavoritesCallback(Context context, View view) {
+        GetFavoritesCallback(Context context, View view) {
             super(context, view);
         }
 
         @Override
-        public void onResponse(Call<List<Bathroom>> call, Response<List<Bathroom>> response) {
-            if (response.isSuccessful()) {
+        public void onResponse(@NonNull Call<List<Bathroom>> call, @NonNull Response<List<Bathroom>> response) {
+            if (response.isSuccessful() && response.body() != null) {
                 favoritesList = new ArrayList<>(response.body());
             } else {
                 parseError(response);
@@ -577,27 +578,27 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         }
     }
 
-    private class PopulateBathroomsTask extends AsyncTask<Void, Void, List<Bathroom>> {
+    private static class PopulateBathroomsTask extends AsyncTask<Void, Void, List<Bathroom>> {
+        private MasterListFragment fragment;
+
+        PopulateBathroomsTask(MasterListFragment fragment) {
+            this.fragment = fragment;
+        }
+
         @Override
         protected List<Bathroom> doInBackground(Void... voids) {
-            List<Bathroom> bList;
-
             try {
-                Response<List<Bathroom>> bathroomResponse = service.getAllBathrooms(sharedPreferences.getString("jwt", "")).execute();
+                Response<List<Bathroom>> bathroomResponse = fragment.service.getAllBathrooms(fragment.sharedPreferences.getString("jwt", "")).execute();
 
-                if (bathroomResponse.isSuccessful()) {
-                    bList = bathroomResponse.body();
+                if (bathroomResponse.isSuccessful() && bathroomResponse.body() != null) {
+                    fragment.bathroomList = bathroomResponse.body();
 
-                    StreamSupport.stream(bList).forEach(bathroom -> {
-                        bathroom.setBuilding(
-                                StreamSupport.stream(buildingList).filter(
-                                        building -> building.getId().equals(bathroom.getBuildingID())).findFirst().get()
-                        );
-                    });
-
-                    bathroomList = bList;
+                    StreamSupport.stream(fragment.bathroomList).forEach(bathroom -> bathroom.setBuilding(
+                            StreamSupport.stream(fragment.buildingList).filter(
+                                    building -> building.getId().equals(bathroom.getBuildingID())).findFirst().get()
+                    ));
                 } else {
-                    Snackbar.make(view, "Error fetching bathrooms.", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(fragment.view, "Error fetching bathrooms.", Snackbar.LENGTH_LONG).show();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -607,33 +608,37 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
 
         @Override
         protected void onPostExecute(List<Bathroom> bathrooms) {
-            if (bathroomList != null) {
-                bathroomChanged("Distance");
+            if (fragment.bathroomList != null) {
+                fragment.bathroomChanged("Distance");
             } else {
-                Snackbar.make(view, "Error fetching bathrooms.", Snackbar.LENGTH_LONG).show();
+                Snackbar.make(fragment.view, "Error fetching bathrooms.", Snackbar.LENGTH_LONG).show();
             }
 
-            refreshLayout.setRefreshing(false);
+            fragment.refreshLayout.setRefreshing(false);
         }
     }
 
-    private class PopulateBuildingsTask extends AsyncTask<Void, Void, Void> {
+    private static class PopulateBuildingsTask extends AsyncTask<Void, Void, Void> {
+        MasterListFragment fragment;
+
+        PopulateBuildingsTask(MasterListFragment fragment) {
+            this.fragment = fragment;
+        }
+
         @Override
         protected Void doInBackground(Void... voids) {
-            buildingList = BuildingDBSingleton.getAllBuildings(getContext());
+            fragment.buildingList = BuildingDBSingleton.getAllBuildings(fragment.getContext());
 
-            if (buildingList == null || buildingList.size() == 0) {
+            if (fragment.buildingList == null || fragment.buildingList.size() == 0) {
                 try {
-                    Response<List<Building>> response = service.getAllBuildings(sharedPreferences.getString("jwt", "")).execute();
+                    Response<List<Building>> response = fragment.service.getAllBuildings(fragment.sharedPreferences.getString("jwt", "")).execute();
 
-                    if (response.isSuccessful()) {
-                        StreamSupport.stream(response.body()).forEach(building -> {
-                            BuildingDBSingleton.addBuilding(getContext(), building);
-                        });
+                    if (response.isSuccessful() && response.body() != null) {
+                        StreamSupport.stream(response.body()).forEach(building -> BuildingDBSingleton.addBuilding(fragment.getContext(), building));
 
-                        buildingList = BuildingDBSingleton.getAllBuildings(getContext());
+                        fragment.buildingList = BuildingDBSingleton.getAllBuildings(fragment.getContext());
                     } else {
-                        Snackbar.make(view, "Error fetching buildings.", Snackbar.LENGTH_LONG).show();
+                        Snackbar.make(fragment.view, "Error fetching buildings.", Snackbar.LENGTH_LONG).show();
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -646,7 +651,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         @Override
         protected void onPostExecute(Void aVoid) {
             // Want to populate bathrooms as well now that we have buildings
-            new PopulateBathroomsTask().execute();
+            new PopulateBathroomsTask(fragment).execute();
         }
     }
 }
