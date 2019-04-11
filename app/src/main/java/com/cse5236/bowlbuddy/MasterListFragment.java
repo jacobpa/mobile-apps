@@ -112,7 +112,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         if (activity != null) {
             int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
             if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) {
-                view = inflater.inflate(R.layout.fragment_master_list_land, container, false);
+                view = inflater.inflate(R.layout.fragment_master_list, container, false);
             } else {
 
                 // Inflate the layout for this fragment
