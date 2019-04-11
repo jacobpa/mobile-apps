@@ -627,10 +627,11 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
                     Response<List<Building>> response = service.getAllBuildings(sharedPreferences.getString("jwt", "")).execute();
 
                     if (response.isSuccessful()) {
-                        buildingList = response.body();
-                        StreamSupport.stream(buildingList).forEach(building -> {
+                        StreamSupport.stream(response.body()).forEach(building -> {
                             BuildingDBSingleton.addBuilding(getContext(), building);
                         });
+
+                        buildingList = BuildingDBSingleton.getAllBuildings(getContext());
                     } else {
                         Snackbar.make(view, "Error fetching buildings.", Snackbar.LENGTH_LONG).show();
                     }

@@ -4,11 +4,12 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.provider.BaseColumns;
 
 import com.cse5236.bowlbuddy.models.Building;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class BuildingDBSingleton {
@@ -64,6 +65,12 @@ public class BuildingDBSingleton {
         }
         cursor.close();
 
+        Collections.sort(buildingList, new Comparator<Building>() {
+            @Override
+            public int compare(Building building, Building t1) {
+                return building.getName().compareTo(t1.getName());
+            }
+        });
         return buildingList;
     }
 }
