@@ -28,9 +28,8 @@ import com.cse5236.bowlbuddy.models.Building;
 import com.cse5236.bowlbuddy.util.APIService;
 import com.cse5236.bowlbuddy.util.APISingleton;
 import com.cse5236.bowlbuddy.util.BowlBuddyCallback;
+import com.cse5236.bowlbuddy.util.BuildingDBSingleton;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -115,8 +114,35 @@ public class ReviewActivityFragment extends Fragment {
         });
 
         String caller = intent.getStringExtra("caller");
-        // Populate building spinner
-        service.getAllBuildings(sharedPrefs.getString("jwt", "")).enqueue(new GetBuildingsCallback(getContext(), view, !caller.equals("MasterListFragment")));
+        buildingList = BuildingDBSingleton.getAllBuildings(getContext());
+
+        // Set ArrayAdapter for building spinner
+        buildingAdapter = new ArrayAdapter<>(getActivity(),
+                android.R.layout.simple_spinner_item, buildingList);
+        buildingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        buildingSpn.setAdapter(buildingAdapter);
+
+        // Set listeners for spinner, or disable if not needed
+        if (!caller.equals("MasterListFragment")) {
+            // Set building selection, disable input
+            bathroom = (Bathroom) intent.getSerializableExtra("bathroom");
+            buildingList.clear();
+            buildingList.add(bathroom.getBuilding());
+            buildingSpn.setSelection(0);
+            buildingSpn.setEnabled(false);
+            building = bathroom.getBuilding();
+        } else {
+            buildingSpn.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                    building = buildingList.get(position);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parentView) {
+                }
+            });
+        }
 
         if (caller.equals("MasterListFragment")) {
             // If called from the Master List, adding a new bathroom.
@@ -151,7 +177,7 @@ public class ReviewActivityFragment extends Fragment {
 
                 @Override
                 public void afterTextChanged(Editable editable) {
-                    if(!TextUtils.isEmpty(editable)) {
+                    if (!TextUtils.isEmpty(editable)) {
                         room = Integer.parseInt(editable.toString());
                     } else {
                         room = -1;
@@ -318,7 +344,7 @@ public class ReviewActivityFragment extends Fragment {
                 Bathroom b = response.body();
                 Log.d(TAG, "onResponse: Response is " + response);
 
-                if(hasReview) {
+                if (hasReview) {
                     service.addReview(sharedPrefs.getInt("id", 0), b.getId(), detailsEntry.getText().toString(), sharedPrefs.getString("jwt", ""))
                             .enqueue(new AddReviewCallback(getContext(), view));
                 }
@@ -329,62 +355,4 @@ public class ReviewActivityFragment extends Fragment {
             }
         }
     }
-
-    private class GetBuildingsCallback extends BowlBuddyCallback<List<Building>> {
-        private boolean bathroomExists;
-
-        public GetBuildingsCallback(Context context, View view, boolean bathroomExists) {
-            super(context, view);
-            this.bathroomExists = bathroomExists;
-        }
-
-        @Override
-        public void onResponse(Call<List<Building>> call, Response<List<Building>> response) {
-            if (response.isSuccessful()) {
-                buildingList = response.body();
-                Log.d(TAG, "onResponse: Response is " + buildingList);
-
-                // Sort buildings alphanumerically by title
-                Collections.sort(buildingList, new Comparator<Building>() {
-                    @Override
-                    public int compare(Building building, Building t1) {
-                        return building.getName().compareTo(t1.getName());
-                    }
-                });
-
-                // Set ArrayAdapter for spinner
-                buildingAdapter = new ArrayAdapter<>(getActivity(),
-                        android.R.layout.simple_spinner_item, buildingList);
-                buildingSpn.setAdapter(buildingAdapter);
-
-                // Set listeners for spinner, or disable if not needed
-                if (bathroomExists) {
-                    // Set building selection, disable input
-                    buildingSpn.setSelection(buildingAdapter.getPosition(bathroom.getBuilding()));
-                    buildingSpn.setEnabled(false);
-                    building = buildingList.get(buildingAdapter.getPosition(bathroom.getBuilding()));
-                } else {
-                    buildingSpn.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                        @Override
-                        public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                            building = buildingList.get(position);
-                        }
-
-                        @Override
-                        public void onNothingSelected(AdapterView<?> parentView) {
-                        }
-                    });
-                }
-            } else {
-                parseError(response);
-            }
-        }
-
-        @Override
-        public void onFailure(Call<List<Building>> call, Throwable t) {
-            super.onFailure(call, t);
-            Log.d(TAG, t.toString());
-        }
-    }
-
 }

@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,7 +19,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.AppCompatRatingBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -35,13 +36,17 @@ import com.cse5236.bowlbuddy.util.APIService;
 import com.cse5236.bowlbuddy.util.APISingleton;
 import com.cse5236.bowlbuddy.models.Bathroom;
 import com.cse5236.bowlbuddy.util.BowlBuddyCallback;
+import com.cse5236.bowlbuddy.util.BuildingDBSingleton;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
+import java8.util.stream.StreamSupport;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -62,7 +67,9 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
     private RecyclerView bathroomRecyclerView;
     private RecyclerView.Adapter bathroomAdapter;
     private RecyclerView.LayoutManager bathroomLayoutManager;
+    private SwipeRefreshLayout refreshLayout;
     private List<Bathroom> bathroomList;
+    private List<Building> buildingList;
     private ArrayList<Bathroom> favoritesList;
     private APIService service;
     private SharedPreferences sharedPreferences;
@@ -107,7 +114,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         if (activity != null) {
             int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
             if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) {
-                view = inflater.inflate(R.layout.fragment_master_list_land, container, false);
+                view = inflater.inflate(R.layout.fragment_master_list, container, false);
             } else {
 
                 // Inflate the layout for this fragment
@@ -128,6 +135,15 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         bathroomRecyclerView.setLayoutManager(bathroomLayoutManager);
         bathroomRecyclerView.setAdapter(bathroomAdapter);
         bathroomRecyclerView.setItemViewCacheSize(100);
+
+        // Initialize the RefreshLayout
+        refreshLayout = view.findViewById(R.id.master_refresh);
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                updateList();
+            }
+        });
 
         // Initialize the navigation view and set this fragment as it's listener
         NavigationView nav = view.findViewById(R.id.master_nav_view);
@@ -168,9 +184,6 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
             }
         });
 
-        service.getFavorites(sharedPreferences.getInt("id", 0), sharedPreferences.getString("jwt", ""))
-                .enqueue(new GetFavoritesCallback(getContext(), view));
-
         // Declare variable that will manage the calls to the gps for location coordinates
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
@@ -184,12 +197,14 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
                 requestPermissions(new String[]{ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_LOCATION);
             } else {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+
                 // Try to get the last known location of user
                 Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 if (lastLocation != null) {
                     latitude = lastLocation.getLatitude();
                     longitude = lastLocation.getLongitude();
                 }
+
             }
         } else {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
@@ -201,7 +216,15 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
             }
         }
 
-
+        if (savedInstanceState != null) {
+            buildingList = (List<Building>) savedInstanceState.getSerializable("buildingList");
+            bathroomList = (List<Bathroom>) savedInstanceState.getSerializable("bathroomList");
+            favoritesList = (ArrayList<Bathroom>) savedInstanceState.getSerializable("favoritesList");
+        } else {
+            updateList();
+            service.getFavorites(sharedPreferences.getInt("id", 0), sharedPreferences.getString("jwt", ""))
+                    .enqueue(new GetFavoritesCallback(getContext(), view));
+        }
 
         Log.d(TAG, "onCreateView: View successfully created");
         return view;
@@ -213,6 +236,18 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         // Make these FABs invisible when the fragment starts
         gottaGoFab.setVisibility(INVISIBLE);
         addReviewFab.setVisibility(INVISIBLE);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        if (bathroomList != null)
+            outState.putSerializable("bathroomList", new ArrayList<>(bathroomList));
+        if (bathroomList != null)
+            outState.putSerializable("buildingList", new ArrayList<>(buildingList));
+        if (bathroomList != null)
+            outState.putSerializable("favoritesList", favoritesList);
     }
 
     @Override
@@ -272,7 +307,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
     /**
      * Method used to go the the MyReviews activity
      */
-    private void launchMyReviewsActivity () {
+    private void launchMyReviewsActivity() {
         Intent i = new Intent(getActivity(), MyReviewsActivity.class);
         startActivity(i);
     }
@@ -289,7 +324,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
      * Method used to start the gottaGo functionality.  It changes the color of the top 3 bathrooms
      * when it is selected so user knows the closes three bathrooms they can go to.
      */
-    public void startGottaGo() {
+    private void startGottaGo() {
 
         // Default the highlight color to yellow
         int color = Color.YELLOW;
@@ -304,7 +339,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         linearLayoutManager.scrollToPositionWithOffset(0,0);
 
         // Sort the bathrooms by distance
-        bathroomChanged(bathroomList, DISTANCE_SORT);
+        bathroomChanged(DISTANCE_SORT);
 
         // Call method to highlight the top 3 bathrooms
         changeRecyclerViewHighlight(color);
@@ -317,7 +352,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
     /**
      * Method used to start the AddReview activity.
      */
-    public void startAddReview() {
+    private void startAddReview() {
         Intent intent = new Intent(getActivity(), ReviewActivity.class);
         intent.putExtra("caller", "MasterListFragment");
         startActivity(intent);
@@ -373,14 +408,9 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
     /**
      * Method used to start the bathroom sorting process
      *
-     * @param unsortedBathroomList A list of the bathrooms that will be sorted
      * @param sortOrder The order in which the bathrooms will be sorted
      */
-    public void bathroomChanged(List<Bathroom> unsortedBathroomList, String sortOrder) {
-        // Do not sort if bathroom list is null
-        if (unsortedBathroomList == null) {
-            return;
-        }
+    public void bathroomChanged(String sortOrder) {
         // Change bathroom backgrounds before sorting
         if (gottaGoEnabled) {
             changeRecyclerViewHighlight(Color.WHITE);
@@ -389,22 +419,28 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
 
         if (sortOrder.equals(DISTANCE_SORT)) {
             // Order list by bathroom distance
-            Collections.sort(unsortedBathroomList, new DistanceSort());
+            Collections.sort(bathroomList, new DistanceSort());
         } else if (sortOrder.equals(RATING_SORT)) {
             // Order list by bathroom rating
-            Collections.sort(unsortedBathroomList, new RatingSort());
+            Collections.sort(bathroomList, new RatingSort());
         }
 
         // Save new bathroom list and notify recycler view of list change
-        bathroomList = unsortedBathroomList;
         bathroomAdapter.notifyDataSetChanged();
+    }
+
+    private void updateList() {
+        if (buildingList == null) {
+            new PopulateBuildingsTask(this).execute();
+        } else {
+            new PopulateBathroomsTask(this).execute();
+        }
     }
 
     /**
      * Comparator used to sort bathrooms by overall rating
      */
-    class RatingSort implements Comparator<Bathroom>
-    {
+    class RatingSort implements Comparator<Bathroom> {
         public int compare(Bathroom bathroom1, Bathroom bathroom2) {
             int result = 0;
             if (bathroom1.getAverageRating() < bathroom2.getAverageRating()) {
@@ -429,7 +465,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
                 // Initialize new location variables for the buildings and the user
                 Location location1 = new Location("Bathroom 1");
                 Location location2 = new Location("Bathroom 2");
-                Location userLocation = new Location ("User Location");
+                Location userLocation = new Location("User Location");
 
                 location1.setLatitude(bathroom1.getBuilding().getLatitude());
                 location1.setLongitude(bathroom1.getBuilding().getLongitude());
@@ -465,23 +501,26 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         }
 
         @Override
-        public void onProviderDisabled(String provider) {}
+        public void onProviderDisabled(String provider) {
+        }
 
         @Override
-        public void onProviderEnabled(String provider) {}
+        public void onProviderEnabled(String provider) {
+        }
 
         @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {}
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
     }
 
-    private class BathroomHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        private TextView bathroomTitle;
-        private TextView bathroomDesc;
-        private AppCompatRatingBar ratingBar;
+    private class BathroomHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private final TextView bathroomTitle;
+        private final TextView bathroomDesc;
+        private final AppCompatRatingBar ratingBar;
         private Bathroom bathroom;
-        private ConstraintLayout layout;
+        private final ConstraintLayout layout;
 
-        public BathroomHolder(LayoutInflater inflater, ViewGroup parent) {
+        BathroomHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.list_item_bathroom, parent, false));
             // Not using an anonymous class here, as all items use the same onClickListener
             itemView.setOnClickListener(this);
@@ -492,10 +531,10 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
             layout = itemView.findViewById(R.id.recycler_view_constraint_layout);
         }
 
-        public void bind(Bathroom bathroom) {
+        void bind(Bathroom bathroom) {
             this.bathroom = bathroom;
             if (bathroom != null && bathroom.getBuilding() != null) {
-                String title = String.format("%s: Floor %d, Room %d",
+                String title = String.format(Locale.getDefault(), "%s: Floor %d, Room %d",
                         bathroom.getBuilding().getName(),
                         bathroom.getFloor(),
                         bathroom.getRmNum());
@@ -516,7 +555,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         /**
          * Method used to open the details activity for the selected bathroom
          */
-        public void openDetails() {
+        void openDetails() {
             Bundle bundle = new Bundle();
             bundle.putSerializable("bathroom", this.bathroom);
             bundle.putSerializable("favorites", favoritesList);
@@ -526,33 +565,9 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
             startActivityForResult(intent, UPDATE_FAVORITES_REQUEST);
         }
 
-        public String getGender() {
-            return bathroom.getGender();
+        ConstraintLayout getConstraintLayout() {
+            return this.layout;
         }
-
-        public Boolean getHandicap() {
-            if (bathroom != null) {
-                return bathroom.isHandicap();
-            } else {
-                return false;
-            }
-        }
-
-        public float getAverageRating() {
-            return bathroom.getAverageRating();
-        }
-
-        public int getPlyCount() {
-            return bathroom.getPlyCount();
-        }
-
-        public String getTitle() {
-            return bathroomTitle.getText().toString();
-        }
-
-        public Bathroom getBathroom() { return this.bathroom; }
-
-        public ConstraintLayout getConstraintLayout() { return this.layout; }
     }
 
     private class BathroomAdapter extends RecyclerView.Adapter<BathroomHolder> {
@@ -578,22 +593,97 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
             return bathroomList.size();
         }
 
-
     }
 
-
     private class GetFavoritesCallback extends BowlBuddyCallback<List<Bathroom>> {
-        public GetFavoritesCallback(Context context, View view) {
+        GetFavoritesCallback(Context context, View view) {
             super(context, view);
         }
 
         @Override
-        public void onResponse(Call<List<Bathroom>> call, Response<List<Bathroom>> response) {
-            if (response.isSuccessful()) {
+        public void onResponse(@NonNull Call<List<Bathroom>> call, @NonNull Response<List<Bathroom>> response) {
+            if (response.isSuccessful() && response.body() != null) {
                 favoritesList = new ArrayList<>(response.body());
             } else {
                 parseError(response);
             }
+        }
+    }
+
+    private static class PopulateBathroomsTask extends AsyncTask<Void, Void, List<Bathroom>> {
+        private MasterListFragment fragment;
+
+        PopulateBathroomsTask(MasterListFragment fragment) {
+            this.fragment = fragment;
+        }
+
+        @Override
+        protected List<Bathroom> doInBackground(Void... voids) {
+            try {
+                Response<List<Bathroom>> bathroomResponse = fragment.service.getAllBathrooms(fragment.sharedPreferences.getString("jwt", "")).execute();
+
+                if (bathroomResponse.isSuccessful() && bathroomResponse.body() != null) {
+                    fragment.bathroomList = bathroomResponse.body();
+
+                    StreamSupport.stream(fragment.bathroomList).forEach(bathroom -> bathroom.setBuilding(
+                            StreamSupport.stream(fragment.buildingList).filter(
+                                    building -> building.getId().equals(bathroom.getBuildingID())).findFirst().get()
+                    ));
+                } else {
+                    Snackbar.make(fragment.view, "Error fetching bathrooms.", Snackbar.LENGTH_LONG).show();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(List<Bathroom> bathrooms) {
+            if (fragment.bathroomList != null) {
+                fragment.bathroomChanged("Distance");
+            } else {
+                Snackbar.make(fragment.view, "Error fetching bathrooms.", Snackbar.LENGTH_LONG).show();
+            }
+
+            fragment.refreshLayout.setRefreshing(false);
+        }
+    }
+
+    private static class PopulateBuildingsTask extends AsyncTask<Void, Void, Void> {
+        MasterListFragment fragment;
+
+        PopulateBuildingsTask(MasterListFragment fragment) {
+            this.fragment = fragment;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            fragment.buildingList = BuildingDBSingleton.getAllBuildings(fragment.getContext());
+
+            if (fragment.buildingList == null || fragment.buildingList.size() == 0) {
+                try {
+                    Response<List<Building>> response = fragment.service.getAllBuildings(fragment.sharedPreferences.getString("jwt", "")).execute();
+
+                    if (response.isSuccessful() && response.body() != null) {
+                        StreamSupport.stream(response.body()).forEach(building -> BuildingDBSingleton.addBuilding(fragment.getContext(), building));
+
+                        fragment.buildingList = BuildingDBSingleton.getAllBuildings(fragment.getContext());
+                    } else {
+                        Snackbar.make(fragment.view, "Error fetching buildings.", Snackbar.LENGTH_LONG).show();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            // Want to populate bathrooms as well now that we have buildings
+            new PopulateBathroomsTask(fragment).execute();
         }
     }
 }
