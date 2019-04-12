@@ -73,7 +73,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
     private ArrayList<Bathroom> favoritesList;
     private APIService service;
     private SharedPreferences sharedPreferences;
-    private HashMap<Bathroom, BathroomHolder> bathroomMap = new HashMap<>();
+    private HashMap<Integer, BathroomHolder> bathroomMap = new HashMap<>();
 
     // Variables needed for fabs
     private FloatingActionButton menuFab;
@@ -376,14 +376,13 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
 
             Bathroom bathroom = bathroomList.get(i);
             Log.d(TAG, "bathroom = " + bathroom);
-            BathroomHolder holder = bathroomMap.get(bathroom);
-            Log.d(TAG, "holder bathroom: " + holder.getBathroom());
+            BathroomHolder holder = bathroomMap.get(bathroom.getId());
 
             if (holder != null) {
 
                 do {
                     Log.d(TAG, "inside do loop");
-                    if (holder.getBathroom().equals(bathroom)) {
+                    if (holder != null && holder.getBathroom().getId().equals(bathroom.getId())) {
                         Log.d(TAG, "bathrooms were equal");
 
                         // Change the color of the view and holder of the bathroom
@@ -393,9 +392,9 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
                         //Snackbar.make(view, "changed color: + " + color, Snackbar.LENGTH_SHORT).show();
                     } else {
                         Log.d(TAG, "bathrooms did not match");
-                        holder = bathroomMap.get(bathroom);
+                        holder = bathroomMap.get(bathroom.getId());
                     }
-                } while (!holder.getBathroom().equals(bathroom));
+                } while (!holder.getBathroom().getId().equals(bathroom.getId()));
             } else {
                 //Snackbar.make(view, "holder was null", Snackbar.LENGTH_LONG).show();
                 Log.d(TAG, "holder was null");
@@ -414,7 +413,6 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         // Change bathroom backgrounds before sorting
         if (gottaGoEnabled) {
             changeRecyclerViewHighlight(Color.WHITE);
-            gottaGoEnabled = !gottaGoEnabled;
         }
 
         if (sortOrder.equals(DISTANCE_SORT)) {
@@ -543,7 +541,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
                 bathroomDesc.setText(bathroom.getBuilding().getAddress());
                 ratingBar.setRating(bathroom.getAverageRating());
 
-                bathroomMap.put(bathroom, this);
+                bathroomMap.put(bathroom.getId(), this);
             }
         }
 
@@ -568,6 +566,8 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         ConstraintLayout getConstraintLayout() {
             return this.layout;
         }
+
+        Bathroom getBathroom() { return this.bathroom; }
     }
 
     private class BathroomAdapter extends RecyclerView.Adapter<BathroomHolder> {
