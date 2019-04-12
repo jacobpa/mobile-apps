@@ -28,14 +28,9 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
     private final static String TAG = SignUpFragment.class.getSimpleName();
 
     private View view;
-    private Button signUpButton;
-    private Button backButton;
     private EditText usernameField;
     private EditText passwordField;
     private EditText confirmPasswordField;
-    private String userName;
-    private String password;
-    private String confirmPassword;
 
     public SignUpFragment() {
         // Required empty public constructor
@@ -49,8 +44,8 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
         view = inflater.inflate(R.layout.fragment_sign_up, container, false);
 
         // Get instances for the buttons and user information
-        signUpButton = view.findViewById(R.id.signUpButton);
-        backButton = view.findViewById(R.id.backButton);
+        Button signUpButton = view.findViewById(R.id.signUpButton);
+        Button backButton = view.findViewById(R.id.backButton);
         usernameField = view.findViewById(R.id.usernameField);
         passwordField = view.findViewById(R.id.passwordField);
         confirmPasswordField = view.findViewById(R.id.confirmPasswordField);
@@ -91,9 +86,9 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
         LoadingScreenActivity activity = (LoadingScreenActivity) getActivity();
 
         // Get the user input username, password, and conformation password
-        userName = usernameField.getText().toString();
-        password = passwordField.getText().toString();
-        confirmPassword = confirmPasswordField.getText().toString();
+        String userName = usernameField.getText().toString();
+        String password = passwordField.getText().toString();
+        String confirmPassword = confirmPasswordField.getText().toString();
 
         // Check that the password and confirm password are the same.
         boolean passwordsMatch = password.equals(confirmPassword);

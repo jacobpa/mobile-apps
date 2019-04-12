@@ -18,8 +18,6 @@ import static android.support.v4.print.PrintHelper.ORIENTATION_PORTRAIT;
 public class MasterListActivity extends AppCompatActivity {
     private final static String TAG = MasterListActivity.class.getSimpleName();
 
-    private Fragment fragment;
-
     // Literals used to know how to sort the bathroom list
     private static final String DISTANCE_SORT = "Distance";
     private static final String RATING_SORT = "Rating";
@@ -45,7 +43,7 @@ public class MasterListActivity extends AppCompatActivity {
         FragmentManager fm = getSupportFragmentManager();
 
         // Try to find the Fragment if it's already been created
-        fragment = fm.findFragmentById(R.id.master_list_container);
+        Fragment fragment = fm.findFragmentById(R.id.master_list_container);
 
         if(fragment == null) {
             fragment = new MasterListFragment();

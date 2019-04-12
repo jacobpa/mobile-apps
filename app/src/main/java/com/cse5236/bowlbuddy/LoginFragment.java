@@ -33,9 +33,6 @@ import retrofit2.Response;
 public class LoginFragment extends Fragment {
     private final static String TAG = LoginFragment.class.getSimpleName();
 
-    private View view;
-    private Button loginButton;
-    private Button backButton;
     private EditText usernameField;
     private EditText passwordField;
     private String userName;
@@ -50,11 +47,11 @@ public class LoginFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_login, container, false);
+        View view = inflater.inflate(R.layout.fragment_login, container, false);
 
         // Populate UI elements
-        loginButton = view.findViewById(R.id.loginButton);
-        backButton = view.findViewById(R.id.backButton);
+        Button loginButton = view.findViewById(R.id.loginButton);
+        Button backButton = view.findViewById(R.id.backButton);
         usernameField = view.findViewById(R.id.usernameField);
         passwordField = view.findViewById(R.id.passwordField);
 

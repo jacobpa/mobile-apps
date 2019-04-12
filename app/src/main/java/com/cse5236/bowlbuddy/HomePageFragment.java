@@ -18,10 +18,6 @@ import android.widget.Button;
 public class HomePageFragment extends Fragment implements View.OnClickListener {
     private final static String TAG = HomePageFragment.class.getSimpleName();
 
-    private View view;
-    private Button loginButton;
-    private Button signUpButton;
-
     public HomePageFragment() {
         // Required empty public constructor
     }
@@ -32,11 +28,11 @@ public class HomePageFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        view = inflater.inflate(R.layout.fragment_home_page, container, false);
+        View view = inflater.inflate(R.layout.fragment_home_page, container, false);
 
         // Get instances for the home page buttons
-        loginButton = view.findViewById(R.id.loginButton);
-        signUpButton = view.findViewById(R.id.signUpButton);
+        Button loginButton = view.findViewById(R.id.loginButton);
+        Button signUpButton = view.findViewById(R.id.signUpButton);
 
         // Set this fragment to be the listener for the sign up and login buttons
         if (loginButton != null) {

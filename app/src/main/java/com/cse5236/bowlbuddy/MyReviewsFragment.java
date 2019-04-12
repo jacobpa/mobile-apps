@@ -42,9 +42,7 @@ public class MyReviewsFragment extends Fragment {
     private static final int UPDATE_FAVORITES_REQUEST = 1;
 
     private View view;
-    private RecyclerView reviewsRecyclerView;
     private RecyclerView.Adapter reviewsAdapter;
-    private RecyclerView.LayoutManager reviewsLayoutManager;
     private List<Review> reviewList;
     private APIService service;
     private SharedPreferences sharedPreferences;
@@ -70,8 +68,8 @@ public class MyReviewsFragment extends Fragment {
 
         // Set up and initialize the recycler view that shows the user's reviews
         reviewsAdapter = new ReviewsAdapter();
-        reviewsLayoutManager = new LinearLayoutManager(activity);
-        reviewsRecyclerView = view.findViewById(R.id.recycler_view);
+        RecyclerView.LayoutManager reviewsLayoutManager = new LinearLayoutManager(activity);
+        RecyclerView reviewsRecyclerView = view.findViewById(R.id.recycler_view);
         reviewsRecyclerView.setHasFixedSize(true);
         reviewsRecyclerView.setLayoutManager(reviewsLayoutManager);
         reviewsRecyclerView.setAdapter(reviewsAdapter);

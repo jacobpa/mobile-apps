@@ -61,10 +61,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
     private static final int UPDATE_FAVORITES_REQUEST = 1;
 
     private View view;
-    private TextView navUsername;
-    private RecyclerView bathroomRecyclerView;
     private RecyclerView.Adapter bathroomAdapter;
-    private RecyclerView.LayoutManager bathroomLayoutManager;
     private SwipeRefreshLayout refreshLayout;
     private List<Bathroom> bathroomList;
     private List<Building> buildingList;
@@ -72,8 +69,6 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
     private APIService service;
     private SharedPreferences sharedPreferences;
 
-    // Variables needed for fabs
-    private FloatingActionButton menuFab;
     private FloatingActionButton addReviewFab;
     private FloatingActionButton gottaGoFab;
 
@@ -125,8 +120,8 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
 
         // Initialize the recycler view that will store all of the bathrooms
         bathroomAdapter = new BathroomAdapter();
-        bathroomLayoutManager = new LinearLayoutManager(activity);
-        bathroomRecyclerView = view.findViewById(R.id.masterRecyclerView);
+        RecyclerView.LayoutManager bathroomLayoutManager = new LinearLayoutManager(activity);
+        RecyclerView bathroomRecyclerView = view.findViewById(R.id.masterRecyclerView);
         bathroomRecyclerView.setHasFixedSize(true);
         bathroomRecyclerView.setLayoutManager(bathroomLayoutManager);
         bathroomRecyclerView.setAdapter(bathroomAdapter);
@@ -143,11 +138,12 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         // Initialize the navigation view and set this fragment as it's listener
         NavigationView nav = view.findViewById(R.id.master_nav_view);
         nav.setNavigationItemSelectedListener(this);
-        navUsername = nav.getHeaderView(0).findViewById(R.id.nav_username);
+        TextView navUsername = nav.getHeaderView(0).findViewById(R.id.nav_username);
         navUsername.setText(sharedPreferences.getString("username", "Username"));
 
         // Initialize the menu, add review, and gotta go fab buttons
-        menuFab = view.findViewById(R.id.menu_fab);
+        // Variables needed for fabs
+        FloatingActionButton menuFab = view.findViewById(R.id.menu_fab);
         gottaGoFab = view.findViewById(R.id.gotta_go);
         addReviewFab = view.findViewById(R.id.add_review);
 

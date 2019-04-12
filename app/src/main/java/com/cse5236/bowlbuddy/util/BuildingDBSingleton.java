@@ -14,11 +14,10 @@ import java.util.List;
 
 public class BuildingDBSingleton {
     private static BuildingDBSingleton instance = null;
-    private BuildingDbHelper helper;
     private SQLiteDatabase db;
 
     private BuildingDBSingleton(Context context) {
-        helper = new BuildingDbHelper(context);
+        BuildingDbHelper helper = new BuildingDbHelper(context);
         db = helper.getWritableDatabase();
     }
 
