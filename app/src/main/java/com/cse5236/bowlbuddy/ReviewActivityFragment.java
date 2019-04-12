@@ -189,16 +189,23 @@ public class ReviewActivityFragment extends Fragment {
             bathroom = (Bathroom) bundle.getSerializable("bathroom");
 
             // Set floor number, disable input
-            floorEntry.setText(bathroom.getFloor().toString());
-            floorEntry.setEnabled(false);
+            if(bathroom.getFloor() != null) {
+                floorEntry.setText(bathroom.getFloor().toString());
+                floorEntry.setEnabled(false);
+            }
 
             // Set room number, disable input
-            roomEntry.setText(bathroom.getRmNum().toString());
-            roomEntry.setEnabled(false);
+            if(bathroom.getRmNum() != null) {
+                roomEntry.setText(bathroom.getRmNum().toString());
+                roomEntry.setEnabled(false);
+            }
+
 
             // Set gender, disable input
-            genderSpinner.setSelection(genderAdapter.getPosition(bathroom.getGender()));
-            genderSpinner.setEnabled(false);
+            if(bathroom.getGender() != null) {
+                genderSpinner.setSelection(genderAdapter.getPosition(bathroom.getGender()));
+                genderSpinner.setEnabled(false);
+            }
 
             if (bathroom.getPlyCount() == 1) {
                 plySwitch.setChecked(false);

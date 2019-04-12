@@ -76,12 +76,16 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         bathroom = (Bathroom) activity.getIntent().getExtras().getSerializable("bathroom");
         favoritesList = (ArrayList<Bathroom>) activity.getIntent().getExtras().getSerializable("favorites");
 
-        setStars(bathroom.getAverageRating());
-        setRoom(bathroom.getRmNum());
-        setFloor(bathroom.getFloor());
-        setGender(bathroom.getGender());
-        setHandicap(bathroom.isHandicap());
-        setTitle(bathroom.getBuilding().getName());
+        if(bathroom != null) {
+            setStars(bathroom.getAverageRating());
+            setRoom(bathroom.getRmNum());
+            setFloor(bathroom.getFloor());
+            setGender(bathroom.getGender());
+            setHandicap(bathroom.isHandicap());
+            if(bathroom.getBuilding() != null) {
+                setTitle(bathroom.getBuilding().getName());
+            }
+        }
 
         addFAB = view.findViewById(R.id.add_review_fab);
         if(addFAB != null) {
@@ -137,8 +141,11 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         sharedPrefs = activity.getSharedPreferences("Session", Context.MODE_PRIVATE);
 
         service = APISingleton.getInstance();
-        service.getBathroomReviews(bathroom.getId(), sharedPrefs.getString("jwt", ""))
-                .enqueue(new ReviewListCallback(getContext(), view));
+
+        if(bathroom.getId() != null) {
+            service.getBathroomReviews(bathroom.getId(), sharedPrefs.getString("jwt", ""))
+                    .enqueue(new ReviewListCallback(getContext(), view));
+        }
 
         reviewAdapter = new ReviewAdapter();
         reviewLayoutManager = new LinearLayoutManager(activity);
@@ -151,30 +158,46 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
     }
 
     public void setGender(String gender) {
-        genderField.setText(gender);
+        if(gender != null) {
+            genderField.setText(gender);
+        }
     }
 
     public void setHandicap(Boolean handicap) {
-        String access = "Handicap Accessible";
-        String no_access = "Not Accessible";
-        if (handicap) {
-            handicapField.setText(access);
-        } else {
-            handicapField.setText(no_access);
+        if(handicap != null) {
+            String access = "Handicap Accessible";
+            String no_access = "Not Accessible";
+            if (handicap) {
+                handicapField.setText(access);
+            } else {
+                handicapField.setText(no_access);
+            }
         }
     }
 
     public void setStars(Float rating) {
-        ratingBar.setRating(rating);
+        if(rating != null) {
+            ratingBar.setRating(rating);
+        }
     }
 
     public void setTitle(String title) {
-        titleField.setText(title);
+        if(title != null) {
+            titleField.setText(title);
+        }
     }
 
-    public void setFloor(Integer floor) { floorField.setText(floor.toString());}
+    public void setFloor(Integer floor) {
+        if(floor != null) {
+            floorField.setText(floor.toString());
+        }
+    }
 
-    public void setRoom(Integer room) { roomField.setText(room.toString()); }
+    public void setRoom(Integer room) {
+        if(room != null) {
+            roomField.setText(room.toString());
+        }
+    }
 
     private class ReviewHolder extends RecyclerView.ViewHolder {
         private TextView username;

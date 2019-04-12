@@ -63,6 +63,18 @@ public class Bathroom implements Serializable {
         return smellRating;
     }
 
+    public void setCleanRating(float cleanRating) {
+        this.cleanRating = cleanRating;
+    }
+
+    public void setEmptyRating(float emptyRating) {
+        this.emptyRating = emptyRating;
+    }
+
+    public void setSmellRating(float smellRating) {
+        this.smellRating = smellRating;
+    }
+
     public String getGender() {
         return gender;
     }
