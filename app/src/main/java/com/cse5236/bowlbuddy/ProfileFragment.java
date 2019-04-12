@@ -15,11 +15,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.cse5236.bowlbuddy.models.Review;
 import com.cse5236.bowlbuddy.models.User;
 import com.cse5236.bowlbuddy.util.APIService;
 import com.cse5236.bowlbuddy.util.APISingleton;
 import com.cse5236.bowlbuddy.util.BowlBuddyCallback;
 
+import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,6 +35,7 @@ public class ProfileFragment extends Fragment {
     private View view;
     private TextView usernameCircle;
     private TextView greeting;
+    private TextView reviewCounter;
     private Button usernameChangeButton;
     private Button passwordChangeButton;
     private EditText usernameField;
@@ -56,6 +60,8 @@ public class ProfileFragment extends Fragment {
         sharedPreferences = getContext().getSharedPreferences("Session", Context.MODE_PRIVATE);
         usernameCircle = view.findViewById(R.id.profile_username);
         greeting = view.findViewById(R.id.profile_greeting);
+        reviewCounter = view.findViewById(R.id.review_counter);
+        service.getUserReviews(sharedPreferences.getInt("id", 0), sharedPreferences.getString("jwt", "")).enqueue(new GetReviewsCallback(getContext(), view));
 
         updateUsernameCircle(sharedPreferences.getString("username", getString(R.string.username_placeholder)));
         greeting.setText(getString(R.string.profile_greeting, sharedPreferences.getString("username", getString(R.string.username_placeholder))));
@@ -225,6 +231,22 @@ public class ProfileFragment extends Fragment {
 
                 getActivity().finish();
             } else {
+                parseError(response);
+            }
+        }
+    }
+
+    private class GetReviewsCallback extends BowlBuddyCallback<List<Review>> {
+        public GetReviewsCallback(Context context, View view) {
+            super(context, view);
+        }
+
+        @Override
+        public void onResponse(Call<List<Review>> call, Response<List<Review>> response) {
+            if (response.isSuccessful()) {
+                reviewCounter.setText(String.format(Locale.getDefault(), "%d", (response.body().size())));
+            } else {
+                reviewCounter.setText("Unknown");
                 parseError(response);
             }
         }
