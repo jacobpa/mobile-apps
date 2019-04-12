@@ -11,7 +11,7 @@ public class APISingleton {
 
     private APISingleton() {
         service = new Retrofit.Builder()
-            .baseUrl("https://bb.jacobpa.com/api/")
+            .baseUrl(API_BASE)
             .addConverterFactory(MoshiConverterFactory.create())
             .build()
             .create(APIService.class);
