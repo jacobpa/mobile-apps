@@ -9,8 +9,6 @@ import android.util.Log;
 public class ReviewActivity extends AppCompatActivity {
     private final static String TAG = ReviewActivity.class.getSimpleName();
 
-    private Fragment fragment;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,7 +17,7 @@ public class ReviewActivity extends AppCompatActivity {
         FragmentManager fm = getSupportFragmentManager();
 
         // Try to find the Fragment if it's already been created
-        fragment = fm.findFragmentById(R.id.review_container);
+        Fragment fragment = fm.findFragmentById(R.id.review_container);
 
         if(fragment == null) {
             fragment = new ReviewActivityFragment();

@@ -3,6 +3,7 @@ package com.cse5236.bowlbuddy;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -32,6 +33,7 @@ import com.cse5236.bowlbuddy.util.BuildingDBSingleton;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -48,20 +50,10 @@ public class ReviewActivityFragment extends Fragment {
     private SharedPreferences sharedPrefs;
 
     private List<Building> buildingList;
-    private ArrayAdapter<Building> buildingAdapter;
     private Building building;
     private Bathroom bathroom;
 
-    private Spinner buildingSpn;
-    private EditText floorEntry;
     private EditText detailsEntry;
-    private EditText roomEntry;
-    private Spinner genderSpinner;
-    private Switch handicapSwitch;
-    private Switch plySwitch;
-    private RatingBar smellBar;
-    private RatingBar quietBar;
-    private RatingBar cleanBar;
 
     private int smellStars;
     private boolean smellRatingEmpty = true;
@@ -73,13 +65,13 @@ public class ReviewActivityFragment extends Fragment {
     private int floor;
     private int room;
     private int ply = 1;
-    boolean handicap = false;
+    private boolean handicap = false;
 
     public ReviewActivityFragment() {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_review, container, false);
 
@@ -87,18 +79,18 @@ public class ReviewActivityFragment extends Fragment {
         Intent intent = getActivity().getIntent();
         sharedPrefs = getActivity().getSharedPreferences("Session", Context.MODE_PRIVATE);
 
-        floorEntry = view.findViewById(R.id.floor_entry);
-        roomEntry = view.findViewById(R.id.room_entry);
-        buildingSpn = view.findViewById(R.id.building_spinner);
+        EditText floorEntry = view.findViewById(R.id.floor_entry);
+        EditText roomEntry = view.findViewById(R.id.room_entry);
+        Spinner buildingSpn = view.findViewById(R.id.building_spinner);
         detailsEntry = view.findViewById(R.id.review_field);
-        smellBar = view.findViewById(R.id.smellRating);
-        quietBar = view.findViewById(R.id.cleanRating);
-        cleanBar = view.findViewById(R.id.quietRating);
-        handicapSwitch = view.findViewById(R.id.handicap_switch);
-        plySwitch = view.findViewById(R.id.ply_switch);
+        RatingBar smellBar = view.findViewById(R.id.smellRating);
+        RatingBar quietBar = view.findViewById(R.id.cleanRating);
+        RatingBar cleanBar = view.findViewById(R.id.quietRating);
+        Switch handicapSwitch = view.findViewById(R.id.handicap_switch);
+        Switch plySwitch = view.findViewById(R.id.ply_switch);
 
         // Set up gender spinner
-        genderSpinner = view.findViewById(R.id.gender_spinner);
+        Spinner genderSpinner = view.findViewById(R.id.gender_spinner);
         ArrayAdapter<CharSequence> genderAdapter = ArrayAdapter.createFromResource(getContext(), R.array.genders, android.R.layout.simple_spinner_item);
         genderAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         genderSpinner.setAdapter(genderAdapter);
@@ -117,7 +109,7 @@ public class ReviewActivityFragment extends Fragment {
         buildingList = BuildingDBSingleton.getAllBuildings(getContext());
 
         // Set ArrayAdapter for building spinner
-        buildingAdapter = new ArrayAdapter<>(getActivity(),
+        ArrayAdapter<Building> buildingAdapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_spinner_item, buildingList);
         buildingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         buildingSpn.setAdapter(buildingAdapter);
@@ -189,20 +181,20 @@ public class ReviewActivityFragment extends Fragment {
             bathroom = (Bathroom) bundle.getSerializable("bathroom");
 
             // Set floor number, disable input
-            if(bathroom.getFloor() != null) {
-                floorEntry.setText(bathroom.getFloor().toString());
+            if (bathroom.getFloor() != null) {
+                floorEntry.setText(String.format(Locale.getDefault(), "%d", bathroom.getFloor()));
                 floorEntry.setEnabled(false);
             }
 
             // Set room number, disable input
-            if(bathroom.getRmNum() != null) {
-                roomEntry.setText(bathroom.getRmNum().toString());
+            if (bathroom.getRmNum() != null) {
+                roomEntry.setText(String.format(Locale.getDefault(), "%d", bathroom.getRmNum()));
                 roomEntry.setEnabled(false);
             }
 
 
             // Set gender, disable input
-            if(bathroom.getGender() != null) {
+            if (bathroom.getGender() != null) {
                 genderSpinner.setSelection(genderAdapter.getPosition(bathroom.getGender()));
                 genderSpinner.setEnabled(false);
             }
@@ -244,11 +236,7 @@ public class ReviewActivityFragment extends Fragment {
         handicapSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) {
-                    handicap = true;
-                } else {
-                    handicap = false;
-                }
+                handicap = b;
             }
         });
 
@@ -318,12 +306,12 @@ public class ReviewActivityFragment extends Fragment {
     }
 
     private class AddReviewCallback extends BowlBuddyCallback<Void> {
-        public AddReviewCallback(Context context, View view) {
+        AddReviewCallback(Context context, View view) {
             super(context, view);
         }
 
         @Override
-        public void onResponse(Call<Void> call, Response<Void> response) {
+        public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
             if (response.isSuccessful()) {
                 Log.d(TAG, "onResponse: Response is " + response);
             } else {
@@ -338,15 +326,15 @@ public class ReviewActivityFragment extends Fragment {
     }
 
     private class AddBathroomCallback extends BowlBuddyCallback<Bathroom> {
-        private boolean hasReview;
+        private final boolean hasReview;
 
-        public AddBathroomCallback(Context context, View view, boolean hasReview) {
+        AddBathroomCallback(Context context, View view, boolean hasReview) {
             super(context, view);
             this.hasReview = hasReview;
         }
 
         @Override
-        public void onResponse(Call<Bathroom> call, Response<Bathroom> response) {
+        public void onResponse(@NonNull Call<Bathroom> call, @NonNull Response<Bathroom> response) {
             if (response.isSuccessful()) {
                 Bathroom b = response.body();
                 Log.d(TAG, "onResponse: Response is " + response);

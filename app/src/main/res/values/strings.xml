@@ -35,6 +35,17 @@
     <string name="room_desc">Room:</string>
 
     <!-- Review Strings -->
+    <string name="building_desc">Building:</string>
+    <string name="details_desc">Details:</string>
+    <string name="details_hint">Enter more details...</string>
+    <string name="smell_desc">Smell:</string>
+    <string name="clean_desc">Clean:</string>
+    <string name="quiet_desc">Quiet:</string>
+    <string name="gender_desc">Gender:</string>
+    <string name="handicap_desc">Handicap Access:</string>
+    <string name="ply_desc">Two Ply Paper:</string>
+
+
     <string-array name="genders">
         <item>Male</item>
         <item>Female</item>
