@@ -39,6 +39,7 @@ import com.cse5236.bowlbuddy.util.BowlBuddyCallback;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 import retrofit2.Call;
@@ -65,6 +66,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
     private ArrayList<Bathroom> favoritesList;
     private APIService service;
     private SharedPreferences sharedPreferences;
+    private HashMap<Bathroom, BathroomHolder> bathroomMap = new HashMap<>();
 
     // Variables needed for fabs
     private FloatingActionButton menuFab;
@@ -297,15 +299,15 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
             color = Color.WHITE;
         }
 
+        // Scroll to the top of the recycler view
+        LinearLayoutManager linearLayoutManager = (LinearLayoutManager) bathroomLayoutManager;
+        linearLayoutManager.scrollToPositionWithOffset(0,0);
+
         // Sort the bathrooms by distance
         bathroomChanged(bathroomList, DISTANCE_SORT);
 
         // Call method to highlight the top 3 bathrooms
         changeRecyclerViewHighlight(color);
-
-        // Scroll to the top of the recycler view
-        LinearLayoutManager linearLayoutManager = (LinearLayoutManager) bathroomLayoutManager;
-        linearLayoutManager.scrollToPositionWithOffset(0,0);
 
         // Change the boolean variable so possible to know which color to highlight bathrooms next
         // time the got to go button is pressed
@@ -327,15 +329,42 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
      * @param color The color to change the background to
      */
     public void changeRecyclerViewHighlight(int color) {
+        //Snackbar.make(view, "entering change highlight", Snackbar.LENGTH_SHORT).show();
+        Log.d(TAG, "Entering changeRecyclerViewHighlight");
+
         // Change the color for the top 3 bathrooms
         for (int i = 0; i < 3; i++) {
+            Log.d(TAG, "For loop for i = " + i);
             // Get the view and holder of the bathroom being changed
-            View bathroom = bathroomRecyclerView.getChildAt(i);
-            BathroomHolder holder = (BathroomHolder) bathroomRecyclerView.getChildViewHolder(bathroom);
+//            View bathroom = bathroomRecyclerView.getChildAt(i);
+//            BathroomHolder holder = (BathroomHolder) bathroomRecyclerView.getChildViewHolder(bathroom);
 
-            // Change the color of the view and holder of the bathroom
-            bathroom.setBackgroundColor(color);
-            holder.getConstraintLayout().setBackgroundColor(color);
+            Bathroom bathroom = bathroomList.get(i);
+            Log.d(TAG, "bathroom = " + bathroom);
+            BathroomHolder holder = bathroomMap.get(bathroom);
+            Log.d(TAG, "holder bathroom: " + holder.getBathroom());
+
+            if (holder != null) {
+
+                do {
+                    Log.d(TAG, "inside do loop");
+                    if (holder.getBathroom().equals(bathroom)) {
+                        Log.d(TAG, "bathrooms were equal");
+
+                        // Change the color of the view and holder of the bathroom
+                        //bathroom.setBackgroundColor(color);
+                        holder.getConstraintLayout().setBackgroundColor(color);
+                        Log.d(TAG, "changed color to: " + color);
+                        //Snackbar.make(view, "changed color: + " + color, Snackbar.LENGTH_SHORT).show();
+                    } else {
+                        Log.d(TAG, "bathrooms did not match");
+                        holder = bathroomMap.get(bathroom);
+                    }
+                } while (!holder.getBathroom().equals(bathroom));
+            } else {
+                //Snackbar.make(view, "holder was null", Snackbar.LENGTH_LONG).show();
+                Log.d(TAG, "holder was null");
+            }
 
         }
 
@@ -355,6 +384,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         // Change bathroom backgrounds before sorting
         if (gottaGoEnabled) {
             changeRecyclerViewHighlight(Color.WHITE);
+            gottaGoEnabled = !gottaGoEnabled;
         }
 
         if (sortOrder.equals(DISTANCE_SORT)) {
@@ -473,6 +503,8 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
                 bathroomTitle.setText(title);
                 bathroomDesc.setText(bathroom.getBuilding().getAddress());
                 ratingBar.setRating(bathroom.getAverageRating());
+
+                bathroomMap.put(bathroom, this);
             }
         }
 
