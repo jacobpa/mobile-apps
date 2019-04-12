@@ -4,41 +4,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DetailsActivityFragment"
-    tools:showIn="@layout/activity_details">
+    tools:context=".DetailsActivityFragment">
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/details_root_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_menu_white"
         android:layout_margin="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:srcCompat="@drawable/ic_menu_white" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/add_review_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:fabSize="mini"
-        app:srcCompat="@drawable/ic_add_white"
         android:layout_marginBottom="2dp"
         android:visibility="gone"
-        app:layout_constraintStart_toStartOf="@id/details_root_fab"
+        app:fabSize="mini"
+        app:layout_constraintBottom_toTopOf="@id/details_root_fab"
         app:layout_constraintEnd_toEndOf="@id/details_root_fab"
-        app:layout_constraintBottom_toTopOf="@id/details_root_fab" />
+        app:layout_constraintStart_toStartOf="@id/details_root_fab"
+        app:srcCompat="@drawable/ic_add_white" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/favorite_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_favorite_border_white"
         android:layout_marginBottom="2dp"
-        app:fabSize="mini"
         android:visibility="gone"
-        app:layout_constraintStart_toStartOf="@id/add_review_fab"
+        app:fabSize="mini"
+        app:layout_constraintBottom_toTopOf="@id/add_review_fab"
         app:layout_constraintEnd_toEndOf="@id/add_review_fab"
-        app:layout_constraintBottom_toTopOf="@id/add_review_fab" />
+        app:layout_constraintStart_toStartOf="@id/add_review_fab"
+        app:srcCompat="@drawable/ic_favorite_border_white" />
 
     <TextView
         android:id="@+id/titleField"
@@ -46,7 +45,7 @@
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="23dp"
-        android:text="Bathroom Name"
+        tools:text="Bathroom Name"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -64,21 +63,12 @@
         app:layout_constraintTop_toBottomOf="@+id/titleField" />
 
     <TextView
-        android:id="@+id/hoursIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="Open Until:"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ratingBar" />
-
-    <TextView
         android:id="@+id/accessIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
         android:layout_marginTop="16dp"
-        android:text="&#9855;"
+        android:text="@string/handicap_symbol"
         android:textSize="24sp"
         app:layout_constraintStart_toEndOf="@+id/titleField"
         app:layout_constraintTop_toTopOf="parent" />
@@ -87,11 +77,10 @@
         android:id="@+id/handicapField"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
         android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="@id/accessIcon"
         app:layout_constraintStart_toEndOf="@+id/accessIcon"
         app:layout_constraintTop_toTopOf="@id/accessIcon"
-        app:layout_constraintBottom_toBottomOf="@id/accessIcon"
         tools:text="Acessible" />
 
     <TextView
@@ -99,7 +88,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="36dp"
-        android:text="👨"
+        android:text="@string/gender_symbol"
         android:textSize="24sp"
         app:layout_constraintStart_toEndOf="@+id/ratingBar"
         app:layout_constraintTop_toBottomOf="@+id/accessIcon" />
@@ -109,30 +98,29 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="@id/genderIcon"
         app:layout_constraintStart_toEndOf="@+id/genderIcon"
-        app:layout_constraintTop_toTopOf="@id/genderIcon"
-        app:layout_constraintBottom_toBottomOf="@id/genderIcon"/>
+        app:layout_constraintTop_toTopOf="@id/genderIcon" />
 
     <TextView
         android:id="@+id/no_reviews_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:text="@string/no_reviews_found"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         android:visibility="gone"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/hoursIcon"
-        />
+        app:layout_constraintTop_toBottomOf="@id/ratingBar" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/review_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/hoursIcon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ratingBar"
         app:layout_constraintVertical_bias="1.0"
         tools:layout_editor_absoluteX="0dp">
 
@@ -143,7 +131,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:text="Floor:"
+        android:text="@string/floor_desc"
         app:layout_constraintBottom_toTopOf="@+id/titleField"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -152,34 +140,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        app:layout_constraintTop_toTopOf="@id/floorIcon"
         app:layout_constraintBottom_toBottomOf="@id/floorIcon"
-        app:layout_constraintStart_toEndOf="@+id/floorIcon" />
+        app:layout_constraintStart_toEndOf="@+id/floorIcon"
+        app:layout_constraintTop_toTopOf="@id/floorIcon" />
 
     <TextView
         android:id="@+id/room_field_desc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="@id/room_icon"
         app:layout_constraintStart_toEndOf="@+id/room_icon"
-        app:layout_constraintTop_toTopOf="@id/room_icon"
-        app:layout_constraintBottom_toBottomOf="@id/room_icon"/>
+        app:layout_constraintTop_toTopOf="@id/room_icon" />
 
     <TextView
         android:id="@+id/room_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="26dp"
-        android:text="Room:"
+        android:text="@string/room_desc"
         app:layout_constraintBottom_toTopOf="@+id/titleField"
         app:layout_constraintStart_toEndOf="@+id/floor_field_desc" />
-
-    <TextView
-        android:id="@+id/time_field"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="10:00pm"
-        app:layout_constraintStart_toEndOf="@+id/hoursIcon"
-        app:layout_constraintTop_toBottomOf="@+id/ratingBar" />
 
 </android.support.constraint.ConstraintLayout>

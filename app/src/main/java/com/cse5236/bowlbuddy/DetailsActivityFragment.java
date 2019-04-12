@@ -24,6 +24,7 @@ import com.cse5236.bowlbuddy.util.BowlBuddyCallback;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -40,15 +41,12 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
     private TextView noReviewMessage;
     private TextView floorField;
     private APIService service;
-    private View view;
-    private FloatingActionButton rootFAB;
     private FloatingActionButton addFAB;
     private FloatingActionButton favoriteFAB;
     private Bathroom bathroom;
     private SharedPreferences sharedPrefs;
     private RecyclerView reviewRecyclerView;
     private RecyclerView.Adapter reviewAdapter;
-    private RecyclerView.LayoutManager reviewLayoutManager;
     private List<Review> reviewList;
     private ArrayList<Bathroom> favoritesList;
     private boolean isFavorited;
@@ -58,10 +56,10 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        view = inflater.inflate(R.layout.fragment_details, container, false);
+        View view = inflater.inflate(R.layout.fragment_details, container, false);
         genderField = view.findViewById(R.id.genderField);
         floorField = view.findViewById(R.id.floor_field_desc);
         handicapField = view.findViewById(R.id.handicapField);
@@ -123,7 +121,7 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
             });
         }
 
-        rootFAB = view.findViewById(R.id.details_root_fab);
+        FloatingActionButton rootFAB = view.findViewById(R.id.details_root_fab);
         if (rootFAB != null) {
             rootFAB.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -148,7 +146,7 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         }
 
         reviewAdapter = new ReviewAdapter();
-        reviewLayoutManager = new LinearLayoutManager(activity);
+        RecyclerView.LayoutManager reviewLayoutManager = new LinearLayoutManager(activity);
         reviewRecyclerView = view.findViewById(R.id.review_recycler_view);
         reviewRecyclerView.setHasFixedSize(true);
         reviewRecyclerView.setLayoutManager(reviewLayoutManager);
@@ -157,13 +155,13 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         return view;
     }
 
-    public void setGender(String gender) {
+    private void setGender(String gender) {
         if(gender != null) {
             genderField.setText(gender);
         }
     }
 
-    public void setHandicap(Boolean handicap) {
+    private void setHandicap(Boolean handicap) {
         if(handicap != null) {
             String access = "Handicap Accessible";
             String no_access = "Not Accessible";
@@ -175,48 +173,48 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         }
     }
 
-    public void setStars(Float rating) {
+    private void setStars(Float rating) {
         if(rating != null) {
             ratingBar.setRating(rating);
         }
     }
 
-    public void setTitle(String title) {
+    private void setTitle(String title) {
         if(title != null) {
             titleField.setText(title);
         }
     }
 
-    public void setFloor(Integer floor) {
+    private void setFloor(Integer floor) {
         if(floor != null) {
-            floorField.setText(floor.toString());
+            floorField.setText(String.format(Locale.getDefault(), "%d", floor));
         }
     }
 
-    public void setRoom(Integer room) {
+    private void setRoom(Integer room) {
         if(room != null) {
-            roomField.setText(room.toString());
+            roomField.setText(String.format(Locale.getDefault(), "%d", room));
         }
     }
 
     private class ReviewHolder extends RecyclerView.ViewHolder {
-        private TextView username;
-        private TextView details;
+        private final TextView username;
+        private final TextView details;
 
-        public ReviewHolder(LayoutInflater inflater, ViewGroup parent) {
+        ReviewHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.list_item_review, parent, false));
 
             username = itemView.findViewById(R.id.review_username);
             details = itemView.findViewById(R.id.review_details);
         }
 
-        public void bind(Review review) {
+        void bind(Review review) {
             username.setText(review.getAuthorName());
             details.setText(review.getDetails());
         }
     }
 
-    public void returnResult() {
+    private void returnResult() {
         Intent data = new Intent();
         data.putExtra("favorites", favoritesList);
         getActivity().setResult(Activity.RESULT_OK, data);
@@ -246,13 +244,13 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
     }
 
     private class ReviewListCallback extends BowlBuddyCallback<List<Review>> {
-        public ReviewListCallback(Context context, View view) {
+        ReviewListCallback(Context context, View view) {
             super(context, view);
         }
 
         @Override
-        public void onResponse(Call<List<Review>> call, Response<List<Review>> response) {
-            if (response.isSuccessful()) {
+        public void onResponse(@NonNull Call<List<Review>> call, @NonNull Response<List<Review>> response) {
+            if (response.isSuccessful() && response.body() != null) {
                 reviewList = response.body();
                 Log.d(TAG, "onResponse: Got list of reviews with length " + reviewList.size());
 
@@ -268,12 +266,12 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
     }
 
     private class AddFavoriteCallback extends BowlBuddyCallback<List<Bathroom>> {
-        public AddFavoriteCallback(Context context, View view) {
+        AddFavoriteCallback(Context context, View view) {
             super(context, view);
         }
 
         @Override
-        public void onResponse(Call<List<Bathroom>> call, Response<List<Bathroom>> response) {
+        public void onResponse(@NonNull Call<List<Bathroom>> call, @NonNull Response<List<Bathroom>> response) {
             if (response.isSuccessful()) {
                 favoriteFAB.setImageResource(R.drawable.ic_favorite_white);
                 favoritesList.clear();
@@ -287,12 +285,12 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
     }
 
     private class DeleteFavoriteCallback extends BowlBuddyCallback<List<Bathroom>> {
-        public DeleteFavoriteCallback(Context context, View view) {
+        DeleteFavoriteCallback(Context context, View view) {
             super(context, view);
         }
 
         @Override
-        public void onResponse(Call<List<Bathroom>> call, Response<List<Bathroom>> response) {
+        public void onResponse(@NonNull Call<List<Bathroom>> call, @NonNull Response<List<Bathroom>> response) {
             if (response.isSuccessful()) {
                 favoriteFAB.setImageResource(R.drawable.ic_favorite_border_white);
                 favoritesList.clear();
