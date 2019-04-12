@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/my_reviews_fragment_constraint"
     tools:context=".MyReviewsFragment">
 
     <!-- TODO: Update blank fragment layout -->

@@ -3,7 +3,6 @@
     <string name="app_name">Bowl Buddy</string>
     <string name="title_activity_details">DetailsActivity</string>
     <string name="title_activity_review">ReviewActivity</string>
-    <string name="title_activity_maps">Map</string>
 
     <!-- Login, Signup, Etc. -->
     <string name="password_hint">Password</string>
@@ -26,13 +25,11 @@
     <string name="action_sign_up">Sign Up</string>
     <string name="action_login">Log In</string>
     <string name="action_logout">Log Out</string>
-    <string name="action_settings">Settings</string>
     <string name="action_my_profile">My Profile</string>
     <string name="submit">Submit</string>
 
     <!-- Profile Strings -->
     <string name="username_placeholder">Username</string>
-    <string name="karma">Karma</string>
     <string name="reviews">Reviews</string>
     <string name="change_username">Change Username</string>
     <string name="change_password">Change Password</string>
@@ -45,7 +42,6 @@
 
     <!-- Details Strings -->
     <string name="no_reviews_found">No reviews found!</string>
-    <string name="open_until">Open Until:</string>
     <string name="handicap_symbol">&#9855;</string>
     <string name="gender_symbol">&#128104;</string>
     <string name="floor_desc">Floor:</string>
