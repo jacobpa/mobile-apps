@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -14,7 +13,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -77,7 +75,6 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
     private FloatingActionButton menuFab;
     private FloatingActionButton addReviewFab;
     private FloatingActionButton gottaGoFab;
-    private boolean gottaGoEnabled = false;
 
     // Variables needed for distance filter
     private double latitude = 0;
@@ -132,7 +129,6 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         bathroomRecyclerView.setHasFixedSize(true);
         bathroomRecyclerView.setLayoutManager(bathroomLayoutManager);
         bathroomRecyclerView.setAdapter(bathroomAdapter);
-        bathroomRecyclerView.setItemViewCacheSize(100);
 
         // Initialize the RefreshLayout
         refreshLayout = view.findViewById(R.id.master_refresh);
@@ -323,28 +319,17 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
      * when it is selected so user knows the closes three bathrooms they can go to.
      */
     private void startGottaGo() {
-
-        // Default the highlight color to yellow
-        int color = Color.YELLOW;
-
-        // Change the color to while if changing backgrounds back to white
-        if (gottaGoEnabled) {
-            color = Color.WHITE;
-        }
-
-        // Sort the bathrooms by distance
+        // Sort by distance
         bathroomChanged(DISTANCE_SORT);
 
-        // Call method to highlight the top 3 bathrooms
-        changeRecyclerViewHighlight(color);
-
-        // Scroll to the top of the recycler view
-        LinearLayoutManager linearLayoutManager = (LinearLayoutManager) bathroomLayoutManager;
-        linearLayoutManager.scrollToPositionWithOffset(0, 0);
-
-        // Change the boolean variable so possible to know which color to highlight bathrooms next
-        // time the got to go button is pressed
-        gottaGoEnabled = !gottaGoEnabled;
+        // Remove all but the five closest bathrooms, if > 5 bathrooms exist
+        if (bathroomList.size() > 5) {
+            int itemsRemoved = bathroomList.subList(5, bathroomList.size()).size();
+            bathroomList.removeAll(bathroomList.subList(5, bathroomList.size()));
+            bathroomAdapter.notifyItemRangeRemoved(5, itemsRemoved);
+        } else {
+            Snackbar.make(view, "Already viewing the five closest bathrooms.", Snackbar.LENGTH_LONG).show();
+        }
     }
 
     /**
@@ -357,36 +342,11 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
     }
 
     /**
-     * Method used to change the background color of a bathroom.
-     *
-     * @param color The color to change the background to
-     */
-    private void changeRecyclerViewHighlight(int color) {
-        // Change the color for the top 3 bathrooms
-        for (int i = 0; i < 3; i++) {
-            // Get the view and holder of the bathroom being changed
-            View bathroom = bathroomRecyclerView.getChildAt(i);
-            BathroomHolder holder = (BathroomHolder) bathroomRecyclerView.getChildViewHolder(bathroom);
-
-            // Change the color of the view and holder of the bathroom
-            bathroom.setBackgroundColor(color);
-            holder.getConstraintLayout().setBackgroundColor(color);
-
-        }
-
-    }
-
-    /**
      * Method used to start the bathroom sorting process
      *
      * @param sortOrder The order in which the bathrooms will be sorted
      */
     public void bathroomChanged(String sortOrder) {
-        // Change bathroom backgrounds before sorting
-        if (gottaGoEnabled) {
-            changeRecyclerViewHighlight(Color.WHITE);
-        }
-
         if (sortOrder.equals(DISTANCE_SORT)) {
             // Order list by bathroom distance
             Collections.sort(bathroomList, new DistanceSort());
@@ -488,7 +448,6 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         private final TextView bathroomDesc;
         private final AppCompatRatingBar ratingBar;
         private Bathroom bathroom;
-        private final ConstraintLayout layout;
 
         BathroomHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.list_item_bathroom, parent, false));
@@ -498,7 +457,6 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
             bathroomTitle = itemView.findViewById(R.id.bathroom_title);
             bathroomDesc = itemView.findViewById(R.id.bathroom_desc);
             ratingBar = itemView.findViewById(R.id.bathroom_overall_rating);
-            layout = itemView.findViewById(R.id.recycler_view_constraint_layout);
         }
 
         void bind(Bathroom bathroom) {
@@ -531,10 +489,6 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
             Intent intent = new Intent(getActivity(), DetailsActivity.class);
             intent.putExtras(bundle);
             startActivityForResult(intent, UPDATE_FAVORITES_REQUEST);
-        }
-
-        ConstraintLayout getConstraintLayout() {
-            return this.layout;
         }
     }
 
@@ -579,7 +533,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
     }
 
     private static class PopulateBathroomsTask extends AsyncTask<Void, Void, List<Bathroom>> {
-        private MasterListFragment fragment;
+        private final MasterListFragment fragment;
 
         PopulateBathroomsTask(MasterListFragment fragment) {
             this.fragment = fragment;
@@ -619,7 +573,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
     }
 
     private static class PopulateBuildingsTask extends AsyncTask<Void, Void, Void> {
-        MasterListFragment fragment;
+        final MasterListFragment fragment;
 
         PopulateBuildingsTask(MasterListFragment fragment) {
             this.fragment = fragment;
