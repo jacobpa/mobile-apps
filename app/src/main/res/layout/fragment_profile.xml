@@ -71,7 +71,7 @@
                     android:id="@+id/review_counter"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:text="@string/big_number"
+                    tools:text="9999"
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.AppCompat"
                     android:textSize="24sp" />

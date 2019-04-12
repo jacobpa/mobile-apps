@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -34,13 +35,9 @@ public class ProfileFragment extends Fragment {
 
     private View view;
     private TextView usernameCircle;
-    private TextView greeting;
     private TextView reviewCounter;
-    private Button usernameChangeButton;
-    private Button passwordChangeButton;
     private EditText usernameField;
-    private EditText[] passwordFields = new EditText[2];
-    private Button deleteAccountButton;
+    private final EditText[] passwordFields = new EditText[2];
     private APIService service;
     private SharedPreferences sharedPreferences;
 
@@ -50,7 +47,7 @@ public class ProfileFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_profile, container, false);
 
         // Get instance of service to communicate with the server
@@ -59,16 +56,16 @@ public class ProfileFragment extends Fragment {
         // Get shared user information
         sharedPreferences = getContext().getSharedPreferences("Session", Context.MODE_PRIVATE);
         usernameCircle = view.findViewById(R.id.profile_username);
-        greeting = view.findViewById(R.id.profile_greeting);
+        TextView greeting = view.findViewById(R.id.profile_greeting);
         reviewCounter = view.findViewById(R.id.review_counter);
         service.getUserReviews(sharedPreferences.getInt("id", 0), sharedPreferences.getString("jwt", "")).enqueue(new GetReviewsCallback(getContext(), view));
 
         updateUsernameCircle(sharedPreferences.getString("username", getString(R.string.username_placeholder)));
         greeting.setText(getString(R.string.profile_greeting, sharedPreferences.getString("username", getString(R.string.username_placeholder))));
 
-        usernameChangeButton = view.findViewById(R.id.username_change_submit);
-        passwordChangeButton = view.findViewById(R.id.password_change_submit);
-        deleteAccountButton = view.findViewById(R.id.delete_account_btn);
+        Button usernameChangeButton = view.findViewById(R.id.username_change_submit);
+        Button passwordChangeButton = view.findViewById(R.id.password_change_submit);
+        Button deleteAccountButton = view.findViewById(R.id.delete_account_btn);
 
         usernameChangeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,7 +112,6 @@ public class ProfileFragment extends Fragment {
 
         // Change the text of the username
         usernameCircle.setText(displayed);
-        return;
     }
 
     /**
@@ -183,12 +179,12 @@ public class ProfileFragment extends Fragment {
     }
 
     private class ChangeUsernameCallback extends BowlBuddyCallback<User> {
-        public ChangeUsernameCallback(Context context, View view) {
+        ChangeUsernameCallback(Context context, View view) {
             super(context, view);
         }
 
         @Override
-        public void onResponse(Call<User> call, Response<User> response) {
+        public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
             if (response.isSuccessful()) {
                 User u = response.body();
                 Log.d(TAG, "onResponse: Username is " + u.getUsername());
@@ -202,12 +198,12 @@ public class ProfileFragment extends Fragment {
     }
 
     private class ChangePasswordCallback extends BowlBuddyCallback<User> {
-        public ChangePasswordCallback(Context context, View view) {
+        ChangePasswordCallback(Context context, View view) {
             super(context, view);
         }
 
         @Override
-        public void onResponse(Call<User> call, Response<User> response) {
+        public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
             if (response.isSuccessful()) {
                 // Don't need to serialize User object
                 Snackbar.make(view, "Password changed successfully.", Snackbar.LENGTH_LONG).show();
@@ -218,12 +214,12 @@ public class ProfileFragment extends Fragment {
     }
 
     private class DeleteAccountCallback extends BowlBuddyCallback<Void> {
-        public DeleteAccountCallback(Context context, View view) {
+        DeleteAccountCallback(Context context, View view) {
             super(context, view);
         }
 
         @Override
-        public void onResponse(Call<Void> call, Response<Void> response) {
+        public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
             if (response.isSuccessful()) {
                 sharedPreferences.edit().clear().apply();
                 Intent i = new Intent(getActivity(), LoadingScreenActivity.class);
@@ -237,16 +233,16 @@ public class ProfileFragment extends Fragment {
     }
 
     private class GetReviewsCallback extends BowlBuddyCallback<List<Review>> {
-        public GetReviewsCallback(Context context, View view) {
+        GetReviewsCallback(Context context, View view) {
             super(context, view);
         }
 
         @Override
-        public void onResponse(Call<List<Review>> call, Response<List<Review>> response) {
+        public void onResponse(@NonNull Call<List<Review>> call, @NonNull Response<List<Review>> response) {
             if (response.isSuccessful()) {
                 reviewCounter.setText(String.format(Locale.getDefault(), "%d", (response.body().size())));
             } else {
-                reviewCounter.setText("Unknown");
+                reviewCounter.setText(R.string.unknown);
                 parseError(response);
             }
         }
