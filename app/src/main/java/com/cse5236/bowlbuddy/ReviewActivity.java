@@ -33,7 +33,6 @@ public class ReviewActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy: Successfully ended activity");
-        finish();
     }
 
     protected void onPause() {
