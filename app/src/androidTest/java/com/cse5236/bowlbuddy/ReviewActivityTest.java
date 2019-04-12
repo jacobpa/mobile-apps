@@ -30,25 +30,4 @@ public class ReviewActivityTest {
 
     }
 
-    @Test
-    public void testLaunchActivityFromDetails() {
-        Intent intent = new Intent();
-        Bundle bundle = new Bundle();
-
-        Bathroom bathroom = new Bathroom();
-
-        bathroom.setCleanRating(5.0f);
-        bathroom.setSmellRating(5.0f);
-        bathroom.setEmptyRating(5.0f);
-
-        bundle.putSerializable("bathroom", bathroom);
-        bundle.putString("caller", "DetailsActivityFragment");
-        intent.putExtras(bundle);
-
-        ReviewActivity activity = activityRule.launchActivity(intent);
-
-        assertNotNull(activity);
-
-    }
-
 }
