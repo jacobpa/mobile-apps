@@ -6,18 +6,18 @@
     <group>
         <item
             android:enabled="false"
-            android:title="Sort Bathrooms By..."/>
+            android:title="@string/sort_by"/>
     </group>
     <group>
         <item
         android:id="@+id/distance"
-        android:title="Distance"/>
+        android:title="@string/distance"/>
 
     </group>
 
     <group>
         <item
             android:id="@+id/rating"
-            android:title="Rating"/>
+            android:title="@string/rating"/>
     </group>
 </menu>

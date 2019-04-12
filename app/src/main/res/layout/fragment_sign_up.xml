@@ -21,7 +21,7 @@
             android:id="@+id/textView3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Bowl Buddy Sign Up"
+            android:text="@string/action_sign_up"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
             android:textSize="24sp" />
@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Username"
+            android:hint="@string/username_placeholder"
             android:inputType="textPersonName"
             android:paddingTop="32dp" />
 
@@ -40,7 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Password"
+            android:hint="@string/password_hint"
             android:inputType="textPassword" />
 
         <EditText
@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/confirmPasswordField"
             android:ems="10"
-            android:hint="Confirm Password"
+            android:hint="@string/confirm_password_hint"
             android:inputType="textPassword"/>
 
         <LinearLayout
@@ -63,7 +63,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Back" />
+                android:text="@string/action_back" />
 
             <Button
                 android:id="@+id/signUpButton"
@@ -71,7 +71,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Sign Up" />
+                android:text="@string/action_sign_up" />
         </LinearLayout>
 
     </LinearLayout>

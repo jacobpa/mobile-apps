@@ -5,6 +5,23 @@
     <string name="title_activity_review">ReviewActivity</string>
     <string name="title_activity_maps">Map</string>
 
+    <!-- Login, Signup, Etc. -->
+    <string name="password_hint">Password</string>
+    <string name="action_back">Back</string>
+    <string name="confirm_password_hint">Confirm Password</string>
+
+    <!-- Cards, List Items, Menu Entries -->
+    <string name="enter_review_hint">"Enter Text Review</string>
+    <string name="action_save_changes">Save Changes</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_edit_review">Edit Review</string>
+    <string name="action_delete_review">Delete Review</string>
+    <string name="sort_by">Sort By...</string>
+    <string name="distance">Distance</string>
+    <string name="rating">Rating</string>
+    <string name="my_reviews">My Reviews</string>
+    <string name="my_favorites">My Favorites</string>
+
     <!-- Buttons, Menu Fields, etc. -->
     <string name="action_sign_up">Sign Up</string>
     <string name="action_login">Log In</string>

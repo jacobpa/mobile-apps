@@ -10,13 +10,13 @@
         <item
             android:id="@+id/my_reviews"
             android:icon="@drawable/ic_edit_black"
-            android:title="My Reviews" />
+            android:title="@string/my_reviews" />
     </group>
     <group>
         <item
             android:id="@+id/favorites"
             android:icon="@drawable/ic_star_black"
-            android:title="Favorites"/>
+            android:title="@string/my_favorites"/>
     </group>
     <group>
         <item
