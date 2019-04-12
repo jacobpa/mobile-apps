@@ -61,6 +61,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
     private static final int UPDATE_FAVORITES_REQUEST = 1;
 
     private View view;
+    private TextView navUsername;
     private RecyclerView bathroomRecyclerView;
     private RecyclerView.Adapter bathroomAdapter;
     private RecyclerView.LayoutManager bathroomLayoutManager;
@@ -142,6 +143,8 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         // Initialize the navigation view and set this fragment as it's listener
         NavigationView nav = view.findViewById(R.id.master_nav_view);
         nav.setNavigationItemSelectedListener(this);
+        navUsername = nav.getHeaderView(0).findViewById(R.id.nav_username);
+        navUsername.setText(sharedPreferences.getString("username", "Username"));
 
         // Initialize the menu, add review, and gotta go fab buttons
         menuFab = view.findViewById(R.id.menu_fab);
