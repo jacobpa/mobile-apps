@@ -29,6 +29,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -144,7 +145,7 @@ public class FavoritesMapActivity extends FragmentActivity implements OnMapReady
         if (bathroomBuilding != null) {
 
             // Set the title of the bathroom
-            String title = String.format("%s: Floor %d, Room %d",
+            String title = String.format(Locale.getDefault(), "%s: Floor %d, Room %d",
                     bathroomBuilding.getName(),
                     bathroom.getFloor(),
                     bathroom.getRmNum());

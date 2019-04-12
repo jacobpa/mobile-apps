@@ -15,7 +15,7 @@
     <string name="action_cancel">Cancel</string>
     <string name="action_edit_review">Edit Review</string>
     <string name="action_delete_review">Delete Review</string>
-    <string name="sort_by">Sort By...</string>
+    <string name="sort_by">Sort By…</string>
     <string name="distance">Distance</string>
     <string name="rating">Rating</string>
     <string name="my_reviews">My Reviews</string>
@@ -50,7 +50,7 @@
     <!-- Review Strings -->
     <string name="building_desc">Building:</string>
     <string name="details_desc">Details:</string>
-    <string name="details_hint">Enter more details...</string>
+    <string name="details_hint">Enter more details…</string>
     <string name="smell_desc">Smell:</string>
     <string name="clean_desc">Clean:</string>
     <string name="quiet_desc">Quiet:</string>

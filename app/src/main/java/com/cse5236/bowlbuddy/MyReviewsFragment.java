@@ -28,6 +28,7 @@ import com.cse5236.bowlbuddy.util.BowlBuddyCallback;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -125,7 +126,7 @@ public class MyReviewsFragment extends Fragment {
 
             if (this.review != null && this.bathroom != null && this.building != null){
                 String details = review.getDetails();
-                String title = String.format("%s: Floor %d, Room %d",
+                String title = String.format(Locale.getDefault(), "%s: Floor %d, Room %d",
                         building.getName(),
                         bathroom.getFloor(),
                         bathroom.getRmNum());
