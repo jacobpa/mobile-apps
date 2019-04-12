@@ -102,7 +102,7 @@ public class LoginFragment extends Fragment {
     }
 
     private class LoginCallback extends BowlBuddyCallback<ResponseBody> {
-        public LoginCallback(Context context, View view) {
+        LoginCallback(Context context, View view) {
             super(context, view);
         }
 

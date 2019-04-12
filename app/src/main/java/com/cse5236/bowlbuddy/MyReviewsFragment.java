@@ -99,7 +99,7 @@ public class MyReviewsFragment extends Fragment {
         private LinearLayout editDetailsLayout;
         private LinearLayout buttonLayout;
 
-        public ReviewHolder(LayoutInflater inflater, ViewGroup parent) {
+        ReviewHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.list_my_reviews, parent, false));
 
             itemView.setOnClickListener(this);
@@ -117,7 +117,7 @@ public class MyReviewsFragment extends Fragment {
             itemView.findViewById(R.id.cancel_review).setOnClickListener(this);
         }
 
-        public void bind(Review review) {
+        void bind(Review review) {
             this.review = review;
             this.bathroom = review.getBathroom();
             this.building = bathroom.getBuilding();
@@ -158,7 +158,7 @@ public class MyReviewsFragment extends Fragment {
         /**
          * Method used for opening a details activity for the bathroom that was selected.
          */
-        public void openDetails() {
+        void openDetails() {
             Bundle bundle = new Bundle();
             bundle.putSerializable("bathroom", this.bathroom);
 
@@ -177,7 +177,7 @@ public class MyReviewsFragment extends Fragment {
         /**
          * Method used to delete a selected review
          */
-        public void deleteReview() {
+        void deleteReview() {
 
             // Send a request to the server to delete the selected review
             service.deleteReview(this.review.getUserID(), this.review.getReviewID(), sharedPreferences.getString("jwt", ""))
@@ -193,7 +193,7 @@ public class MyReviewsFragment extends Fragment {
         /**
          * Method used to edit the details of a review
          */
-        public void editReview() {
+        void editReview() {
             // Change visibility of layouts to allow user to update review
             editDetailsLayout.setVisibility(View.VISIBLE);
             buttonLayout.setVisibility(View.GONE);
@@ -202,7 +202,7 @@ public class MyReviewsFragment extends Fragment {
         /**
          * Method used to save the updated review to the server.
          */
-        public void saveReview() {
+        void saveReview() {
             // Get the text for the updated review
             String newReview = editDetails.getText().toString();
 
@@ -229,7 +229,7 @@ public class MyReviewsFragment extends Fragment {
         /**
          * Method used to cancel the edit review process.
          */
-        public void cancelReview() {
+        void cancelReview() {
             editDetailsLayout.setVisibility(View.GONE);
             buttonLayout.setVisibility(View.VISIBLE);
         }
@@ -264,7 +264,7 @@ public class MyReviewsFragment extends Fragment {
     private class GetReviewsCallback extends BowlBuddyCallback<List<Review>> {
         private Context callbackContext;
 
-        public GetReviewsCallback(Context context, View view) {
+        GetReviewsCallback(Context context, View view) {
 
             super(context, view);
             this.callbackContext = context;
@@ -295,7 +295,7 @@ public class MyReviewsFragment extends Fragment {
         private Review review;
         private Context callbackContext;
 
-        public GetBathroomCallback(Context context, View view, Review review) {
+        GetBathroomCallback(Context context, View view, Review review) {
             super(context, view);
             this.review = review;
             this.callbackContext = context;
@@ -324,7 +324,7 @@ public class MyReviewsFragment extends Fragment {
     private class GetBuildingCallback extends BowlBuddyCallback<Building> {
         private Bathroom bathroom;
 
-        public GetBuildingCallback(Context context, View view, Bathroom bathroom) {
+        GetBuildingCallback(Context context, View view, Bathroom bathroom) {
             super(context, view);
             this.bathroom = bathroom;
         }
@@ -346,7 +346,7 @@ public class MyReviewsFragment extends Fragment {
     }
 
     private class DeleteReviewCallback extends BowlBuddyCallback<Void> {
-        public DeleteReviewCallback(Context context, View view) {
+        DeleteReviewCallback(Context context, View view) {
             super(context, view);
         }
 
@@ -361,7 +361,7 @@ public class MyReviewsFragment extends Fragment {
     }
 
     private class UpdateUserReviewCallback extends BowlBuddyCallback<Void> {
-        public UpdateUserReviewCallback(Context context, View view) { super(context, view); }
+        UpdateUserReviewCallback(Context context, View view) { super(context, view); }
 
         @Override
         public void onResponse(Call<Void> call, Response<Void> response) {
@@ -374,7 +374,7 @@ public class MyReviewsFragment extends Fragment {
     }
 
     private class GetFavoritesCallback extends BowlBuddyCallback<List<Bathroom>> {
-        public GetFavoritesCallback(Context context, View view) { super(context, view); }
+        GetFavoritesCallback(Context context, View view) { super(context, view); }
 
         @Override
         public void onResponse(Call<List<Bathroom>> call, Response<List<Bathroom>> response) {

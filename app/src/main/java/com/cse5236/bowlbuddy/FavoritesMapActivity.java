@@ -136,7 +136,7 @@ public class FavoritesMapActivity extends FragmentActivity implements OnMapReady
      *
      * @param bathroom The bathroom being added to the map
      */
-    public void addFavoriteMarkers(Bathroom bathroom) {
+    private void addFavoriteMarkers(Bathroom bathroom) {
 
         // Get the building the bathroom is in
         Building bathroomBuilding = bathroom.getBuilding();
@@ -205,7 +205,7 @@ public class FavoritesMapActivity extends FragmentActivity implements OnMapReady
     private class GetFavoritesCallback extends BowlBuddyCallback<List<Bathroom>> {
         private Context callbackContext;
 
-        public GetFavoritesCallback(Context context, View view) {
+        GetFavoritesCallback(Context context, View view) {
 
             super(context, view);
             this.callbackContext = context;
@@ -240,7 +240,7 @@ public class FavoritesMapActivity extends FragmentActivity implements OnMapReady
     private class GetBuildingCallback extends BowlBuddyCallback<Building> {
         private Bathroom bathroom;
 
-        public GetBuildingCallback(Context context, View view, Bathroom bathroom) {
+        GetBuildingCallback(Context context, View view, Bathroom bathroom) {
             super(context, view);
             this.bathroom = bathroom;
         }

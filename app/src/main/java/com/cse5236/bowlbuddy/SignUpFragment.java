@@ -118,7 +118,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
     }
 
     private class SignUpCallback extends BowlBuddyCallback<User> {
-        public SignUpCallback(Context context, View view) {
+        SignUpCallback(Context context, View view) {
             super(context, view);
         }
 
