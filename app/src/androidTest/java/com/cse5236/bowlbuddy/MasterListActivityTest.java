@@ -21,7 +21,7 @@ public class MasterListActivityTest {
     @Test
     public void testLaunchActivity() {
         MasterListActivity activity = activityRule.launchActivity(null);
-        MasterListFragment fragment = (MasterListFragment)activity.getSupportFragmentManager().findFragmentById(R.id.loadingScreen);
+        MasterListFragment fragment = (MasterListFragment)activity.getSupportFragmentManager().findFragmentById(R.id.master_list_container);
         assertNotNull(fragment);
         assertNotNull(activity);
     }
