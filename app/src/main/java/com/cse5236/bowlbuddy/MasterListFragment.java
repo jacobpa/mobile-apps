@@ -59,8 +59,10 @@ import static android.app.Activity.RESULT_OK;
 public class MasterListFragment extends Fragment implements NavigationView.OnNavigationItemSelectedListener {
     private final static String TAG = MasterListFragment.class.getSimpleName();
     private static final int UPDATE_FAVORITES_REQUEST = 1;
+    private static final int ADD_REVIEW_REQUEST = 2;
 
     private View view;
+    private RecyclerView bathroomRecyclerView;
     private RecyclerView.Adapter bathroomAdapter;
     private SwipeRefreshLayout refreshLayout;
     private List<Bathroom> bathroomList;
@@ -93,6 +95,10 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
                 Bundle bundle = data.getExtras();
                 favoritesList = (ArrayList<Bathroom>) bundle.getSerializable("favorites");
             }
+        } else if (requestCode == ADD_REVIEW_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                updateList();
+            }
         }
     }
 
@@ -121,7 +127,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
         // Initialize the recycler view that will store all of the bathrooms
         bathroomAdapter = new BathroomAdapter();
         RecyclerView.LayoutManager bathroomLayoutManager = new LinearLayoutManager(activity);
-        RecyclerView bathroomRecyclerView = view.findViewById(R.id.masterRecyclerView);
+        bathroomRecyclerView = view.findViewById(R.id.masterRecyclerView);
         bathroomRecyclerView.setHasFixedSize(true);
         bathroomRecyclerView.setLayoutManager(bathroomLayoutManager);
         bathroomRecyclerView.setAdapter(bathroomAdapter);
@@ -337,7 +343,7 @@ public class MasterListFragment extends Fragment implements NavigationView.OnNav
     private void startAddReview() {
         Intent intent = new Intent(getActivity(), ReviewActivity.class);
         intent.putExtra("caller", "MasterListFragment");
-        startActivity(intent);
+        startActivityForResult(intent, ADD_REVIEW_REQUEST);
     }
 
     /**

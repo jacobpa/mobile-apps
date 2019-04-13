@@ -34,6 +34,7 @@ import retrofit2.Response;
  */
 public class DetailsActivityFragment extends android.support.v4.app.Fragment {
     private static final String TAG = DetailsActivityFragment.class.getSimpleName();
+    private static final int ADD_REPORT_REQUEST = 1;
     private TextView genderField;
     private TextView handicapField;
     private TextView titleField;
@@ -95,7 +96,7 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
                     bundle.putSerializable("bathroom", bathroom);
                     bundle.putString("caller", "DetailsActivityFragment");
                     intent.putExtras(bundle);
-                    startActivity(intent);
+                    startActivityForResult(intent, ADD_REPORT_REQUEST);
                 }
             });
         }
@@ -153,6 +154,19 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         reviewRecyclerView.setAdapter(reviewAdapter);
 
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == ADD_REPORT_REQUEST) {
+            if (resultCode == Activity.RESULT_OK) {
+                Bathroom newBathroom = (Bathroom) data.getSerializableExtra("bathroom");
+                setStars(newBathroom.getAverageRating());
+                setHandicap(newBathroom.isHandicap());
+            }
+        }
     }
 
     private void setGender(String gender) {
