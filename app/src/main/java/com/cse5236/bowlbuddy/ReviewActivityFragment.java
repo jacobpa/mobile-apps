@@ -204,7 +204,6 @@ public class ReviewActivityFragment extends Fragment {
 
             if (bathroom.getPlyCount() == 1) {
                 plySwitch.setChecked(false);
-                plySwitch.toggle();
             } else {
                 plySwitch.setChecked(true);
             }

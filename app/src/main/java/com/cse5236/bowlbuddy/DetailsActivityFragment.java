@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,6 +42,7 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
     private TextView roomField;
     private TextView noReviewMessage;
     private TextView floorField;
+    private TextView tpField;
     private APIService service;
     private FloatingActionButton addFAB;
     private FloatingActionButton favoriteFAB;
@@ -66,6 +68,7 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
         handicapField = view.findViewById(R.id.handicapField);
         titleField = view.findViewById(R.id.titleField);
         roomField = view.findViewById(R.id.room_field_desc);
+        tpField = view.findViewById(R.id.tpField);
         noReviewMessage = view.findViewById(R.id.no_reviews_message);
         ratingBar = view.findViewById(R.id.ratingBar);
 
@@ -81,6 +84,7 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
             setFloor(bathroom.getFloor());
             setGender(bathroom.getGender());
             setHandicap(bathroom.isHandicap());
+            setTP(bathroom.getPlyCount());
             if(bathroom.getBuilding() != null) {
                 setTitle(bathroom.getBuilding().getName());
             }
@@ -172,6 +176,14 @@ public class DetailsActivityFragment extends android.support.v4.app.Fragment {
     private void setGender(String gender) {
         if(gender != null) {
             genderField.setText(gender);
+        }
+    }
+
+    private void setTP(int ply) {
+        if (ply == 1) {
+            tpField.setText(R.string.single_ply);
+        } else {
+            tpField.setText(R.string.two_ply);
         }
     }
 

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
 public class ReviewActivity extends AppCompatActivity {
@@ -15,6 +16,10 @@ public class ReviewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_review);
 
         FragmentManager fm = getSupportFragmentManager();
+
+        Toolbar tb = findViewById(R.id.toolbar);
+        setSupportActionBar(tb);
+        getSupportActionBar().setTitle("Add a Review");
 
         // Try to find the Fragment if it's already been created
         Fragment fragment = fm.findFragmentById(R.id.review_container);

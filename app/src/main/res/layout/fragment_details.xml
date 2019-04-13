@@ -87,10 +87,9 @@
         android:id="@+id/genderIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="36dp"
         android:text="@string/gender_symbol"
         android:textSize="24sp"
-        app:layout_constraintStart_toEndOf="@+id/ratingBar"
+        app:layout_constraintStart_toStartOf="@id/accessIcon"
         app:layout_constraintTop_toBottomOf="@+id/accessIcon" />
 
     <TextView
@@ -100,7 +99,26 @@
         android:layout_marginStart="8dp"
         app:layout_constraintBottom_toBottomOf="@id/genderIcon"
         app:layout_constraintStart_toEndOf="@+id/genderIcon"
-        app:layout_constraintTop_toTopOf="@id/genderIcon" />
+        app:layout_constraintTop_toTopOf="@id/genderIcon"
+        tools:text="Gender"/>
+
+    <TextView
+        android:id="@+id/tpIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tp_symbol"
+        app:layout_constraintStart_toStartOf="@id/genderIcon"
+        app:layout_constraintTop_toBottomOf="@id/genderIcon"/>
+
+    <TextView
+        android:id="@+id/tpField"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="@id/tpIcon"
+        app:layout_constraintStart_toEndOf="@+id/tpIcon"
+        app:layout_constraintTop_toTopOf="@id/tpIcon"
+        tools:text="TP Ply"/>
 
     <TextView
         android:id="@+id/no_reviews_message"

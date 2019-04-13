@@ -44,6 +44,9 @@
     <string name="no_reviews_found">No reviews found!</string>
     <string name="handicap_symbol">&#9855;</string>
     <string name="gender_symbol">&#128104;</string>
+    <string name="tp_symbol">&#129531;</string>
+    <string name="single_ply">Single Ply</string>
+    <string name="two_ply">Two Ply</string>
     <string name="floor_desc">Floor:</string>
     <string name="room_desc">Room:</string>
 

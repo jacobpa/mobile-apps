@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
 public class DetailsActivity extends AppCompatActivity {
@@ -16,6 +17,10 @@ public class DetailsActivity extends AppCompatActivity {
 
         // Get an instance of the fragment manager
         FragmentManager fm = getSupportFragmentManager();
+
+        Toolbar tb = findViewById(R.id.toolbar);
+        setSupportActionBar(tb);
+        getSupportActionBar().setTitle("Bathroom Details");
 
         // Try to find the Fragment if it's already been created
         Fragment fragment = fm.findFragmentById(R.id.details_fragment_container);
